@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.appsaga.foodbar">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -18,7 +18,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".HomeScreen"></activity>
+        <activity android:name=".HomeScreen" />
+        <activity android:name=".Category1" />
+        <activity android:name=".Category2" />
+        <activity android:name=".Category3" />
+        <activity android:name=".Category4" />
+        <activity android:name=".Category5" />
+        <activity android:name=".Category6"></activity>
     </application>
 
 </manifest>
