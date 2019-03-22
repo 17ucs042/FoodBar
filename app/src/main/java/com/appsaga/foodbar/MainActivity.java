@@ -4,16 +4,21 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
+import com.bumptech.glide.util.Util;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.Profile;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.login.widget.ProfilePictureView;
 
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.util.Arrays;
@@ -23,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     CallbackManager callbackManager;
     LoginButton loginButton;
     //private static final String EMAIL = "email";
-    TextView view;
+    ProfilePictureView profilePictureView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +52,9 @@ public class MainActivity extends AppCompatActivity {
 
         callbackManager = CallbackManager.Factory.create();
         loginButton = findViewById(R.id.login_button);
-        view=findViewById(R.id.view);
+        profilePictureView = findViewById(R.id.pro_pic);
+
+        final TextView pro_name = findViewById(R.id.pro_name);
 
         //loginButton.setReadPermissions(Arrays.asList(EMAIL));
         // If you are using in a fragment, call loginButton.setFragment(this);
@@ -57,13 +64,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
 
-                view.setText(loginResult.getAccessToken().getUserId());
-
                 String userID = loginResult.getAccessToken().getUserId();
 
-                ProfilePictureView profilePictureView = findViewById(R.id.pro_pic);
-
                 profilePictureView.setProfileId(userID);
+
+                profilePictureView.setVisibility(View.VISIBLE);
+
+                /*String response = FacebookSdk.request(userId);
+
+                JSONObject json = Util.parseJson(response);
+                String name = json.getString("name");
+
+                Log.d("First Name: ",profile.getFirstName());
+
+                pro_name.setText("Name: "+profile.getFirstName()+" "+profile.getLastName());*/
+
+                Intent intent = new Intent(MainActivity.this,com.appsaga.foodbar.HomeScreen.class);
+                intent.putExtra("User Id",userID);
+
+                startActivity(intent);
             }
 
             @Override

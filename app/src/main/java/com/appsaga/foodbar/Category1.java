@@ -1,5 +1,6 @@
 package com.appsaga.foodbar;
 
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +17,8 @@ public class Category1 extends AppCompatActivity {
     ArrayList<Items> Category1;
     ListView Category1List;
     CategoryAdapter myAdapter;
+
+    FloatingActionButton shop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,8 @@ public class Category1 extends AppCompatActivity {
 
         Category1List.setAdapter(myAdapter);
 
+        shop = findViewById(R.id.shop);
+
         /*Category1List.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -48,5 +53,13 @@ public class Category1 extends AppCompatActivity {
 
             }
         });*/
+
+        shop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+            }
+        });
     }
 }
