@@ -1,7 +1,10 @@
 package com.appsaga.foodbar;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -22,9 +25,18 @@ import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderLayout;
 import com.smarteist.autoimageslider.DefaultSliderView;
 import com.smarteist.autoimageslider.SliderView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-
+import com.facebook.FacebookSdk;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.Profile;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.facebook.login.widget.ProfilePictureView;
 
 public class HomeScreen extends AppCompatActivity {
 
@@ -32,6 +44,8 @@ public class HomeScreen extends AppCompatActivity {
     DefaultSliderView sliderView;
 
     private DrawerLayout drawerLayout;
+
+    ImageView pic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +64,35 @@ public class HomeScreen extends AppCompatActivity {
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
+        String userID = getIntent().getStringExtra("User Id");
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        View hView =  navigationView.getHeaderView(0);
+
+        pic = hView.findViewById(R.id.pic);
+
+        Log.d("userId",userID);
+
+        Picasso.get().load("https://graph.facebook.com/" + userID + "/picture?type=large").into(pic);
+
         ImageView category1 = findViewById(R.id.Category1);
         ImageView category2 = findViewById(R.id.Category2);
         ImageView category3 = findViewById(R.id.Category3);
         ImageView category4 = findViewById(R.id.Category4);
         ImageView category5 = findViewById(R.id.Category5);
         ImageView category6 = findViewById(R.id.Category6);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            //    ActivityCompat#requestPermissions
+            String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+            ActivityCompat.requestPermissions(this, permissions, 1);
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+        }
 
         category1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,7 +164,6 @@ public class HomeScreen extends AppCompatActivity {
 
         drawerLayout = findViewById(R.id.drawer_layout);
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override

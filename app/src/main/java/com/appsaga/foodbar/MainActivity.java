@@ -1,14 +1,19 @@
 package com.appsaga.foodbar;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.bumptech.glide.util.Util;
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -28,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     CallbackManager callbackManager;
     LoginButton loginButton;
     //private static final String EMAIL = "email";
-    ProfilePictureView profilePictureView;
+    String userID = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +41,22 @@ public class MainActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
 
-        Handler handler = new Handler();
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+
+        if(isLoggedIn==Boolean.TRUE)
+        {
+            Intent intent = new Intent(MainActivity.this,com.appsaga.foodbar.HomeScreen.class);
+            intent.putExtra("User Id",AccessToken.getCurrentAccessToken().getUserId());
+            startActivity(intent);
+            finish();
+        }
+
+        /*Handler handler = new Handler();
 
         int delay = 1500;
 
-        /*handler.postDelayed(new Runnable() {
+        handler.postDelayed(new Runnable() {
             @Override
             public void run() {
 
@@ -50,9 +66,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }, delay);*/
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            //    ActivityCompat#requestPermissions
+            String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+            ActivityCompat.requestPermissions(this, permissions, 1);
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+        }
+
         callbackManager = CallbackManager.Factory.create();
         loginButton = findViewById(R.id.login_button);
-        profilePictureView = findViewById(R.id.pro_pic);
 
         final TextView pro_name = findViewById(R.id.pro_name);
 
@@ -64,11 +91,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
 
-                String userID = loginResult.getAccessToken().getUserId();
+                userID = loginResult.getAccessToken().getUserId();
 
-                profilePictureView.setProfileId(userID);
-
-                profilePictureView.setVisibility(View.VISIBLE);
+                Log.d("userId",userID);
 
                 /*String response = FacebookSdk.request(userId);
 
@@ -83,6 +108,8 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("User Id",userID);
 
                 startActivity(intent);
+
+                finish();
             }
 
             @Override

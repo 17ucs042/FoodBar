@@ -1,5 +1,6 @@
 package com.appsaga.foodbar;
 
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -58,8 +59,34 @@ public class Category1 extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                String price = "";
+                Log.d("Checkpoint","Yes");
+                for(Items item : Category1)
+                {
+                    Log.d("Checkpoint","YES");
+                    if(item.getQuantity()!=0)
+                    {
+                        Log.d("Checkpoint","Yes1");
+                        String price1  = (item.getQuantity() + "x" + item.getPrice()+ " = "+ (item.getQuantity()*Double.parseDouble(item.getPrice()))+"\n");
+                        price = price + " " + price1;
+                    }
+                }
 
+                Log.d("Checkpoint","YES1");
+                Intent intent = new Intent(Category1.this,com.appsaga.foodbar.Payment.class);
+                intent.putExtra("price",price);
+                startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 }

@@ -6,8 +6,14 @@
     android:padding="16dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     android:orientation="vertical"
-    android:gravity="bottom">
+    android:gravity="bottom"
+    android:id="@+id/nav_header">
 
+    <ImageView
+        android:id="@+id/pic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/shopping_cart"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

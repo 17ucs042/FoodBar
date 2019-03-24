@@ -2,4 +2,5 @@
     <string name="app_name">FoodBar</string>
     <string name="facebook_app_id">234167524177969</string>
     <string name="fb_login_protocol_scheme">fb234167524177969</string>
+    <string name="title_activity_maps">Map</string>
 </resources>
