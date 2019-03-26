@@ -11,13 +11,17 @@
 
     <ImageView
         android:id="@+id/pic"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/profile"/>
+
+    <TextView
+        android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/shopping_cart"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="My header title"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+        android:text="Welcome"
+        android:textSize="20sp"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="8dp"/>
 
 </LinearLayout>

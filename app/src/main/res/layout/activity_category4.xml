@@ -4,17 +4,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginStart="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginEnd="8dp"
     tools:context=".Category4">
+
+    <ImageView
+        android:id="@+id/Category4"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/category4"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"/>
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/Category4List">
+        android:id="@+id/Category4List"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10.0sp"
+        android:layout_marginBottom="8dp"
+        android:layout_below="@+id/Category4">
 
     </ListView>
+
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/shop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/shopping_cart"/>
+        android:src="@drawable/shopping_cart"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"/>
 
 </RelativeLayout>

@@ -40,39 +40,34 @@ public class Category1 extends AppCompatActivity {
 
         shop = findViewById(R.id.shop);
 
-        /*Category1List.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        Category1List.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 final Items items = Category1.get(position);
-
-                Button order = view.findViewById(R.id.inStock);
 
                 if (items.getInStock() == Boolean.TRUE) {
                     Toast.makeText(Category1.this, items.getName(), Toast.LENGTH_SHORT).show();
                 }
 
             }
-        });*/
+        });
 
         shop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 String price = "";
-                Log.d("Checkpoint","Yes");
+
                 for(Items item : Category1)
                 {
-                    Log.d("Checkpoint","YES");
                     if(item.getQuantity()!=0)
                     {
-                        Log.d("Checkpoint","Yes1");
                         String price1  = (item.getQuantity() + "x" + item.getPrice()+ " = "+ (item.getQuantity()*Double.parseDouble(item.getPrice()))+"\n");
                         price = price + " " + price1;
                     }
                 }
 
-                Log.d("Checkpoint","YES1");
                 Intent intent = new Intent(Category1.this,com.appsaga.foodbar.Payment.class);
                 intent.putExtra("price",price);
                 startActivity(intent);
@@ -80,13 +75,4 @@ public class Category1 extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-    }
 }

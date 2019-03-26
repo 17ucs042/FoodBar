@@ -14,7 +14,10 @@ public class Payment extends AppCompatActivity {
 
         String price1 = getIntent().getStringExtra("price");
 
+        String final_price = "";
+        final_price = final_price + price1;
+
         TextView price = findViewById(R.id.price);
-        price.setText(price1);
+        price.setText(final_price);
     }
 }

@@ -4,12 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginStart="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginEnd="8dp"
     tools:context=".Category1">
+
+    <ImageView
+        android:id="@+id/Category1"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/category1"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"/>
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/Category1List">
+        android:id="@+id/Category1List"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10.0sp"
+        android:layout_marginBottom="8dp"
+        android:layout_below="@+id/Category1">
 
     </ListView>
     <android.support.design.widget.FloatingActionButton

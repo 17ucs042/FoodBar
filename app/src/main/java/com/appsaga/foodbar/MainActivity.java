@@ -10,9 +10,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.util.Util;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         callbackManager = CallbackManager.Factory.create();
         loginButton = findViewById(R.id.login_button);
 
-        final TextView pro_name = findViewById(R.id.pro_name);
+        loginButton.setVisibility(View.VISIBLE);
 
         //loginButton.setReadPermissions(Arrays.asList(EMAIL));
         // If you are using in a fragment, call loginButton.setFragment(this);
@@ -91,18 +91,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
 
+                loginButton.setVisibility(View.INVISIBLE);
+
                 userID = loginResult.getAccessToken().getUserId();
 
                 Log.d("userId",userID);
-
-                /*String response = FacebookSdk.request(userId);
-
-                JSONObject json = Util.parseJson(response);
-                String name = json.getString("name");
-
-                Log.d("First Name: ",profile.getFirstName());
-
-                pro_name.setText("Name: "+profile.getFirstName()+" "+profile.getLastName());*/
 
                 Intent intent = new Intent(MainActivity.this,com.appsaga.foodbar.HomeScreen.class);
                 intent.putExtra("User Id",userID);
