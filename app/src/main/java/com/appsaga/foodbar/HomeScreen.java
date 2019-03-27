@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,6 +72,8 @@ public class HomeScreen extends AppCompatActivity implements BaseSliderView.OnSl
     private GoogleApiClient googleApiClient;
     private GoogleSignInOptions gso;
 
+    Button special;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +95,7 @@ public class HomeScreen extends AppCompatActivity implements BaseSliderView.OnSl
         setSliderViews();*/
 
         imageSlider = findViewById(R.id.slider);
+        special = findViewById(R.id.special);
 
        // HashMap<String,String> url_maps = new HashMap<>();
 
@@ -271,6 +275,14 @@ public class HomeScreen extends AppCompatActivity implements BaseSliderView.OnSl
                         return true;
                     }
                 });
+
+        special.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(HomeScreen.this,com.appsaga.foodbar.SpecialOffer.class));
+            }
+        });
     }
 
     @Override
