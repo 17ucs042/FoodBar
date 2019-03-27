@@ -5,8 +5,8 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeScreen"
-    android:background="@drawable/home_screen">
+    android:background="@color/primary_light"
+    tools:context=".HomeScreen">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -33,10 +33,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:layout_weight="2"
                 android:orientation="horizontal">
 
-                <ImageView
+
+                <com.makeramen.roundedimageview.RoundedImageView
                     android:id="@+id/Category1"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
@@ -45,18 +45,24 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
+                    android:background="@drawable/round_corner"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/category1" />
+                    android:src="@drawable/category1"
+                    app:riv_corner_radius="10dp"
+                    android:elevation="10dp"/>
 
-                <ImageView
+
+                <com.makeramen.roundedimageview.RoundedImageView
                     android:id="@+id/Category2"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_weight="1"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/category2" />
+                    android:src="@drawable/category2"
+                    app:riv_corner_radius="10dp"
+                    android:elevation="10dp"/>
 
-                <ImageView
+                <com.makeramen.roundedimageview.RoundedImageView
                     android:id="@+id/Category3"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
@@ -66,7 +72,9 @@
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/category3" />
+                    android:src="@drawable/category3"
+                    app:riv_corner_radius="10dp"
+                    android:elevation="10dp"/>
 
             </LinearLayout>
 
@@ -74,10 +82,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:layout_weight="2"
                 android:orientation="horizontal">
 
-                <ImageView
+                <com.makeramen.roundedimageview.RoundedImageView
                     android:id="@+id/Category4"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
@@ -87,17 +94,21 @@
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/category4" />
+                    android:src="@drawable/category4"
+                    app:riv_corner_radius="10dp"
+                    android:elevation="10dp"/>
 
-                <ImageView
+                <com.makeramen.roundedimageview.RoundedImageView
                     android:id="@+id/Category5"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_weight="1"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/category5" />
+                    android:src="@drawable/category5"
+                    app:riv_corner_radius="10dp"
+                    android:elevation="10dp"/>
 
-                <ImageView
+                <com.makeramen.roundedimageview.RoundedImageView
                     android:id="@+id/Category6"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
@@ -107,7 +118,9 @@
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/category6" />
+                    android:src="@drawable/category6"
+                    app:riv_corner_radius="10dp"
+                    android:elevation="10dp"/>
 
             </LinearLayout>
 
@@ -117,11 +130,11 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
                 android:layout_weight="1"
-                android:text="Special Offers"
-                android:textAllCaps="false"
                 android:background="@drawable/button_thin"
+                android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:paddingLeft="10dp" />
+                android:text="Special Offers"
+                android:textAllCaps="false" />
 
         </LinearLayout>
 

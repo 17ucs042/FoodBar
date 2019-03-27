@@ -25,7 +25,7 @@
         android:id="@+id/Category6List"
         android:divider="@android:color/transparent"
         android:dividerHeight="10.0sp"
-        android:layout_marginBottom="8dp"
+        android:paddingBottom="10dp"
         android:layout_below="@+id/Category6">
 
     </ListView>

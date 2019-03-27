@@ -24,9 +24,9 @@ public class Category4 extends AppCompatActivity {
 
         Category4 = new ArrayList<>();
 
-        Category4.add(new Items("Burger", "100.00", Boolean.TRUE,0));
-        Category4.add(new Items("Pizza", "100.00", Boolean.TRUE,0));
-        Category4.add(new Items("Chowmein", "100.00", Boolean.FALSE,0));
+        Category4.add(new Items("Burger", "100.00", Boolean.TRUE, 0));
+        Category4.add(new Items("Pizza", "100.00", Boolean.TRUE, 0));
+        Category4.add(new Items("Chowmein", "100.00", Boolean.FALSE, 0));
 
         myAdapter = new CategoryAdapter(this, Category4);
 
@@ -42,19 +42,22 @@ public class Category4 extends AppCompatActivity {
 
                 String price = "";
 
-                for(Items item : Category4)
-                {
-                    if(item.getQuantity()!=0)
-                    {
-                        String price1  = (item.getQuantity() + "x" + item.getPrice()+ " = "+ (item.getQuantity()*Double.parseDouble(item.getPrice()))+"\n");
+                for (Items item : Category4) {
+                    if (item.getQuantity() != 0) {
+                        String price1 = (item.getQuantity() + "x" + item.getPrice() + " = " + (item.getQuantity() * Double.parseDouble(item.getPrice())) + "\n");
                         price = price + " " + price1;
                     }
                 }
 
-                Intent intent = new Intent(Category4.this,com.appsaga.foodbar.Payment.class);
-                intent.putExtra("price",price);
+                Intent intent = new Intent(Category4.this, com.appsaga.foodbar.Payment.class);
+                intent.putExtra("price", price);
                 startActivity(intent);
             }
         });
+    }
+
+    public ArrayList<Items> sendCategory()
+    {
+        return Category4;
     }
 }

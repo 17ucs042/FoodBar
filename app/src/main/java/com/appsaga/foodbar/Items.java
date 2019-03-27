@@ -1,6 +1,8 @@
 package com.appsaga.foodbar;
 
-class Items {
+import java.io.Serializable;
+
+class Items implements Serializable {
 
     String name;
     String price;

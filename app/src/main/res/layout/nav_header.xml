@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="192dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/colorPrimaryDark"
     android:padding="16dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
@@ -9,11 +10,13 @@
     android:gravity="bottom"
     android:id="@+id/nav_header">
 
-    <ImageView
+    <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/pic"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/profile"/>
+        android:src="@drawable/profile"
+        app:riv_corner_radius="50dp"
+        android:elevation="10dp"/>
 
     <TextView
         android:id="@+id/name"

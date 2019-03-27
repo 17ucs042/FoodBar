@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "64740569169",
+    "firebase_url": "https://foodbar-1c4c1.firebaseio.com",
+    "project_id": "foodbar-1c4c1",
+    "storage_bucket": "foodbar-1c4c1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:64740569169:android:8ede38cf5a9f3bb0",
+        "android_client_info": {
+          "package_name": "com.appsaga.foodbar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "64740569169-8k7qvt8otstvnkn1k18ctj3doi4fq5lg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.appsaga.foodbar",
+            "certificate_hash": "9d15ff30be6a3deb80d2e965b90ce4af8086fbe1"
+          }
+        },
+        {
+          "client_id": "64740569169-cds9c3hu1ud1ogf2b3kqj052n9181133.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAibbQnczFU7vvJty6WdaIjzfzAZMkKGCk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "64740569169-cds9c3hu1ud1ogf2b3kqj052n9181133.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

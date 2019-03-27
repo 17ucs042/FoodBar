@@ -3,6 +3,7 @@ package com.appsaga.foodbar;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
@@ -20,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
@@ -28,6 +30,16 @@ import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.widget.ProfilePictureView;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -44,7 +56,7 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.login.widget.ProfilePictureView;
 
-public class HomeScreen extends AppCompatActivity implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
+public class HomeScreen extends AppCompatActivity implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener ,GoogleApiClient.OnConnectionFailedListener{
 
     //SliderLayout sliderLayout;
     // DefaultSliderView sliderView;
@@ -56,10 +68,22 @@ public class HomeScreen extends AppCompatActivity implements BaseSliderView.OnSl
 
     TextView name;
 
+    private GoogleApiClient googleApiClient;
+    private GoogleSignInOptions gso;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
+
+        gso =  new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        googleApiClient=new GoogleApiClient.Builder(this)
+                .enableAutoManage(this,this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API,gso)
+                .build();
 
         /*sliderLayout = findViewById(R.id.imageSlider);
         sliderLayout.setIndicatorAnimation(IndicatorAnimations.SWAP);
@@ -224,6 +248,18 @@ public class HomeScreen extends AppCompatActivity implements BaseSliderView.OnSl
                         if(menuItem.getItemId()==R.id.item1)
                         {
                             LoginManager.getInstance().logOut();
+                            FirebaseAuth.getInstance().signOut();
+                            Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(
+                                    new ResultCallback<Status>() {
+                                        @Override
+                                        public void onResult(Status status) {
+                                            if (status.isSuccess()){
+                                                gotoMainActivity();
+                                            }else{
+                                                Toast.makeText(getApplicationContext(),"Session not close",Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    });
                             startActivity(new Intent(HomeScreen.this,com.appsaga.foodbar.MainActivity.class));
                         }
                         // close drawer when item is tapped
@@ -300,4 +336,47 @@ public class HomeScreen extends AppCompatActivity implements BaseSliderView.OnSl
     public void onPageScrollStateChanged(int state) {
 
     }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        OptionalPendingResult<GoogleSignInResult> opr= Auth.GoogleSignInApi.silentSignIn(googleApiClient);
+        if(opr.isDone()){
+            GoogleSignInResult result=opr.get();
+            handleSignInResult(result);
+        }else{
+            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(@NonNull GoogleSignInResult googleSignInResult) {
+                    handleSignInResult(googleSignInResult);
+                }
+            });
+        }
+    }
+    private void handleSignInResult(GoogleSignInResult result){
+        if(result.isSuccess()){
+            GoogleSignInAccount account=result.getSignInAccount();
+           name.setText(account.getDisplayName());
+            try{
+                Glide.with(this).load(account.getPhotoUrl()).into(pic);
+            }catch (NullPointerException e){
+                Toast.makeText(getApplicationContext(),"image not found",Toast.LENGTH_LONG).show();
+            }
+
+        }else{
+            gotoMainActivity();
+        }
+
+
+
+
+    }
+    private void gotoMainActivity(){
+        Intent intent=new Intent(this,MainActivity.class);
+        startActivity(intent);
+    }
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
 }

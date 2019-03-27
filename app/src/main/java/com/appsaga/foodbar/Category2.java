@@ -57,4 +57,10 @@ public class Category2 extends AppCompatActivity {
             }
         });
     }
+
+    public ArrayList<Items> sendCategory()
+    {
+        return Category2;
+    }
+
 }

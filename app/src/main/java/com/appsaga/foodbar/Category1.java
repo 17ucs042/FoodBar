@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class Category1 extends AppCompatActivity {
 
-    ArrayList<Items> Category1;
+    public ArrayList<Items> Category1;
     ListView Category1List;
     CategoryAdapter myAdapter;
 
@@ -40,18 +40,17 @@ public class Category1 extends AppCompatActivity {
 
         shop = findViewById(R.id.shop);
 
-        Category1List.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*Category1List.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                final Items items = Category1.get(position);
+                Items items = Category1.get(position);
 
                 if (items.getInStock() == Boolean.TRUE) {
                     Toast.makeText(Category1.this, items.getName(), Toast.LENGTH_SHORT).show();
                 }
-
-            }
-        });
+           }
+        });*/
 
         shop.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,4 +74,8 @@ public class Category1 extends AppCompatActivity {
         });
     }
 
+    public ArrayList<Items> sendCategory()
+    {
+        return Category1;
+    }
 }

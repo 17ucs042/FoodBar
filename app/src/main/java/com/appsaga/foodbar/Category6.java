@@ -58,4 +58,8 @@ public class Category6 extends AppCompatActivity {
         });
 
     }
+    public ArrayList<Items> sendCategory()
+    {
+        return Category6;
+    }
 }
