@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -57,7 +58,7 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.login.widget.ProfilePictureView;
 
-public class HomeScreen extends AppCompatActivity implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener ,GoogleApiClient.OnConnectionFailedListener{
+public class HomeScreen extends AppCompatActivity implements ViewPagerEx.OnPageChangeListener ,GoogleApiClient.OnConnectionFailedListener{
 
     //SliderLayout sliderLayout;
     // DefaultSliderView sliderView;
@@ -73,28 +74,34 @@ public class HomeScreen extends AppCompatActivity implements BaseSliderView.OnSl
     private GoogleSignInOptions gso;
 
     Button special;
+    String from;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
 
-        gso =  new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
+        from = "" + getIntent().getStringExtra("from");
 
-        googleApiClient=new GoogleApiClient.Builder(this)
-                .enableAutoManage(this,this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API,gso)
-                .build();
+        Log.d("fromIs:",from);
+        if(from.equals("google"))
+        {
+            gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestEmail()
+                    .build();
 
+            googleApiClient = new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this, this)
+                    .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                    .build();
+        }
         /*sliderLayout = findViewById(R.id.imageSlider);
         sliderLayout.setIndicatorAnimation(IndicatorAnimations.SWAP);
         sliderLayout.setSliderTransformAnimation(SliderAnimations.FADETRANSFORMATION);
         sliderLayout.setScrollTimeInSec(5);
         setSliderViews();*/
 
-        imageSlider = findViewById(R.id.slider);
+       // imageSlider = findViewById(R.id.slider);
         special = findViewById(R.id.special);
 
        // HashMap<String,String> url_maps = new HashMap<>();
@@ -104,7 +111,7 @@ public class HomeScreen extends AppCompatActivity implements BaseSliderView.OnSl
         //url_maps.put("House of Cards", "https://www.studytutorial.in/wp-content/uploads/2016/10/multiseries_bar_chart.jpg");
        // url_maps.put("Game of Thrones", "https://www.studytutorial.in/wp-content/uploads/2017/04/studytutorial-logo.png");
 
-        TreeMap<String,Index> file_maps = new TreeMap<>();
+        /*TreeMap<String,Index> file_maps = new TreeMap<>();
         file_maps.put("Hannibal",new Index(R.drawable.category1,0));
         file_maps.put("Big Bang Theory",new Index(R.drawable.category2,1));
         file_maps.put("House of Cards",new Index(R.drawable.category3,2));
@@ -132,7 +139,7 @@ public class HomeScreen extends AppCompatActivity implements BaseSliderView.OnSl
         imageSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
         imageSlider.setCustomAnimation(new DescriptionAnimation());
         imageSlider.setDuration(2000);
-        imageSlider.addOnPageChangeListener(this);
+        imageSlider.addOnPageChangeListener(this);*/
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -151,7 +158,10 @@ public class HomeScreen extends AppCompatActivity implements BaseSliderView.OnSl
 
         //name.setText(my_name);
 
-        Picasso.with(getApplicationContext()).load("https://graph.facebook.com/" + userID + "/picture?type=large").into(pic);
+        if(from.equals("facebook")) {
+
+            Picasso.with(getApplicationContext()).load("https://graph.facebook.com/" + userID + "/picture?type=large").into(pic);
+        }
 
         ImageView category1 = findViewById(R.id.Category1);
         ImageView category2 = findViewById(R.id.Category2);
@@ -249,22 +259,26 @@ public class HomeScreen extends AppCompatActivity implements BaseSliderView.OnSl
                         // set item as selected to persist highlight
                         menuItem.setChecked(true);
 
-                        if(menuItem.getItemId()==R.id.item1)
+                        if(menuItem.getItemId()==R.id.log_out)
                         {
-                            LoginManager.getInstance().logOut();
-                            FirebaseAuth.getInstance().signOut();
-                            Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(
-                                    new ResultCallback<Status>() {
-                                        @Override
-                                        public void onResult(Status status) {
-                                            if (status.isSuccess()){
-                                                gotoMainActivity();
-                                            }else{
-                                                Toast.makeText(getApplicationContext(),"Session not close",Toast.LENGTH_LONG).show();
+                            if(from.equals("facebook")) {
+                                LoginManager.getInstance().logOut();
+                                startActivity(new Intent(HomeScreen.this,com.appsaga.foodbar.MainActivity.class));
+                            }
+                            else {
+                                FirebaseAuth.getInstance().signOut();
+                                Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(
+                                        new ResultCallback<Status>() {
+                                            @Override
+                                            public void onResult(Status status) {
+                                                if (status.isSuccess()) {
+                                                    gotoMainActivity();
+                                                } else {
+                                                    Toast.makeText(HomeScreen.this, "Session not close", Toast.LENGTH_LONG).show();
+                                                }
                                             }
-                                        }
-                                    });
-                            startActivity(new Intent(HomeScreen.this,com.appsaga.foodbar.MainActivity.class));
+                                        });
+                            }
                         }
                         // close drawer when item is tapped
                         drawerLayout.closeDrawers();
@@ -283,6 +297,18 @@ public class HomeScreen extends AppCompatActivity implements BaseSliderView.OnSl
                 startActivity(new Intent(HomeScreen.this,com.appsaga.foodbar.SpecialOffer.class));
             }
         });
+
+        ViewPager viewPager = findViewById(R.id.viewpager);
+
+        FragmentAdapter adapter = new FragmentAdapter(this, getSupportFragmentManager());
+
+        viewPager.setAdapter(adapter);
+
+        TabLayout tabLayout = findViewById(R.id.tabs);
+
+        tabLayout.setupWithViewPager(viewPager);
+
+        
     }
 
     @Override
@@ -325,17 +351,6 @@ public class HomeScreen extends AppCompatActivity implements BaseSliderView.OnSl
     }*/
 
     @Override
-    protected void onStop() {
-        imageSlider.stopAutoCycle();
-        super.onStop();
-    }
-
-    @Override
-    public void onSliderClick(BaseSliderView slider) {
-
-    }
-
-    @Override
     public void onPageScrolled(int position, float positionOffset,
                                int positionOffsetPixels) {}
 
@@ -351,17 +366,20 @@ public class HomeScreen extends AppCompatActivity implements BaseSliderView.OnSl
     @Override
     protected void onStart() {
         super.onStart();
-        OptionalPendingResult<GoogleSignInResult> opr= Auth.GoogleSignInApi.silentSignIn(googleApiClient);
-        if(opr.isDone()){
-            GoogleSignInResult result=opr.get();
-            handleSignInResult(result);
-        }else{
-            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-                @Override
-                public void onResult(@NonNull GoogleSignInResult googleSignInResult) {
-                    handleSignInResult(googleSignInResult);
-                }
-            });
+
+        if(from.equals("google")) {
+            OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(googleApiClient);
+            if (opr.isDone()) {
+                GoogleSignInResult result = opr.get();
+                handleSignInResult(result);
+            } else {
+                opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                    @Override
+                    public void onResult(@NonNull GoogleSignInResult googleSignInResult) {
+                        handleSignInResult(googleSignInResult);
+                    }
+                });
+            }
         }
     }
     private void handleSignInResult(GoogleSignInResult result){

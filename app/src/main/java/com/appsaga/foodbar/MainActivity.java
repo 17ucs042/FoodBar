@@ -67,13 +67,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
 
-       /* AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        /*AccessToken accessToken = AccessToken.getCurrentAccessToken();
         boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
 
         if(isLoggedIn==Boolean.TRUE)
         {
             Intent intent = new Intent(MainActivity.this,com.appsaga.foodbar.HomeScreen.class);
             intent.putExtra("User Id",AccessToken.getCurrentAccessToken().getUserId());
+            intent.putExtra("from","facebook");
             startActivity(intent);
             finish();
         }*/
@@ -125,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                 Intent intent = new Intent(MainActivity.this,com.appsaga.foodbar.HomeScreen.class);
                 intent.putExtra("User Id",userID);
+                intent.putExtra("from","facebook");
 
                 startActivity(intent);
 
@@ -159,7 +161,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     // gotoProfile();
                     // User is signed in
                     // you could place other firebase code
-                    startActivity(new Intent(MainActivity.this,HomeScreen.class));
+                    Intent intent = new Intent(MainActivity.this,com.appsaga.foodbar.HomeScreen.class);
+                    intent.putExtra("from","google");
+                    startActivity(intent);
                     //logic to save the user details to Firebase
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
@@ -183,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             @Override
             public void onClick(View view) {
                 Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+                intent.putExtra("from","google");
                 startActivityForResult(intent,RC_SIGN_IN);
             }
         });
@@ -245,12 +250,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 });
     }
 
-
-
-
     private void gotoProfile(){
         Intent intent = new Intent(MainActivity.this, HomeScreen.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra("from","google");
         startActivity(intent);
         finish();
     }
@@ -287,6 +290,5 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         }
     }
-
 
 }
