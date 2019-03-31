@@ -308,7 +308,7 @@ public class HomeScreen extends AppCompatActivity implements ViewPagerEx.OnPageC
 
         tabLayout.setupWithViewPager(viewPager);
 
-        
+
     }
 
     @Override
