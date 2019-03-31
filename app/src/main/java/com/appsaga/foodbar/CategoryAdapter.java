@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,12 +19,14 @@ import java.util.ArrayList;
 
 class CategoryAdapter extends ArrayAdapter<Items> {
 
+    DatabaseHelper mDatabaseHelper;
+
     public CategoryAdapter(Context context, ArrayList<Items> items) {
         super(context,0,items);
     }
 
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, final ViewGroup parent) {
 
         View listItemView = convertView;
 
@@ -73,11 +76,13 @@ class CategoryAdapter extends ArrayAdapter<Items> {
 
                     if(currentItem.getQuantity()>0)
                     {
-                        Intent intent = new Intent("item sent");
+                        /*Intent intent = new Intent("item sent");
                         intent.putExtra("Item", currentItem);
-                        getContext().sendBroadcast(intent);
+                        getContext().sendBroadcast(intent);*/
                     }
                 }
+
+                ((ListView) parent).performItemClick(v, position, 0);
             }
         });
 

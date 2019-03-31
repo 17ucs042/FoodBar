@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -67,15 +68,25 @@ public class Category1 extends AppCompatActivity {
                     }
                 }
 
-                Intent intent = new Intent(Category1.this,com.appsaga.foodbar.Payment.class);
+                Intent intent = new Intent(Category1.this,com.appsaga.foodbar.CategoryAll.class);
                 intent.putExtra("price",price);
                 startActivity(intent);
             }
         });
-    }
 
-    public ArrayList<Items> sendCategory()
-    {
-        return Category1;
+        Category1List.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                long viewID = view.getId();
+
+                Items currentItem = Category1.get(position);
+
+                if(viewID==R.id.add) {
+                    Toast.makeText(Category1.this, "Clicked On: add", Toast.LENGTH_SHORT).show();
+                    //mDatabaseHelper.addData(new Items(currentItem.getName(),currentItem.getPrice(),Boolean.TRUE,currentItem.getQuantity()));
+                }
+            }
+        });
     }
 }

@@ -23,7 +23,8 @@
         android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
         android:layout_toEndOf="@+id/display"
-        android:layout_toRightOf="@+id/display" />
+        android:layout_toRightOf="@+id/display"
+        android:text="TEST"/>
 
     <TextView
         android:id="@+id/price"
