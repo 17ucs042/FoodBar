@@ -49,15 +49,10 @@ public class Category4 extends AppCompatActivity {
                     }
                 }
 
-                Intent intent = new Intent(Category4.this, com.appsaga.foodbar.Payment.class);
+                Intent intent = new Intent(Category4.this, com.appsaga.foodbar.CategoryAll.class);
                 intent.putExtra("price", price);
                 startActivity(intent);
             }
         });
-    }
-
-    public ArrayList<Items> sendCategory()
-    {
-        return Category4;
     }
 }

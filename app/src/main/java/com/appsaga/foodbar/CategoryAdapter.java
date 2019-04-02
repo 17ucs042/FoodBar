@@ -2,6 +2,7 @@ package com.appsaga.foodbar;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +23,8 @@ class CategoryAdapter extends ArrayAdapter<Items> {
     DatabaseHelper mDatabaseHelper;
 
     public CategoryAdapter(Context context, ArrayList<Items> items) {
-        super(context,0,items);
+        super(context, 0, items);
+        mDatabaseHelper = new DatabaseHelper(context);
     }
 
     @Override
@@ -48,38 +50,54 @@ class CategoryAdapter extends ArrayAdapter<Items> {
         ImageButton add = listItemView.findViewById(R.id.add);
         ImageButton subtract = listItemView.findViewById(R.id.subtract);
 
-        if(currentItem.inStock==Boolean.FALSE)
-        {
+        if (currentItem.inStock == Boolean.FALSE) {
             notInStock.setVisibility(View.VISIBLE);
             add.setVisibility(View.GONE);
             subtract.setVisibility(View.GONE);
-        }
-        else
-        {
+        } else {
             notInStock.setVisibility(View.GONE);
             add.setVisibility(View.VISIBLE);
             subtract.setVisibility(View.VISIBLE);
         }
 
         final TextView quantity_value = listItemView.findViewById(R.id.quantity_value);
-        quantity_value.setText(String.valueOf(currentItem.getQuantity()));
+        quantity_value.setText(String.valueOf(mDatabaseHelper.getQuantity(currentItem.getName())));
 
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(currentItem.inStock==Boolean.TRUE) {
+                if (currentItem.inStock == Boolean.TRUE) {
 
-                    quantity_value.setText(String.valueOf(currentItem.getQuantity()+1));
-                    currentItem.setQuantity(currentItem.getQuantity()+1);
+                    quantity_value.setText(String.valueOf(mDatabaseHelper.getQuantity(currentItem.getName()) + 1));
+                    mDatabaseHelper.update(currentItem.getName(), mDatabaseHelper.getQuantity(currentItem.getName()) + 1, mDatabaseHelper.getPrice(currentItem.getName()) + 1);
+
+                    //currentItem.setQuantity(currentItem.getQuantity()+1);
                     //Toast.makeText(getContext(), "Item at position " + position + " was clicked", Toast.LENGTH_SHORT).show();
 
-                    if(currentItem.getQuantity()>0)
+                   /* if(currentItem.getQuantity()>0)
                     {
-                        /*Intent intent = new Intent("item sent");
+                        *//*Intent intent = new Intent("item sent");
                         intent.putExtra("Item", currentItem);
-                        getContext().sendBroadcast(intent);*/
+                        getContext().sendBroadcast(intent);*//*
                     }
+                    if (mDatabaseHelper.getQuantity(currentItem.getName()) == 0) {
+                        boolean isInserted = mDatabaseHelper.insertData(currentItem.getName(), currentItem.getQuantity()
+                                , currentItem.getPrice());
+                        if (isInserted)
+                            Toast.makeText(getContext(), "inserted", Toast.LENGTH_SHORT).show();
+
+                    }
+                    if (currentItem.getQuantity() >= 0) {
+                        boolean isUpdated = mDatabaseHelper.update(currentItem.getName(), currentItem.getQuantity(), currentItem.getPrice());
+                        if (isUpdated) {
+                            Toast.makeText(getContext(), "updated", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    /*if(currentItem.getQuantity()==0){
+                        SQLiteDatabase db = mDatabaseHelper.getWritableDatabase();
+                        db.delete("OrderTable","item=?",new String[]{currentItem.getName()});
+                    }*/
                 }
 
                 ((ListView) parent).performItemClick(v, position, 0);
@@ -90,10 +108,10 @@ class CategoryAdapter extends ArrayAdapter<Items> {
             @Override
             public void onClick(View v) {
 
-                if(currentItem.inStock==Boolean.TRUE && currentItem.getQuantity() > 0) {
+                if (currentItem.inStock == Boolean.TRUE && currentItem.getQuantity() > 0) {
 
-                    quantity_value.setText(String.valueOf(currentItem.getQuantity()-1));
-                    currentItem.setQuantity(currentItem.getQuantity()-1);
+                    quantity_value.setText(String.valueOf(currentItem.getQuantity() - 1));
+                    currentItem.setQuantity(currentItem.getQuantity() - 1);
                     //Toast.makeText(getContext(), "Item at position " + position + " was clicked", Toast.LENGTH_SHORT).show();
                 }
             }

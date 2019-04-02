@@ -12,6 +12,7 @@
         android:layout_height="match_parent"
         android:src="@drawable/home_screen"
         android:scaleType="centerCrop" />
+
     <com.google.android.gms.common.SignInButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

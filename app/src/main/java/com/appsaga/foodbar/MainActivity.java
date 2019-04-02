@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             @Override
             public void onClick(View view) {
                 Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
-                intent.putExtra("from","google");
+                //intent.putExtra("from","google");
                 startActivityForResult(intent,RC_SIGN_IN);
             }
         });
@@ -253,11 +253,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private void gotoProfile(){
         Intent intent = new Intent(MainActivity.this, HomeScreen.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra("from","google");
+        intent.putExtra("fromIs","google");
         startActivity(intent);
         finish();
     }
-    @Override
+    /*@Override
     protected void onStart() {
         super.onStart();
 //        if (authStateListener != null){
@@ -269,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             startActivity(new Intent(MainActivity.this, HomeScreen.class));
         }
         //        firebaseAuth.addAuthStateListener(authStateListener);
-    }
+    }*/
 
     @Override
     protected void onStop() {

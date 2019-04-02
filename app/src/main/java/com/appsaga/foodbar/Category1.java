@@ -22,16 +22,26 @@ public class Category1 extends AppCompatActivity {
 
     FloatingActionButton shop;
 
+    DatabaseHelper mDatabaseHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category1);
 
+        mDatabaseHelper=new DatabaseHelper(Category1.this);
         Category1 = new ArrayList<>();
 
         Category1.add(new Items("Burger", "100.00", Boolean.TRUE,0));
         Category1.add(new Items("Pizza", "100.00", Boolean.TRUE,0));
         Category1.add(new Items("Chowmein", "100.00", Boolean.FALSE,0));
+
+        mDatabaseHelper.insertData("Burger",0
+                ,"100.00");
+        mDatabaseHelper.insertData("Pizza",0
+                ,"100.00");
+        mDatabaseHelper.insertData("Chowmein",0
+                ,"100.00");
 
         myAdapter = new CategoryAdapter(this, Category1);
 
@@ -82,10 +92,6 @@ public class Category1 extends AppCompatActivity {
 
                 Items currentItem = Category1.get(position);
 
-                if(viewID==R.id.add) {
-                    Toast.makeText(Category1.this, "Clicked On: add", Toast.LENGTH_SHORT).show();
-                    //mDatabaseHelper.addData(new Items(currentItem.getName(),currentItem.getPrice(),Boolean.TRUE,currentItem.getQuantity()));
-                }
             }
         });
     }

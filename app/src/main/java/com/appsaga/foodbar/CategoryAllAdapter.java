@@ -38,21 +38,11 @@ class CategoryAllAdapter extends ArrayAdapter<Items> {
 
         final Items currentItem = getItem(position);
 
-        if (currentItem.getQuantity() != 0) {
+        if (currentItem.getQuantity() > 0) {
 
             name.setText(currentItem.getName());
 
             price.setText(currentItem.getPrice());
-
-            if (currentItem.inStock == Boolean.FALSE) {
-                notInStock.setVisibility(View.VISIBLE);
-                add.setVisibility(View.GONE);
-                subtract.setVisibility(View.GONE);
-            } else {
-                notInStock.setVisibility(View.GONE);
-                add.setVisibility(View.VISIBLE);
-                subtract.setVisibility(View.VISIBLE);
-            }
 
             final TextView quantity_value = listItemView.findViewById(R.id.quantity_value);
             quantity_value.setText(String.valueOf(currentItem.getQuantity()));
