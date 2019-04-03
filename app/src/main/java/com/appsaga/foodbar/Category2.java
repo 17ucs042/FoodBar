@@ -16,6 +16,7 @@ public class Category2 extends AppCompatActivity {
     CategoryAdapter myAdapter;
 
     FloatingActionButton shop;
+    DatabaseHelper mDatabaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,9 +25,17 @@ public class Category2 extends AppCompatActivity {
 
         Category2 = new ArrayList<>();
 
-        Category2.add(new Items("Burger", "100.00", Boolean.TRUE,0));
-        Category2.add(new Items("Pizza", "100.00", Boolean.TRUE,0));
-        Category2.add(new Items("Chowmein", "100.00", Boolean.FALSE,0));
+        Category2.add(new Items("Milk", "100.00", Boolean.TRUE,0));
+        Category2.add(new Items("Cake", "100.00", Boolean.TRUE,0));
+        Category2.add(new Items("Pudding", "100.00", Boolean.FALSE,0));
+
+        mDatabaseHelper=new DatabaseHelper(Category2.this);
+        mDatabaseHelper.insertData("Milk",0
+                ,"100.00");
+        mDatabaseHelper.insertData("Cake",0
+                ,"100.00");
+        mDatabaseHelper.insertData("Pudding",0
+                ,"100.00");
 
         myAdapter = new CategoryAdapter(this, Category2);
 

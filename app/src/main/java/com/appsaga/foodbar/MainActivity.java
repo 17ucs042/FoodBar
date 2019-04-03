@@ -61,13 +61,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private FirebaseAuth.AuthStateListener authStateListener;
     ProgressBar pb;
 
+    Button facebook;
+    Button google;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
 
-        /*AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
         boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
 
         if(isLoggedIn==Boolean.TRUE)
@@ -77,48 +80,36 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             intent.putExtra("from","facebook");
             startActivity(intent);
             finish();
-        }*/
+        }
 
-        /*Handler handler = new Handler();
+        facebook = findViewById(R.id.facebook);
 
-        int delay = 1500;
-
-        handler.postDelayed(new Runnable() {
+        facebook.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
+            public void onClick(View v) {
 
-                Intent intent = new Intent(MainActivity.this, com.appsaga.foodbar.HomeScreen.class);
-                startActivity(intent);
-                finish();
+                loginButton.performClick();
             }
-        }, delay);*/
+        });
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            //    ActivityCompat#requestPermissions
             String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
             ActivityCompat.requestPermissions(this, permissions, 1);
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
         }
 
         callbackManager = CallbackManager.Factory.create();
         loginButton = findViewById(R.id.login_button);
+        google = findViewById(R.id.google_button);
 
-        loginButton.setVisibility(View.VISIBLE);
-
-        //loginButton.setReadPermissions(Arrays.asList(EMAIL));
-        // If you are using in a fragment, call loginButton.setFragment(this);
 
         // Callback registration
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
 
-                loginButton.setVisibility(View.INVISIBLE);
+                facebook.setVisibility(View.INVISIBLE);
+                google.setVisibility(View.INVISIBLE);
 
                 userID = loginResult.getAccessToken().getUserId();
 
@@ -183,34 +174,30 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 .build();
 
         signInButton = findViewById(R.id.sign_in_button);
-        signInButton.setOnClickListener(new View.OnClickListener() {
+
+        /*signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+            }
+        });*/
+
+        google.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //signInButton.performClick();
                 Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
-                //intent.putExtra("from","google");
+                intent.putExtra("from","google");
                 startActivityForResult(intent,RC_SIGN_IN);
             }
         });
-
-
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
-
-  /*
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==RC_SIGN_IN){
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleSignInResult(result);
-
-        }
-
-    }*/
 
     private void handleSignInResult(GoogleSignInResult result){
         if(result.isSuccess()){
@@ -228,7 +215,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
     private void firebaseAuthWithGoogle(AuthCredential credential){
-        signInButton.setVisibility(View.GONE);
+        facebook.setVisibility(View.INVISIBLE);
+        google.setVisibility(View.INVISIBLE);
         pb.setVisibility(View.VISIBLE);
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -253,11 +241,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private void gotoProfile(){
         Intent intent = new Intent(MainActivity.this, HomeScreen.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra("fromIs","google");
+        intent.putExtra("from","google");
         startActivity(intent);
         finish();
     }
-    /*@Override
+    @Override
     protected void onStart() {
         super.onStart();
 //        if (authStateListener != null){
@@ -265,11 +253,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 //        }
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if(user!=null) {
-
-            startActivity(new Intent(MainActivity.this, HomeScreen.class));
+            Intent intent = new Intent(MainActivity.this, HomeScreen.class);
+            intent.putExtra("from","google");
+            startActivity(intent);
         }
         //        firebaseAuth.addAuthStateListener(authStateListener);
-    }*/
+    }
 
     @Override
     protected void onStop() {

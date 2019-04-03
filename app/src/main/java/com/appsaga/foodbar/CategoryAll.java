@@ -12,12 +12,10 @@ import java.util.ArrayList;
 
 public class CategoryAll extends AppCompatActivity {
 
-    CategoryAllAdapter myCategoryAdapter;
-    ListView CategoryAllList;
-
     DatabaseHelper mDatabaseHelper;
     private static final String TAG = "ListDataActivity";
     ArrayList<Items> CategoryAll = new ArrayList<>();
+    ArrayList<String> items = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,17 +34,23 @@ public class CategoryAll extends AppCompatActivity {
 
         //get the data and append to a list
         Cursor data = mDatabaseHelper.getAllData();
-        CategoryAllList = findViewById(R.id.CategoryAllList);
+        ListView CategoryAllList = findViewById(R.id.CategoryAllList);
 
         CategoryAll.clear();
+        CategoryAllAdapter myCategoryAdapter = new CategoryAllAdapter(com.appsaga.foodbar.CategoryAll.this,CategoryAll);
+        myCategoryAdapter.clear();
+
+        myCategoryAdapter.notifyDataSetChanged();
         while (data.moveToNext()) {
             //get the value from the database in column 1
-            //then add it to the ArrayList
-            if(data.getInt(1)!=0)
-            CategoryAll.add(new Items(data.getString(0),data.getString(2),Boolean.TRUE,data.getInt(1)));
+            //then add it to the ArrayLis
+
+            if(data.getInt(1)!=0 && !items.contains(data.getString(0))) {
+                items.add(data.getString(0));
+                CategoryAll.add(new Items(data.getString(0), data.getString(2), Boolean.TRUE, data.getInt(1)));
+            }
         }
         //create the list adapter and set the adapter
-        myCategoryAdapter = new CategoryAllAdapter(com.appsaga.foodbar.CategoryAll.this,CategoryAll);
 
         CategoryAllList.setAdapter(myCategoryAdapter);
     }

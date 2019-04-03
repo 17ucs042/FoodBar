@@ -57,6 +57,8 @@ import com.facebook.Profile;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.login.widget.ProfilePictureView;
+import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
+import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator;
 
 public class HomeScreen extends AppCompatActivity implements ViewPagerEx.OnPageChangeListener ,GoogleApiClient.OnConnectionFailedListener{
 
@@ -75,6 +77,8 @@ public class HomeScreen extends AppCompatActivity implements ViewPagerEx.OnPageC
 
     Button special;
     String from;
+
+    WormDotsIndicator wormdotsIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -264,6 +268,7 @@ public class HomeScreen extends AppCompatActivity implements ViewPagerEx.OnPageC
                             if(from.equals("facebook")) {
                                 LoginManager.getInstance().logOut();
                                 startActivity(new Intent(HomeScreen.this,com.appsaga.foodbar.MainActivity.class));
+                                HomeScreen.this.finish();
                             }
                             else {
                                 FirebaseAuth.getInstance().signOut();
@@ -273,6 +278,7 @@ public class HomeScreen extends AppCompatActivity implements ViewPagerEx.OnPageC
                                             public void onResult(Status status) {
                                                 if (status.isSuccess()) {
                                                     gotoMainActivity();
+                                                    HomeScreen.this.finish();
                                                 } else {
                                                     Toast.makeText(HomeScreen.this, "Session not close", Toast.LENGTH_LONG).show();
                                                 }
@@ -304,10 +310,9 @@ public class HomeScreen extends AppCompatActivity implements ViewPagerEx.OnPageC
 
         viewPager.setAdapter(adapter);
 
-        TabLayout tabLayout = findViewById(R.id.tabs);
+        wormdotsIndicator = findViewById(R.id.worm_dots_indicator);
 
-        tabLayout.setupWithViewPager(viewPager);
-
+        wormdotsIndicator.setViewPager(viewPager);
 
     }
 
@@ -393,7 +398,8 @@ public class HomeScreen extends AppCompatActivity implements ViewPagerEx.OnPageC
             }
 
         }else{
-            gotoMainActivity();
+            //gotoMainActivity();
+            HomeScreen.this.finish();
         }
 
 
@@ -402,6 +408,7 @@ public class HomeScreen extends AppCompatActivity implements ViewPagerEx.OnPageC
     }
     private void gotoMainActivity(){
         Intent intent=new Intent(this,MainActivity.class);
+       // intent.putExtra("from","google");
         startActivity(intent);
     }
     @Override

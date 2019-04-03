@@ -53,6 +53,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     implementation 'com.makeramen:roundedimageview:2.3.0'
+    implementation 'com.tbuonomo.andrui:viewpagerdotsindicator:3.0.3'
+    implementation 'com.shaishavgandhi:login-buttons:1.0.0'
 
 }
 apply plugin: 'com.google.gms.google-services'

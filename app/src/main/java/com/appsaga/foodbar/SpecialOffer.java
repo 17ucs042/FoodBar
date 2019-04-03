@@ -10,4 +10,9 @@ public class SpecialOffer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_special_offer);
     }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }

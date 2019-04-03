@@ -16,7 +16,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_1=" item";
     public static final String COL_2=" quantity";
     public static final String COL_3=" price";
-    public static final String COL_4=" totalprice";
+    public static final String COL_4=" total price";
 
     public  DatabaseHelper(Context context){
         super(context,DATABASE_NAME,null,1);
@@ -63,7 +63,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
     public Cursor getAllData(){
         SQLiteDatabase db=this.getWritableDatabase();
-        Cursor res= db.rawQuery("select * from "+TABLE_NAME,null);
+        Cursor res= db.rawQuery("select * from "+TABLE_NAME+ " WHERE  quantity > 0",null);
         return res;
     }
 
