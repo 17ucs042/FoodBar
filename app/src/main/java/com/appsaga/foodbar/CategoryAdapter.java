@@ -44,7 +44,7 @@ class CategoryAdapter extends ArrayAdapter<Items> {
         name.setText(currentItem.getName());
 
         TextView price = listItemView.findViewById(R.id.price);
-        price.setText(currentItem.getPrice());
+        price.setText("Rs. "+currentItem.getPrice());
 
         Button notInStock = listItemView.findViewById(R.id.not_in_stock);
         ImageButton add = listItemView.findViewById(R.id.add);
@@ -70,7 +70,7 @@ class CategoryAdapter extends ArrayAdapter<Items> {
                 if (currentItem.inStock == Boolean.TRUE) {
 
                     quantity_value.setText(String.valueOf(mDatabaseHelper.getQuantity(currentItem.getName()) + 1));
-                    mDatabaseHelper.update(currentItem.getName(), mDatabaseHelper.getQuantity(currentItem.getName()) + 1, mDatabaseHelper.getPrice(currentItem.getName()) + 1);
+                    mDatabaseHelper.update(currentItem.getName(), mDatabaseHelper.getQuantity(currentItem.getName()) + 1, mDatabaseHelper.getPrice(currentItem.getName()));
 
                     //currentItem.setQuantity(currentItem.getQuantity()+1);
                     //Toast.makeText(getContext(), "Item at position " + position + " was clicked", Toast.LENGTH_SHORT).show();
@@ -108,10 +108,10 @@ class CategoryAdapter extends ArrayAdapter<Items> {
             @Override
             public void onClick(View v) {
 
-                if (currentItem.inStock == Boolean.TRUE && currentItem.getQuantity() > 0) {
+                if (currentItem.inStock == Boolean.TRUE && mDatabaseHelper.getQuantity(currentItem.getName()) > 0) {
 
-                    quantity_value.setText(String.valueOf(currentItem.getQuantity() - 1));
-                    currentItem.setQuantity(currentItem.getQuantity() - 1);
+                    quantity_value.setText(String.valueOf(mDatabaseHelper.getQuantity(currentItem.getName()) - 1));
+                    mDatabaseHelper.update(currentItem.getName(), mDatabaseHelper.getQuantity(currentItem.getName()) - 1, mDatabaseHelper.getPrice(currentItem.getName()));
                     //Toast.makeText(getContext(), "Item at position " + position + " was clicked", Toast.LENGTH_SHORT).show();
                 }
             }

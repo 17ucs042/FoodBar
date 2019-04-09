@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -25,8 +25,10 @@
                 android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
             <FrameLayout
+                android:id="@+id/view_frame"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_below="@id/toolbar">
 
                 <android.support.v4.view.ViewPager
                     android:id="@+id/viewpager"
@@ -55,10 +57,12 @@
             </FrameLayout>
 
             <LinearLayout
+                android:id="@+id/horizontal_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_below="@id/view_frame">
 
                 <RelativeLayout
                     android:layout_width="100dp"
@@ -167,10 +171,12 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/horizontal_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_below="@id/horizontal_1">
 
                 <RelativeLayout
                     android:layout_width="100dp"
@@ -281,17 +287,20 @@
             <Button
                 android:id="@+id/special"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="20dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_thin"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:text="Special Offers"
-                android:textAllCaps="false" />
+                android:textAllCaps="false"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/horizontal_2"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="20dp"/>
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </ScrollView>
 

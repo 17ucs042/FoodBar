@@ -1,20 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/parentView"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:elevation="4dp"
-    android:background="@drawable/card">
+    android:layout_height="120dp"
+    android:background="@color/primary">
 
-    <ImageView
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="55dp"
+        android:layout_marginLeft="55dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        app:riv_corner_radius="20dp"
+        android:src="#FFFFFF"
+        android:scaleType="centerCrop"
+        android:layout_marginRight="30dp"
+        android:layout_marginEnd="30dp"/>
+
+    <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/display"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_launcher_background"
-        android:layout_marginLeft="5dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp" />
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        app:riv_corner_radius="10dp"/>
+
+    <RelativeLayout
+        android:id="@+id/button_layout"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:gravity="center"
+        android:layout_marginEnd="13dp"
+        android:layout_marginRight="13dp">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="#FFFFFF"
+            app:riv_corner_radius="15dp"
+            android:scaleType="centerCrop"
+            android:elevation="15dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:elevation="20dp"
+            android:outlineAmbientShadowColor="#000000">
+
+            <ImageButton
+                android:id="@+id/add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:textSize="20sp"
+                android:src="@drawable/add"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:background="#FFFFFF"/>
+
+            <ImageButton
+                android:id="@+id/subtract"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:textSize="20sp"
+                android:src="@drawable/subtract"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:background="#FFFFFF"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/name"
@@ -22,31 +96,39 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
-        android:layout_toEndOf="@+id/display"
         android:layout_toRightOf="@+id/display"
-        android:text="TEST"/>
+        android:layout_toEndOf="@+id/display"
+        android:text="Name"
+        android:layout_marginTop="35dp"
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/name"
         android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_toEndOf="@+id/display"
-        android:layout_toRightOf="@+id/display" />
+        android:maxLength="10"
+        android:text="Price"
+        android:layout_toLeftOf="@id/button_layout"
+        android:layout_toStartOf="@id/button_layout"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="15dp"
+        android:textStyle="bold"
+        android:textColor="@color/primary_dark"/>
 
     <TextView
         android:id="@+id/quantity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/price"
+        android:layout_below="@+id/name"
         android:layout_toEndOf="@id/display"
         android:layout_toRightOf="@id/display"
         android:layout_marginLeft="20dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:text="Quantity: "/>
 
     <TextView
@@ -55,8 +137,8 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/quantity"
         android:layout_toEndOf="@+id/quantity"
-        android:layout_below="@+id/price"
-        android:layout_marginTop="30dp"/>
+        android:layout_below="@+id/name"
+        android:layout_marginTop="10dp"/>
 
     <Button
         android:id="@+id/not_in_stock"
@@ -70,32 +152,9 @@
         android:focusable="false"
         android:textSize="10sp"
         android:visibility="gone"
-        android:text="Not In Stock"/>
-
-    <ImageButton
-        android:id="@+id/add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
-        android:focusable="false"
-        android:textSize="20sp"
-        android:src="@drawable/add"/>
-
-    <ImageButton
-        android:id="@+id/subtract"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
-        android:focusable="false"
-        android:textSize="20sp"
-        android:src="@drawable/subtract"
-        android:layout_toLeftOf="@id/add"
-        android:layout_toStartOf="@id/add"/>
+        android:text="Not In Stock"
+        android:background="#FFFFFF"
+        android:textColor="@color/primary_dark"
+        android:textStyle="bold"/>
 
 </RelativeLayout>
