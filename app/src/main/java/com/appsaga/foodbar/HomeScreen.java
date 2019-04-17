@@ -41,10 +41,16 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.TreeMap;
 
@@ -64,6 +70,7 @@ public class HomeScreen extends AppCompatActivity implements ViewPagerEx.OnPageC
 
     //SliderLayout sliderLayout;
     // DefaultSliderView sliderView;
+    String TAG = "CHECK....";
 
     private DrawerLayout drawerLayout;
 
@@ -80,12 +87,20 @@ public class HomeScreen extends AppCompatActivity implements ViewPagerEx.OnPageC
 
     WormDotsIndicator wormdotsIndicator;
 
+    DatabaseHelper mDatabaseHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
 
         from = "" + getIntent().getStringExtra("from");
+
+        mDatabaseHelper=new DatabaseHelper(HomeScreen.this);
+
+        Places.initialize(getApplicationContext(), "AIzaSyB5HusYbRe5m-VVVQ9WBURW2TapsJ-VeCM");
+
+        PlacesClient placesClient = Places.createClient(this);
 
         Log.d("fromIs:",from);
         if(from.equals("google"))
@@ -107,6 +122,28 @@ public class HomeScreen extends AppCompatActivity implements ViewPagerEx.OnPageC
 
        // imageSlider = findViewById(R.id.slider);
         special = findViewById(R.id.special);
+
+        // Initialize the AutocompleteSupportFragment.
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+
+        // Specify the types of place data to return.
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+
+        // Set up a PlaceSelectionListener to handle the response.
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i(TAG, "An error occurred: " + status);
+            }
+        });
 
        // HashMap<String,String> url_maps = new HashMap<>();
 
@@ -149,6 +186,7 @@ public class HomeScreen extends AppCompatActivity implements ViewPagerEx.OnPageC
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setDisplayShowTitleEnabled(false);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
         String userID = getIntent().getStringExtra("User Id");
@@ -401,19 +439,22 @@ public class HomeScreen extends AppCompatActivity implements ViewPagerEx.OnPageC
             //gotoMainActivity();
             HomeScreen.this.finish();
         }
-
-
-
-
     }
     private void gotoMainActivity(){
         Intent intent=new Intent(this,MainActivity.class);
        // intent.putExtra("from","google");
         startActivity(intent);
     }
+
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        mDatabaseHelper.deleteData();
+    }
 }

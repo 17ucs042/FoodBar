@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.sql.Blob;
+import java.util.ArrayList;
 
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -22,12 +23,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         super(context,DATABASE_NAME,null,1);
     }
 
-    DatabaseHelper mDatabaseHelper ;
+   // DatabaseHelper mDatabaseHelper ;
 
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        db.execSQL("create table " + TABLE_NAME+" (item TEXT,quantity INTEGER,price TEXT)");
+        db.execSQL("create table " + TABLE_NAME+" (item TEXT PRIMARY KEY,quantity INTEGER,price TEXT)");
     }
 
     @Override
@@ -109,5 +110,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }while (res.moveToNext());
         }
         return price;
+    }
+
+    public int getTotalItems()
+    {
+        ArrayList<String> items = new ArrayList<>();
+        int totalItems=0;
+        String i;
+        int q;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res= db.rawQuery("select * from "+TABLE_NAME,null);
+
+        if (res.moveToFirst())
+        {
+            do
+            {
+                i=res.getString(0);
+                q=res.getInt(1);
+                if(!items.contains(i) && q!=0)
+                {
+                    items.add(i);
+                }
+            }while (res.moveToNext());
+        }
+        return items.size();
+    }
+
+    public void deleteData()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL ("delete from "+TABLE_NAME);
     }
 }

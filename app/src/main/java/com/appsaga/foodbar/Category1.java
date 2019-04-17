@@ -50,6 +50,7 @@ public class Category1 extends AppCompatActivity {
         Category1List.setAdapter(myAdapter);
 
         shop = findViewById(R.id.shop);
+        final TextView fab_text = findViewById( R.id.fab_text);
 
         /*Category1List.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -92,7 +93,19 @@ public class Category1 extends AppCompatActivity {
 
                 Items currentItem = Category1.get(position);
 
+                if(mDatabaseHelper.getTotalItems()==0)
+                {
+                    fab_text.setVisibility(View.GONE);
+                }
+                else if(mDatabaseHelper.getTotalItems()>0)
+                {
+                    fab_text.setVisibility(View.VISIBLE);
+                    fab_text.setText(Integer.toString(mDatabaseHelper.getTotalItems()));
+                }
+
             }
         });
+
+
     }
 }

@@ -27,16 +27,37 @@
 
     </ListView>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/shop"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/shopping_cart"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_marginRight="10dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="10dp">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/shop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="12dp"
+            android:src="@drawable/shopping_cart" />
+
+        <TextView
+            android:id="@+id/fab_text"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:elevation="16dp"
+            android:textColor="#000000"
+            android:background="@drawable/circle"
+            android:gravity="center"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:text="1"/>
+
+    </RelativeLayout>
 
 </RelativeLayout>

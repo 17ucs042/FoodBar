@@ -12,23 +12,142 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
+            <RelativeLayout
+                android:id="@+id/search_frame"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:layout_marginBottom="10dp">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="?attr/colorPrimary"
+                    android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
+
+                <LinearLayout
+                    android:layout_width="270dp"
+                    android:layout_height="?attr/actionBarSize"
+                    android:gravity="center"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/round_corner"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp">
+
+                    <fragment
+                        android:id="@+id/autocomplete_fragment"
+                        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/im1"
+                android:layout_width="match_parent"
+                android:layout_height="253dp"
+                android:src="@drawable/im1"
+                android:background="@drawable/plain_rectangle"
+                android:elevation="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp" />
+
+            <ImageView
+                android:id="@+id/im2"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:src="@drawable/im2" />
+
+            <ImageView
+                android:id="@+id/im3"
+                android:layout_width="match_parent"
+                android:layout_height="490dp"
+                android:src="@drawable/im3"
+                android:elevation="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/plain_rectangle"/>
+
+            <ImageView
+                android:id="@+id/im4"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:src="@drawable/im4" />
+
+            <ImageView
+                android:id="@+id/im5"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:src="@drawable/im5" />
+
+            <ImageView
+                android:id="@+id/im7"
+                android:layout_width="match_parent"
+                android:layout_height="156dp"
+                android:src="@drawable/im7"
+                android:background="@drawable/plain_rectangle"
+                android:elevation="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"/>
+
+            <ImageView
+                android:id="@+id/im8"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:src="@drawable/im8" />
+
+            <ImageView
+                android:id="@+id/im9"
+                android:layout_width="match_parent"
+                android:layout_height="490dp"
+                android:src="@drawable/im9"
+                android:elevation="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/plain_rectangle"/>
+
+            <ImageView
+                android:id="@+id/im10"
+                android:layout_width="match_parent"
+                android:layout_height="155dp"
+                android:src="@drawable/im10"
+                android:elevation="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/plain_rectangle"
+                android:layout_marginTop="10dp"/>
+
+            <ImageView
+                android:id="@+id/im11"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:src="@drawable/im11"
+                android:layout_marginTop="10dp"/>
 
             <FrameLayout
                 android:id="@+id/view_frame"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/toolbar">
+                android:layout_below="@id/search_frame">
 
                 <android.support.v4.view.ViewPager
                     android:id="@+id/viewpager"
@@ -300,7 +419,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="20dp"/>
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </ScrollView>
 
