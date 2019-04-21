@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -42,6 +43,9 @@ public class Category3 extends AppCompatActivity {
         Category3List = findViewById(R.id.Category3List);
 
         Category3List.setAdapter(myAdapter);
+
+        final TextView fab_text = findViewById( R.id.fab_text);
+        fab_text.setVisibility(View.GONE);
 
         shop = findViewById(R.id.shop);
 

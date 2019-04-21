@@ -28,25 +28,29 @@ public class FragmentAdapter extends FragmentPagerAdapter {
             return new Fragment4();
         else
         {
-            return new Fragment4();
+            return new Fragment5();
         }
     }
 
     @Override
     public int getCount() {
-        return 4;
+        return 5;
     }
 
-    /*@Override
+    @Override
     public CharSequence getPageTitle(int position) {
 
         if (position == 0) {
-            return mContext.getString(R.string.home);
+            return "Home";
         } else if (position == 1) {
-            return mContext.getString(R.string.products);
+            return "Categories";
         } else if (position == 2)
-            return mContext.getString(R.string.career);
+            return "Search";
+        else if(position==3)
+            return  "Offers";
         else
-            return mContext.getString(R.string.offers);
-    }*/
+            return "Basket";
+    }
+
+
 }

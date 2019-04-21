@@ -8,420 +8,78 @@
     android:background="#F8F8F8"
     tools:context=".HomeScreen">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
 
-        <LinearLayout
+    <RelativeLayout
+        android:id="@+id/search_frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:gravity="center">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar" >
+
+        <LinearLayout
+            android:id="@+id/getLocation"
+            android:layout_width="270dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:orientation="vertical">
 
-            <RelativeLayout
-                android:id="@+id/search_frame"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:layout_centerHorizontal="true"
-                android:gravity="center"
-                android:layout_marginBottom="10dp">
-
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:background="?attr/colorPrimary"
-                    android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
-
-                <LinearLayout
-                    android:layout_width="270dp"
-                    android:layout_height="?attr/actionBarSize"
-                    android:gravity="center"
-                    android:layout_centerHorizontal="true"
-                    android:background="@drawable/round_corner"
-                    android:layout_centerVertical="true"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp">
-
-                    <fragment
-                        android:id="@+id/autocomplete_fragment"
-                        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
-
-            </RelativeLayout>
-
-            <ImageView
-                android:id="@+id/im1"
-                android:layout_width="match_parent"
-                android:layout_height="253dp"
-                android:src="@drawable/im1"
-                android:background="@drawable/plain_rectangle"
-                android:elevation="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp" />
-
-            <ImageView
-                android:id="@+id/im2"
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:src="@drawable/im2" />
-
-            <ImageView
-                android:id="@+id/im3"
-                android:layout_width="match_parent"
-                android:layout_height="490dp"
-                android:src="@drawable/im3"
-                android:elevation="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/plain_rectangle"/>
-
-            <ImageView
-                android:id="@+id/im4"
-                android:layout_width="match_parent"
-                android:layout_height="130dp"
-                android:src="@drawable/im4" />
-
-            <ImageView
-                android:id="@+id/im5"
-                android:layout_width="match_parent"
-                android:layout_height="130dp"
-                android:src="@drawable/im5" />
-
-            <ImageView
-                android:id="@+id/im7"
-                android:layout_width="match_parent"
-                android:layout_height="156dp"
-                android:src="@drawable/im7"
-                android:background="@drawable/plain_rectangle"
-                android:elevation="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"/>
-
-            <ImageView
-                android:id="@+id/im8"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:src="@drawable/im8" />
-
-            <ImageView
-                android:id="@+id/im9"
-                android:layout_width="match_parent"
-                android:layout_height="490dp"
-                android:src="@drawable/im9"
-                android:elevation="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/plain_rectangle"/>
-
-            <ImageView
-                android:id="@+id/im10"
-                android:layout_width="match_parent"
-                android:layout_height="155dp"
-                android:src="@drawable/im10"
-                android:elevation="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/plain_rectangle"
-                android:layout_marginTop="10dp"/>
-
-            <ImageView
-                android:id="@+id/im11"
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
-                android:src="@drawable/im11"
-                android:layout_marginTop="10dp"/>
-
-            <FrameLayout
-                android:id="@+id/view_frame"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/search_frame">
-
-                <android.support.v4.view.ViewPager
-                    android:id="@+id/viewpager"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp" />
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:background="#80000000">
-
-                <com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
-                    android:id="@+id/worm_dots_indicator"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:dotsColor="@color/colorPrimary"
-                    app:dotsStrokeColor="@color/colorAccent"
-                    app:dotsCornerRadius="8dp"
-                    app:dotsSize="16dp"
-                    app:dotsSpacing="4dp"
-                    app:dotsStrokeWidth="2dp"
-                    android:layout_gravity="center_horizontal|bottom"/>
-
-                </FrameLayout>
-            </FrameLayout>
-
-            <LinearLayout
-                android:id="@+id/horizontal_1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:orientation="horizontal"
-                android:layout_below="@id/view_frame">
-
-                <RelativeLayout
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1">
-
-                    <com.makeramen.roundedimageview.RoundedImageView
-                        android:id="@+id/Category1"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:elevation="10dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/category1"
-                        app:riv_corner_radius="10dp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:background="#80000000"
-                        android:elevation="10dp"
-                        android:gravity="center"
-                        android:paddingStart="3dp"
-                        android:paddingLeft="3dp"
-                        android:paddingEnd="3dp"
-                        android:paddingRight="3dp"
-                        android:paddingBottom="5dp"
-                        android:text="Category 1"
-                        android:textColor="#FFFFFF"
-                        android:textSize="18sp" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_weight="1">
-
-                    <com.makeramen.roundedimageview.RoundedImageView
-                        android:id="@+id/Category2"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:elevation="10dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/category2"
-                        app:riv_corner_radius="10dp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:background="#80000000"
-                        android:elevation="10dp"
-                        android:gravity="center"
-                        android:paddingStart="3dp"
-                        android:paddingLeft="3dp"
-                        android:paddingEnd="3dp"
-                        android:paddingRight="3dp"
-                        android:paddingBottom="5dp"
-                        android:text="Category 2"
-                        android:textColor="#FFFFFF"
-                        android:textSize="18sp" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1">
-
-                    <com.makeramen.roundedimageview.RoundedImageView
-                        android:id="@+id/Category3"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:elevation="10dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/category3"
-                        app:riv_corner_radius="10dp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:background="#80000000"
-                        android:elevation="10dp"
-                        android:gravity="center"
-                        android:paddingStart="3dp"
-                        android:paddingLeft="3dp"
-                        android:paddingEnd="3dp"
-                        android:paddingRight="3dp"
-                        android:paddingBottom="5dp"
-                        android:text="Category 3"
-                        android:textColor="#FFFFFF"
-                        android:textSize="18sp" />
-
-                </RelativeLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/horizontal_2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:orientation="horizontal"
-                android:layout_below="@id/horizontal_1">
-
-                <RelativeLayout
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1">
-
-                    <com.makeramen.roundedimageview.RoundedImageView
-                        android:id="@+id/Category4"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:elevation="10dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/category4"
-                        app:riv_corner_radius="10dp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:background="#80000000"
-                        android:elevation="10dp"
-                        android:gravity="center"
-                        android:paddingStart="3dp"
-                        android:paddingLeft="3dp"
-                        android:paddingEnd="3dp"
-                        android:paddingRight="3dp"
-                        android:paddingBottom="5dp"
-                        android:text="Category 4"
-                        android:textColor="#FFFFFF"
-                        android:textSize="18sp" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_weight="1">
-
-                    <com.makeramen.roundedimageview.RoundedImageView
-                        android:id="@+id/Category5"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:elevation="10dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/category5"
-                        app:riv_corner_radius="10dp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:background="#80000000"
-                        android:elevation="10dp"
-                        android:gravity="center"
-                        android:paddingStart="3dp"
-                        android:paddingLeft="3dp"
-                        android:paddingEnd="3dp"
-                        android:paddingRight="3dp"
-                        android:paddingBottom="5dp"
-                        android:text="Category 5"
-                        android:textColor="#FFFFFF"
-                        android:textSize="18sp" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1">
-
-                    <com.makeramen.roundedimageview.RoundedImageView
-                        android:id="@+id/Category6"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:elevation="10dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/category6"
-                        app:riv_corner_radius="10dp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:background="#80000000"
-                        android:elevation="10dp"
-                        android:gravity="center"
-                        android:paddingStart="3dp"
-                        android:paddingLeft="3dp"
-                        android:paddingEnd="3dp"
-                        android:paddingRight="3dp"
-                        android:paddingBottom="5dp"
-                        android:text="Category 6"
-                        android:textColor="#FFFFFF"
-                        android:textSize="18sp" />
-
-                </RelativeLayout>
-
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/special"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:background="@drawable/button_thin"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:text="Special Offers"
-                android:textAllCaps="false"
-                android:layout_marginTop="20dp"
-                android:layout_below="@id/horizontal_2"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="20dp"/>
+                android:text="Your Location"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="15sp"/>
 
+            <TextView
+                android:id="@+id/placeName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="location"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp"
+                android:layout_marginBottom="5dp"
+                android:maxLength="50"
+                android:ellipsize="end"
+                android:maxLines="1"/>
         </LinearLayout>
 
-    </ScrollView>
+        </android.support.v7.widget.Toolbar>
+
+    </RelativeLayout>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:tabMode="scrollable"
+            android:layout_alignParentBottom="true"
+            app:tabGravity="center"
+            app:tabSelectedTextColor="@color/primary_dark"
+            app:tabTextAppearance="@style/MineCustomTabText"
+            app:tabTextColor="#000000"/>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/tabs"
+            android:layout_below="@id/search_frame" />
+
+    </RelativeLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"

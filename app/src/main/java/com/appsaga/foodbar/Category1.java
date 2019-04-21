@@ -51,6 +51,7 @@ public class Category1 extends AppCompatActivity {
 
         shop = findViewById(R.id.shop);
         final TextView fab_text = findViewById( R.id.fab_text);
+        fab_text.setVisibility(View.GONE);
 
         /*Category1List.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
