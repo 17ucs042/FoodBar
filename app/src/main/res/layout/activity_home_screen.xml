@@ -61,22 +61,31 @@
 
     </RelativeLayout>
 
+        <View
+            android:id="@+id/line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#000000"
+            android:layout_above="@id/tabs" />
+
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            app:tabMode="scrollable"
+            app:tabMode="fixed"
             android:layout_alignParentBottom="true"
-            app:tabGravity="center"
+            app:tabGravity="fill"
             app:tabSelectedTextColor="@color/primary_dark"
             app:tabTextAppearance="@style/MineCustomTabText"
-            app:tabTextColor="#000000"/>
+            app:tabTextColor="#000000"
+            app:tabMaxWidth="0dp"
+            />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@id/tabs"
+            android:layout_above="@id/line"
             android:layout_below="@id/search_frame" />
 
     </RelativeLayout>

@@ -155,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     Intent intent = new Intent(MainActivity.this,com.appsaga.foodbar.HomeScreen.class);
                     intent.putExtra("from","google");
                     startActivity(intent);
+                    finish();
                     //logic to save the user details to Firebase
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
@@ -256,6 +257,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             Intent intent = new Intent(MainActivity.this, HomeScreen.class);
             intent.putExtra("from","google");
             startActivity(intent);
+            finish();
         }
         //        firebaseAuth.addAuthStateListener(authStateListener);
     }

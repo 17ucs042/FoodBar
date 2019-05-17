@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragment1"
+    tools:context=".HomeFragment"
     android:orientation="vertical"
     android:layout_gravity="center">
 
@@ -51,69 +51,75 @@
 
                 <ImageView
                     android:id="@+id/im3_1"
-                    android:layout_width="104dp"
-                    android:layout_height="120dp"
+                    android:layout_width="115dp"
+                    android:layout_height="133dp"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
-                    android:layout_marginStart="11dp"
-                    android:layout_marginLeft="11dp"
-                    android:layout_marginTop="56dp" />
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="51dp"
+                    android:background="@drawable/ripple_effect" />
 
                 <ImageView
                     android:id="@+id/im3_2"
-                    android:layout_width="96dp"
-                    android:layout_height="101dp"
+                    android:layout_width="119dp"
+                    android:layout_height="138dp"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
-                    android:layout_marginStart="133dp"
-                    android:layout_marginLeft="133dp"
-                    android:layout_marginTop="56dp" />
+                    android:layout_marginStart="129dp"
+                    android:layout_marginLeft="129dp"
+                    android:layout_marginTop="50dp"
+                    android:background="@drawable/ripple_effect" />
 
                 <ImageView
                     android:id="@+id/im3_3"
-                    android:layout_width="96dp"
-                    android:layout_height="101dp"
+                    android:layout_width="115dp"
+                    android:layout_height="138dp"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
-                    android:layout_marginStart="257dp"
-                    android:layout_marginLeft="257dp"
-                    android:layout_marginTop="65dp" />
+                    android:layout_marginStart="248dp"
+                    android:layout_marginLeft="248dp"
+                    android:layout_marginTop="52dp"
+                    android:background="@drawable/ripple_effect" />
 
                 <ImageView
                     android:id="@+id/im3_4"
-                    android:layout_width="96dp"
-                    android:layout_height="101dp"
+                    android:layout_width="107dp"
+                    android:layout_height="138dp"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginStart="254dp"
                     android:layout_marginLeft="254dp"
-                    android:layout_marginTop="216dp" />
+                    android:layout_marginTop="190dp"
+                    android:background="@drawable/ripple_effect" />
 
                 <ImageView
                     android:id="@+id/im3_5"
-                    android:layout_width="96dp"
-                    android:layout_height="101dp"
+                    android:layout_width="120dp"
+                    android:layout_height="142dp"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginStart="132dp"
                     android:layout_marginLeft="132dp"
-                    android:layout_marginTop="206dp" />
+                    android:layout_marginTop="190dp"
+                    android:background="@drawable/ripple_effect" />
 
                 <ImageView
                     android:id="@+id/im3_6"
-                    android:layout_width="96dp"
-                    android:layout_height="101dp"
+                    android:layout_width="114dp"
+                    android:layout_height="145dp"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginStart="13dp"
                     android:layout_marginLeft="13dp"
-                    android:layout_marginTop="205dp" />
+                    android:layout_marginTop="185dp"
+                    android:background="@drawable/ripple_effect" />
 
             </RelativeLayout>
 

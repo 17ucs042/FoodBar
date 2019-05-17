@@ -1,6 +1,7 @@
 package com.appsaga.foodbar;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,6 +10,8 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -94,6 +97,8 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
     String placeName = "";
     TextView PlaceName;
 
+    ViewPager viewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,7 +180,6 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
                                             public void onResult(Status status) {
                                                 if (status.isSuccess()) {
                                                     gotoMainActivity();
-                                                    HomeScreen.this.finish();
                                                 } else {
                                                     Toast.makeText(HomeScreen.this, "Session not close", Toast.LENGTH_LONG).show();
                                                 }
@@ -211,7 +215,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
 
         wormdotsIndicator.setViewPager(viewPager);*/
 
-        ViewPager viewPager = findViewById(R.id.viewpager);
+        viewPager = findViewById(R.id.viewpager);
 
         FragmentAdapter adapter = new FragmentAdapter(this, getSupportFragmentManager());
 
@@ -297,6 +301,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
         Intent intent=new Intent(this,MainActivity.class);
        // intent.putExtra("from","google");
         startActivity(intent);
+        finish();
     }
 
     @Override
@@ -306,7 +311,20 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+
+        if(viewPager.getCurrentItem()!=0) {
+            viewPager.setCurrentItem(0);
+        }
+        else if(viewPager.getCurrentItem()==0)
+        {
+            finish();
+            //System.exit(0);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
         mDatabaseHelper.deleteData();
     }

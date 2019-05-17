@@ -18,17 +18,17 @@ public class FragmentAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
 
         if (position == 0) {
-            return new Fragment1();
+            return new HomeFragment();
         }
         else if (position == 1) {
-            return new Fragment2();
+            return new CategoriesFragment();
         } else if (position == 2) {
-            return new Fragment3();
+            return new SearchFragment();
         } else if(position == 3)
-            return new Fragment4();
+            return new OfferFragment();
         else
         {
-            return new Fragment5();
+            return new BasketFragment();
         }
     }
 
@@ -51,6 +51,4 @@ public class FragmentAdapter extends FragmentPagerAdapter {
         else
             return "Basket";
     }
-
-
 }
