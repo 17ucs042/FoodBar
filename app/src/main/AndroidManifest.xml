@@ -71,7 +71,13 @@
         <activity android:name=".Payment" />
         <activity android:name=".CategoryAll" />
         <activity android:name=".SpecialOffer" />
-        <activity android:name=".EnterLocation"></activity>
+        <activity android:name=".EnterLocation" />
+        <activity
+            android:name=".ShowItems"
+            android:label="@string/title_activity_show_items"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".EnterDetails" />
+        <activity android:name=".SelectPaymentOptions"></activity>
     </application>
 
 </manifest>

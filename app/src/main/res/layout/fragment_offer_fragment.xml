@@ -5,10 +5,18 @@
     android:layout_height="match_parent"
     tools:context=".OfferFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No offers yet!"
+        android:layout_centerInParent="true"
+        android:textSize="30sp"
+        android:textColor="#000000"/>
+
+    </RelativeLayout>
 
 </FrameLayout>

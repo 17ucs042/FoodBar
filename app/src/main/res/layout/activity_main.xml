@@ -10,8 +10,32 @@
         android:id="@+id/back"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/home_screen"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:src="@drawable/homy_bee_main" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp"
+            android:src="@drawable/homy_bee_main_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textColor="#000000"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/pbar"
@@ -25,35 +49,35 @@
     <com.shaishavgandhi.loginbuttons.GoogleButton
         android:id="@+id/google_button"
         android:layout_width="300dp"
-        android:textAlignment="center"
-        app:roundedCorner="true"
-        app:iconCenterAligned="false"
-        app:iconSize="30dp"
-        android:text="Sign in with Google"
         android:layout_height="wrap_content"
         android:layout_above="@id/facebook"
         android:layout_centerHorizontal="true"
-        android:textColor="#000000" />
+        android:text="Sign in with Google"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        app:iconCenterAligned="false"
+        app:iconSize="30dp"
+        app:roundedCorner="true" />
 
     <com.shaishavgandhi.loginbuttons.FacebookButton
         android:id="@+id/facebook"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
+        android:layout_marginBottom="80dp"
         android:text="Sign in with Facebook"
-        app:iconSize="30dp"
-        app:roundedCorner="true"
         app:iconCenterAligned="false"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="80dp"/>
+        app:iconSize="30dp"
+        app:roundedCorner="true" />
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"

@@ -25,10 +25,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -98,6 +100,8 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
     TextView PlaceName;
 
     ViewPager viewPager;
+    RelativeLayout searchFrame;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,8 +111,20 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
         from = "" +getIntent().getStringExtra("from");
 
         mDatabaseHelper=new DatabaseHelper(getApplicationContext());
+        searchFrame = findViewById(R.id.search_frame);
 
-        Log.d("fromIs:",from);
+        viewPager = findViewById(R.id.viewpager);
+        FragmentAdapter adapter = new FragmentAdapter(this, getSupportFragmentManager());
+        viewPager.setAdapter(adapter);
+        final TabLayout tabLayout = findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+
+        tabLayout.getTabAt(0).setIcon(R.drawable.home_icon);
+        tabLayout.getTabAt(1).setIcon(R.drawable.categories);
+        tabLayout.getTabAt(2).setIcon(R.drawable.search);
+        tabLayout.getTabAt(3).setIcon(R.drawable.offers);
+        tabLayout.getTabAt(4).setIcon(R.drawable.basket);
+
         if(from.equals("google"))
         {
             gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -121,7 +137,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
                     .build();
         }
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
@@ -205,32 +221,6 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
             }
         });*/
 
-       /* ViewPager viewPager = findViewById(R.id.viewpager);
-
-        FragmentAdapter adapter = new FragmentAdapter(this, getSupportFragmentManager());
-
-        viewPager.setAdapter(adapter);
-
-        wormdotsIndicator = findViewById(R.id.worm_dots_indicator);
-
-        wormdotsIndicator.setViewPager(viewPager);*/
-
-        viewPager = findViewById(R.id.viewpager);
-
-        FragmentAdapter adapter = new FragmentAdapter(this, getSupportFragmentManager());
-
-        viewPager.setAdapter(adapter);
-
-        TabLayout tabLayout = findViewById(R.id.tabs);
-
-        tabLayout.setupWithViewPager(viewPager);
-
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_launcher_background);
-        tabLayout.getTabAt(1).setIcon(R.drawable.categories);
-        tabLayout.getTabAt(2).setIcon(R.drawable.search);
-        tabLayout.getTabAt(3).setIcon(R.drawable.offers);
-        tabLayout.getTabAt(4).setIcon(R.drawable.basket);
-
         LinearLayout getLocation = findViewById(R.id.getLocation);
         getLocation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -241,6 +231,31 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
         });
 
         PlaceName = findViewById(R.id.placeName);
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+
+                if(tab.getPosition()==2 || tab.getPosition()==4)
+                {
+                    searchFrame.setVisibility(View.GONE);
+                }
+                else
+                {
+                    searchFrame.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
