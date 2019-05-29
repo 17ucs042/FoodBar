@@ -1,5 +1,6 @@
 package com.appsaga.foodbar;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
@@ -7,9 +8,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.signature.ObjectKey;
@@ -27,6 +31,9 @@ import com.google.firebase.storage.StorageReference;
 public class HomeFragment extends Fragment {
 
     View view;
+    ViewPager viewPager;
+    ScrollView scrollView;
+    TabLayout tabLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,6 +48,24 @@ public class HomeFragment extends Fragment {
 
             TextView searchText = view.findViewById(R.id.search_text);
             RelativeLayout searchBar = view.findViewById(R.id.search_item_bar);
+            viewPager = getActivity().findViewById(R.id.viewpager);
+            scrollView = view.findViewById(R.id.scroll);
+            tabLayout = getActivity().findViewById(R.id.tabs);
+
+            scrollView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+                @Override
+                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+                    if(scrollY-oldScrollY>3 || scrollY==scrollView.getHeight())
+                    {
+                        tabLayout.setVisibility(View.GONE);
+                    }
+                    else if(scrollY+1<oldScrollY || scrollY==0)
+                    {
+                        tabLayout.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
 
             ImageView im3_1 = view.findViewById(R.id.im3_1);
             ImageView im3_2 = view.findViewById(R.id.im3_2);
@@ -121,7 +146,7 @@ public class HomeFragment extends Fragment {
 
                     Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
                     intent.putExtra("value", "Fruits & Vegetables");
-                    startActivity(intent);
+                    startActivityForResult(intent,10);
                 }
             });
 
@@ -131,7 +156,7 @@ public class HomeFragment extends Fragment {
 
                     Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
                     intent.putExtra("value", "Foodgrains, Oils & Masalas");
-                    startActivity(intent);
+                    startActivityForResult(intent,10);
                 }
             });
 
@@ -141,7 +166,7 @@ public class HomeFragment extends Fragment {
 
                     Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
                     intent.putExtra("value", "Bakery, Cakes & Dairy");
-                    startActivity(intent);
+                    startActivityForResult(intent,10);
                 }
             });
 
@@ -151,7 +176,7 @@ public class HomeFragment extends Fragment {
 
                     Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
                     intent.putExtra("value", "Beverages & Snacks");
-                    startActivity(intent);
+                    startActivityForResult(intent,10);
                 }
             });
 
@@ -161,7 +186,7 @@ public class HomeFragment extends Fragment {
 
                     Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
                     intent.putExtra("value", "Medicine");
-                    startActivity(intent);
+                    startActivityForResult(intent,10);
                 }
             });
 
@@ -171,7 +196,7 @@ public class HomeFragment extends Fragment {
 
                     Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
                     intent.putExtra("value", "Stationary");
-                    startActivity(intent);
+                    startActivityForResult(intent,10);
                 }
             });
 
@@ -181,7 +206,7 @@ public class HomeFragment extends Fragment {
 
                     Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
                     intent.putExtra("value", "Cleaning, Kitchen & Baby Care");
-                    startActivity(intent);
+                    startActivityForResult(intent,10);
                 }
             });
 
@@ -191,7 +216,7 @@ public class HomeFragment extends Fragment {
 
                     Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
                     intent.putExtra("value", "Pet Supplies");
-                    startActivity(intent);
+                    startActivityForResult(intent,10);
                 }
             });
 
@@ -201,7 +226,7 @@ public class HomeFragment extends Fragment {
 
                     Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
                     intent.putExtra("value", "Eggs, Meat, Fish");
-                    startActivity(intent);
+                    startActivityForResult(intent,10);
                 }
             });
 
@@ -225,5 +250,37 @@ public class HomeFragment extends Fragment {
 
         }
         return view;
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 10) {
+            if(resultCode == Activity.RESULT_OK){
+                String result=data.getStringExtra("result");
+
+                if(result.equalsIgnoreCase("Home"))
+                {
+                    viewPager.setCurrentItem(0);
+                }
+                else if(result.equalsIgnoreCase("Categories"))
+                {
+                    Log.d("test....","Yese");
+                    viewPager.setCurrentItem(1);
+                }
+                else if(result.equalsIgnoreCase("Search"))
+                {
+                    viewPager.setCurrentItem(2);
+                }
+                else if(result.equalsIgnoreCase("Offers"))
+                {
+                    viewPager.setCurrentItem(3);
+                }
+                else
+                {
+                    viewPager.setCurrentItem(4);
+                }
+            }
+        }
     }
 }

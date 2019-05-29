@@ -47,12 +47,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".HomeScreen" />
-        <activity android:name=".Category1" />
-        <activity android:name=".Category2" />
-        <activity android:name=".Category3" />
-        <activity android:name=".Category4" />
-        <activity android:name=".Category5" />
-        <activity android:name=".Category6" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -68,9 +62,6 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".Payment" />
-        <activity android:name=".CategoryAll" />
-        <activity android:name=".SpecialOffer" />
         <activity android:name=".EnterLocation" />
         <activity
             android:name=".ShowItems"

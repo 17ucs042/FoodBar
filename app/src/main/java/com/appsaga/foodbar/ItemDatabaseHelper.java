@@ -20,6 +20,7 @@ public class ItemDatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_4=" price";
     public static final String COL_5=" itemNum";
     public static final String COL_6=" image";
+    public static final String COL_7=" type";
 
     public  ItemDatabaseHelper(Context context){
         super(context,DATABASE_NAME,null,1);
@@ -28,7 +29,7 @@ public class ItemDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        db.execSQL("create table " + TABLE_NAME+" (_id INTEGER  , name TEXT ,quantity TEXT,price TEXT,itemNum INTEGER, image BLOB," +
+        db.execSQL("create table " + TABLE_NAME+" (_id INTEGER  , name TEXT ,quantity TEXT,price TEXT,itemNum INTEGER, image BLOB,type TEXT," +
                 "PRIMARY KEY(name,quantity))");
     }
 
@@ -38,7 +39,7 @@ public class ItemDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public  boolean insertData(String name, String quantity, String price,int itemNum, byte[] image)
+    public  boolean insertData(String name, String quantity, String price,int itemNum, byte[] image, String type)
     {
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues contentValues= new ContentValues();
@@ -47,6 +48,7 @@ public class ItemDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_4,price);
         contentValues.put(COL_5,itemNum);
         contentValues.put(COL_6,image);
+        contentValues.put(COL_7,type);
 
         long result=db.insert(TABLE_NAME,null,contentValues);
         if(result==-1)
@@ -54,7 +56,7 @@ public class ItemDatabaseHelper extends SQLiteOpenHelper {
         else
             return  true;
     }
-    public boolean update(String name, String quantity, String price, int itemNum, byte[] image){
+    public boolean update(String name, String quantity, String price, int itemNum, byte[] image, String type){
 
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues contentValues= new ContentValues();
@@ -63,6 +65,7 @@ public class ItemDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_4,price);
         contentValues.put(COL_5,itemNum);
         contentValues.put(COL_6,image);
+        contentValues.put(COL_7,type);
 
         db.update(TABLE_NAME,contentValues,"name = ? and quantity = ?" ,new String[] {name,quantity});
         return  true;
@@ -201,7 +204,7 @@ public class ItemDatabaseHelper extends SQLiteOpenHelper {
         if(res.moveToFirst())
         {
             do {
-                    String price = res.getString(3).replace("Rs.","").trim();
+                    String price = res.getString(3).replace("₹","").trim();
                     totalPrice = totalPrice + Integer.parseInt(price)*res.getInt(4);
 
             }while (res.moveToNext());

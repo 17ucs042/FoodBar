@@ -102,6 +102,9 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
     ViewPager viewPager;
     RelativeLayout searchFrame;
 
+    TextView count;
+    TabLayout tabLayout;
+    ItemDatabaseHelper itemDatabaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,18 +115,19 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
 
         mDatabaseHelper=new DatabaseHelper(getApplicationContext());
         searchFrame = findViewById(R.id.search_frame);
+        itemDatabaseHelper = new ItemDatabaseHelper(HomeScreen.this);
 
         viewPager = findViewById(R.id.viewpager);
         FragmentAdapter adapter = new FragmentAdapter(this, getSupportFragmentManager());
         viewPager.setAdapter(adapter);
-        final TabLayout tabLayout = findViewById(R.id.tabs);
+        tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
         tabLayout.getTabAt(0).setIcon(R.drawable.home_icon);
         tabLayout.getTabAt(1).setIcon(R.drawable.categories);
         tabLayout.getTabAt(2).setIcon(R.drawable.search);
         tabLayout.getTabAt(3).setIcon(R.drawable.offers);
-        tabLayout.getTabAt(4).setIcon(R.drawable.basket);
+        tabLayout.getTabAt(4).setCustomView(R.layout.basket_custom_icon);
 
         if(from.equals("google"))
         {
@@ -216,7 +220,6 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
         /*special.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 startActivity(new Intent(HomeScreen.this,com.appsaga.foodbar.SpecialOffer.class));
             }
         });*/
@@ -236,13 +239,20 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
 
-                if(tab.getPosition()==2 || tab.getPosition()==4)
+                if( tab.getPosition()==4)
                 {
                     searchFrame.setVisibility(View.GONE);
+                    tabLayout.setVisibility(View.GONE);
+                }
+                else if(tab.getPosition()==2 )
+                {
+                    searchFrame.setVisibility(View.GONE);
+                    tabLayout.setVisibility(View.VISIBLE);
                 }
                 else
                 {
                     searchFrame.setVisibility(View.VISIBLE);
+                    tabLayout.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -256,6 +266,18 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
 
             }
         });
+
+        count = tabLayout.getTabAt(4).getCustomView().findViewById(R.id.count);
+
+        if(itemDatabaseHelper.getTotalItems()!=0)
+        {
+            count.setVisibility(View.VISIBLE);
+            count.setText(String.valueOf(itemDatabaseHelper.getTotalItems()));
+        }
+        else
+        {
+            count.setVisibility(View.GONE);
+        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -266,6 +288,34 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
                 PlaceName.setText(placeName);
             }
         }
+
+        /*if (requestCode == 10) {
+            if(resultCode == Activity.RESULT_OK){
+                String result=data.getStringExtra("result");
+
+                if(result.equalsIgnoreCase("Home"))
+                {
+                    viewPager.setCurrentItem(0);
+                }
+                else if(result.equalsIgnoreCase("Categories"))
+                {
+                    Log.d("test....","Yese");
+                    viewPager.setCurrentItem(1);
+                }
+                else if(result.equalsIgnoreCase("Search"))
+                {
+                    viewPager.setCurrentItem(2);
+                }
+                else if(result.equalsIgnoreCase("Offers"))
+                {
+                    viewPager.setCurrentItem(3);
+                }
+                else
+                {
+                    viewPager.setCurrentItem(4);
+                }
+            }
+        }*/
     }
 
     @Override
@@ -300,7 +350,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
     private void handleSignInResult(GoogleSignInResult result){
         if(result.isSuccess()){
             GoogleSignInAccount account=result.getSignInAccount();
-           name.setText(account.getDisplayName());
+            name.setText(account.getDisplayName());
             try{
                 Glide.with(this).load(account.getPhotoUrl()).into(pic);
             }catch (NullPointerException e){
@@ -314,7 +364,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
     }
     private void gotoMainActivity(){
         Intent intent=new Intent(this,MainActivity.class);
-       // intent.putExtra("from","google");
+        // intent.putExtra("from","google");
         startActivity(intent);
         finish();
     }
@@ -335,6 +385,15 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
             finish();
             //System.exit(0);
         }
+        if(itemDatabaseHelper.getTotalItems()!=0)
+        {
+            count.setVisibility(View.VISIBLE);
+            count.setText(String.valueOf(itemDatabaseHelper.getTotalItems()));
+        }
+        else
+        {
+            count.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -343,5 +402,19 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
 
         mDatabaseHelper.deleteData();
     }
-}
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(itemDatabaseHelper.getTotalItems()!=0)
+        {
+            count.setVisibility(View.VISIBLE);
+            count.setText(String.valueOf(itemDatabaseHelper.getTotalItems()));
+        }
+        else
+        {
+            count.setVisibility(View.GONE);
+        }
+    }
+}

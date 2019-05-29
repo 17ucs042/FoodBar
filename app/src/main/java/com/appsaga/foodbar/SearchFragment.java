@@ -115,7 +115,7 @@ public class SearchFragment extends Fragment {
                             }
                         }
 
-                        ItemAdapter itemAdapter = new ItemAdapter(getContext(), searchedItemsArray,getActivity());
+                        ItemAdapter itemAdapter = new ItemAdapter(getContext(), searchedItemsArray);
                         searchedItems.setAdapter(null);
                         searchedItems.setAdapter(itemAdapter);
                     }

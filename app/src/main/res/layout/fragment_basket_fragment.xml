@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:orientation="vertical"
-    tools:context=".BasketFragment">
+    tools:context=".BasketFragment"
+    android:id="@+id/basket_fragment">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -51,7 +52,7 @@ public class BaksetItemsAdapter extends CursorAdapter {
         final TextView price = view.findViewById(R.id.price);
         final TextView quantity = view.findViewById(R.id.quantity);
         final TextView itemsNum = view.findViewById(R.id.itemsNum);
-        RoundedImageView display = view.findViewById(R.id.display);
+        ImageView display = view.findViewById(R.id.display);
 
         ImageButton add = view.findViewById(R.id.add);
         ImageButton subtract = view.findViewById(R.id.subtract);
@@ -74,11 +75,11 @@ public class BaksetItemsAdapter extends CursorAdapter {
                 int num = Integer.parseInt(itemsNum.getText().toString());
 
                 if (num < 12) {
-                    itemDatabaseHelper.update(name.getText().toString(), quantity.getText().toString(), price.getText().toString(), num + 1, image);
+                    itemDatabaseHelper.update(name.getText().toString(), quantity.getText().toString(), price.getText().toString(), num + 1, image,cursor.getString(cursor.getColumnIndex("type")));
                     itemsNum.setText(Integer.toString(num + 1));
 
                     TextView textView = ((RelativeLayout) view.getParent().getParent()).findViewById(R.id.total_price);
-                    textView.setText(String.valueOf(itemDatabaseHelper.getTotalPrice()) + " Rs.");
+                    textView.setText(String.valueOf(itemDatabaseHelper.getTotalPrice()) + " ₹ ");
 
                     ((ListView) view.getParent()).setVisibility(View.VISIBLE);
                 }
@@ -92,7 +93,7 @@ public class BaksetItemsAdapter extends CursorAdapter {
                 int num = Integer.parseInt(itemsNum.getText().toString());
 
                 if (num > 0) {
-                    itemDatabaseHelper.update(name.getText().toString(), quantity.getText().toString(), price.getText().toString(), num - 1, image);
+                    itemDatabaseHelper.update(name.getText().toString(), quantity.getText().toString(), price.getText().toString(), num - 1, image,cursor.getString(cursor.getColumnIndex("type")));
                     itemsNum.setText(Integer.toString(num - 1));
                 }
 
@@ -112,7 +113,7 @@ public class BaksetItemsAdapter extends CursorAdapter {
                 }
 
                 TextView textView = ((RelativeLayout) view.getParent().getParent()).findViewById(R.id.total_price);
-                textView.setText(String.valueOf(itemDatabaseHelper.getTotalPrice()) + " Rs.");
+                textView.setText(String.valueOf(itemDatabaseHelper.getTotalPrice()) + "₹ ");
 
                 if (itemDatabaseHelper.getTotalItems() == 0) {
                     RelativeLayout checkoutLayout = ((RelativeLayout) view.getParent().getParent()).findViewById(R.id.checkout_layout);

@@ -1,8 +1,11 @@
 package com.appsaga.foodbar;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +22,7 @@ public class CategoriesFragment extends Fragment {
     ArrayList<Categories> categories = new ArrayList<>();
 
     ListView categories_list;
+    ViewPager viewPager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -28,6 +32,7 @@ public class CategoriesFragment extends Fragment {
 
             view = inflater.inflate(R.layout.fragment_categories_fragment, container, false);
             categories_list = view.findViewById(R.id.categories_list);
+            viewPager = getActivity().findViewById(R.id.viewpager);
 
             categories.add(new Categories(R.drawable.fruits_veges,"Fruits & Vegetables"));
             categories.add(new Categories(R.drawable.foodgrain,"Foodgrains, Oils & Masalas"));
@@ -46,11 +51,43 @@ public class CategoriesFragment extends Fragment {
                     TextView textView = view.findViewById(R.id.type);
                     Intent intent = new Intent(getContext(),ShowItems.class);
                     intent.putExtra("value",textView.getText().toString());
-                    startActivity(intent);
+                    startActivityForResult(intent,20);
                 }
             });
         }
 
         return view;
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 20) {
+            if(resultCode == Activity.RESULT_OK){
+                String result=data.getStringExtra("result");
+
+                if(result.equalsIgnoreCase("Home"))
+                {
+                    viewPager.setCurrentItem(0);
+                }
+                else if(result.equalsIgnoreCase("Categories"))
+                {
+                    Log.d("test....","Yese");
+                    viewPager.setCurrentItem(1);
+                }
+                else if(result.equalsIgnoreCase("Search"))
+                {
+                    viewPager.setCurrentItem(2);
+                }
+                else if(result.equalsIgnoreCase("Offers"))
+                {
+                    viewPager.setCurrentItem(3);
+                }
+                else
+                {
+                    viewPager.setCurrentItem(4);
+                }
+            }
+        }
     }
 }

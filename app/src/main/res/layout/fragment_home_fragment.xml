@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:layout_gravity="center"
     android:orientation="vertical"
-    tools:context=".HomeFragment">
+    tools:context=".HomeFragment"
+    android:id="@+id/frame">
 
     <ScrollView
         android:id="@+id/scroll"

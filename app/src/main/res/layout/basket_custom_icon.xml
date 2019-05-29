@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/basket"
+    android:layout_width="35dp"
+    android:layout_height="50dp">
+
+    <ImageView
+        android:id="@+id/basket_image"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/basket"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"/>
+
+    <TextView
+        android:id="@+id/count"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/circle"
+        android:elevation="10dp"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
+        android:visibility="gone"
+        android:layout_marginTop="3dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/basket_image"
+        android:textColor="#666666"
+        android:textStyle="bold"
+        android:text="Basket"
+        android:textSize="10sp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:paddingTop="3dp"/>
+
+</RelativeLayout>

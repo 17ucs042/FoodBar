@@ -8,14 +8,19 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.support.design.widget.TabLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -38,12 +43,10 @@ import java.util.logging.Handler;
 public class ItemAdapter extends ArrayAdapter<Item> {
 
     ItemDatabaseHelper itemDatabaseHelper;
-    private Activity activityContext;
 
-    public ItemAdapter(Context context, ArrayList<Item> allItems,Activity activityContext) {
+    public ItemAdapter(Context context, ArrayList<Item> allItems) {
         super(context, 0, allItems);
         itemDatabaseHelper = new ItemDatabaseHelper(context);
-        this.activityContext = activityContext;
     }
 
     @Override
@@ -53,7 +56,7 @@ public class ItemAdapter extends ArrayAdapter<Item> {
 
         if (listItemView == null) {
             listItemView = LayoutInflater.from(getContext()).inflate(
-                    R.layout.item_view, parent, false);
+                    R.layout.items_view, parent, false);
         }
 
         final Item currentItem = getItem(position);
@@ -78,8 +81,11 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         final ImageView display = listItemView.findViewById(R.id.display);
         Picasso.with(getContext()).load(currentItem.getUrl()).into(display);
 
-        ImageButton add = listItemView.findViewById(R.id.add);
-        ImageButton subtract = listItemView.findViewById(R.id.subtract);
+        final ImageButton add = listItemView.findViewById(R.id.add);
+        final ImageButton subtract = listItemView.findViewById(R.id.subtract);
+        final Button addButton = listItemView.findViewById(R.id.add_button);
+        final LinearLayout addLayout = listItemView.findViewById(R.id.add_layout);
+
         final TextView item_num = listItemView.findViewById(R.id.quantity_value);
 
         ProgressDialog dialog = null;
@@ -131,6 +137,54 @@ public class ItemAdapter extends ArrayAdapter<Item> {
             item_num.setText("0");
         }
 
+        int itemNum = Integer.parseInt(item_num.getText().toString());
+
+        if(itemNum!=0)
+        {
+            addButton.setVisibility(View.GONE);
+            addLayout.setVisibility(View.VISIBLE);
+        }
+        else {
+            addButton.setVisibility(View.VISIBLE);
+            addLayout.setVisibility(View.GONE);
+        }
+
+        final TabLayout tabLayout = ((RelativeLayout)parent.getParent()).findViewById(R.id.tabs);
+        final RelativeLayout baketLayout = (RelativeLayout)tabLayout.getTabAt(4).getCustomView();
+        final TextView count = baketLayout.findViewById(R.id.count);
+
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                int itemNum = Integer.parseInt(item_num.getText().toString());
+
+                if(display.getDrawable()!=null)
+                {
+                    BitmapDrawable drawable = (BitmapDrawable) display.getDrawable();
+                    Bitmap bitmap = drawable.getBitmap();
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    image[0] = stream.toByteArray();
+                }
+
+                item_num.setText(Integer.toString(itemNum + 1));
+
+                addButton.setVisibility(View.GONE);
+                addLayout.setVisibility(View.VISIBLE);
+
+                itemDatabaseHelper.insertData(currentItem.getName(), quantity_spinner.getSelectedItem().toString(),
+                        price.getText().toString(), itemNum + 1, image[0],currentItem.getType());
+
+                itemDatabaseHelper.update(currentItem.getName(), quantity_spinner.getSelectedItem().toString(),
+                        price.getText().toString(), itemNum + 1, image[0],currentItem.getType());
+
+                count.setVisibility(View.VISIBLE);
+                count.setText(String.valueOf(itemDatabaseHelper.getTotalItems()));
+            }
+        });
+
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,19 +203,11 @@ public class ItemAdapter extends ArrayAdapter<Item> {
                 if (itemNum < 12) {
                     item_num.setText(Integer.toString(itemNum + 1));
 
-                    if (itemNum == 0) {
-                        itemDatabaseHelper.insertData(currentItem.getName(), quantity_spinner.getSelectedItem().toString(),
-                                price.getText().toString(), itemNum + 1, image[0]);
-
                         itemDatabaseHelper.update(currentItem.getName(), quantity_spinner.getSelectedItem().toString(),
-                                price.getText().toString(), itemNum + 1, image[0]);
-
-                    } else {
-                        itemDatabaseHelper.update(currentItem.getName(), quantity_spinner.getSelectedItem().toString(),
-                                price.getText().toString(), itemNum + 1, image[0]);
-
-                    }
+                                price.getText().toString(), itemNum + 1, image[0],currentItem.getType());
                 }
+
+                count.setText(String.valueOf(itemDatabaseHelper.getTotalItems()));
             }
         });
 
@@ -180,13 +226,31 @@ public class ItemAdapter extends ArrayAdapter<Item> {
                     image[0] = stream.toByteArray();
                 }
 
-                if (itemNum > 0) {
+                if (itemNum > 1) {
                     item_num.setText(Integer.toString(itemNum - 1));
 
                     itemDatabaseHelper.update(currentItem.getName(), quantity_spinner.getSelectedItem().toString(),
-                            price.getText().toString(), itemNum - 1, image[0]);
+                            price.getText().toString(), itemNum - 1, image[0],currentItem.getType());
+
+                }
+                if(itemNum==1)
+                {
+                    item_num.setText(Integer.toString(itemNum - 1));
+
+                    itemDatabaseHelper.update(currentItem.getName(), quantity_spinner.getSelectedItem().toString(),
+                            price.getText().toString(), itemNum - 1, image[0],currentItem.getType());
+
+                    addButton.setVisibility(View.VISIBLE);
+                    addLayout.setVisibility(View.GONE);
+
+                    count.setText(String.valueOf(itemDatabaseHelper.getTotalItems()));
                 }
 
+                if(itemDatabaseHelper.getTotalItems()==0)
+                {
+                    count.setText(String.valueOf(itemDatabaseHelper.getTotalItems()));
+                    count.setVisibility(View.GONE);
+                }
             }
         });
 

@@ -2,11 +2,11 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/show_item_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary"
     android:orientation="vertical"
-    android:id="@+id/frame_layout"
     tools:context=".ShowItems">
 
     <LinearLayout
@@ -43,6 +43,7 @@
                     android:layout_height="30dp"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
                     android:layout_marginEnd="5dp"
                     android:layout_marginRight="5dp"
                     android:layout_marginBottom="3dp"
@@ -59,13 +60,15 @@
             android:background="#FFFFFF"
             android:gravity="center"
             android:text="title"
+            android:textAllCaps="true"
             android:textColor="#000000"
             android:textSize="18sp" />
 
         <RelativeLayout
+            android:id="@+id/itemsNum_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#F1F3F4"
+            android:background="#D3D3D3"
             android:paddingTop="5dp"
             android:paddingBottom="5dp">
 
@@ -75,16 +78,17 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="7dp"
-                android:layout_marginLeft="7dp" />
+                android:layout_marginLeft="7dp"
+                android:textColor="#000000" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
                 android:layout_marginEnd="7dp"
                 android:layout_marginRight="7dp"
-                android:layout_marginBottom="5dp"
                 android:background="@drawable/ripple_effect3"
                 android:clickable="true"
                 android:drawableStart="@drawable/filter"
@@ -99,12 +103,41 @@
 
         </RelativeLayout>
 
-        <ListView
-            android:id="@+id/itemsList"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:divider="@android:color/transparent"
-            android:background="@color/primary"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ListView
+                android:id="@+id/itemsList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+               android:layout_above="@id/tabs"
+                android:divider="@android:color/transparent"
+                android:layout_alignParentTop="true" />
+
+            <View
+                android:id="@+id/line"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/itemsList"
+                android:background="#000000" />
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="bottom"
+                android:elevation="10dp"
+                app:tabGravity="fill"
+                app:tabMaxWidth="0dp"
+                app:tabMode="fixed"
+                app:tabSelectedTextColor="@color/primary_dark"
+                app:tabTextAppearance="@style/MineCustomTabText"
+                app:tabTextColor="#000000"
+                android:overScrollMode="always" />
+
+        </RelativeLayout>
     </LinearLayout>
 
 </FrameLayout>
