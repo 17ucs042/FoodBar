@@ -1,8 +1,11 @@
 package com.appsaga.foodbar;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.drm.DrmStore;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
@@ -11,7 +14,10 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
@@ -43,6 +49,7 @@ public class SearchFragment extends Fragment {
 
     ArrayList<Item> searchedItemsArray;
     ListView searchedItems;
+    ProgressDialog dialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,7 +59,6 @@ public class SearchFragment extends Fragment {
             view = inflater.inflate(R.layout.fragment_search_fragment, container, false);
 
             searchText = view.findViewById(R.id.search_text);
-            searchText.performClick();
 
             firebaseDatabase = FirebaseDatabase.getInstance();
             databaseReference = firebaseDatabase.getReference();
@@ -89,6 +95,11 @@ public class SearchFragment extends Fragment {
                     searchText.setAdapter(itemArrayAdapter);
 
                     dialog.dismiss();
+
+                    searchText.requestFocus();
+                    InputMethodManager imgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imgr.showSoftInput(searchText, 0);
+                    imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
                 }
 
                 @Override
@@ -101,7 +112,7 @@ public class SearchFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                    ProgressDialog dialog = ProgressDialog.show(getContext(), "Loading", "Please wait...", true);
+                    final ProgressDialog dialog = ProgressDialog.show(getContext(), "Loading", "Please wait...", true);
 
                     searchedItemsArray.clear();
                     if (!searchText.getText().toString().equals("")) {
@@ -118,9 +129,16 @@ public class SearchFragment extends Fragment {
                         ItemAdapter itemAdapter = new ItemAdapter(getContext(), searchedItemsArray);
                         searchedItems.setAdapter(null);
                         searchedItems.setAdapter(itemAdapter);
-                    }
 
-                    dialog.dismiss();
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                dialog.dismiss();
+                            }
+                        },5000);
+                    }
                 }
             });
 
@@ -137,6 +155,28 @@ public class SearchFragment extends Fragment {
                 }
             });
         }
+        else
+        {
+            searchText.requestFocus();
+            InputMethodManager imgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imgr.showSoftInput(searchText, 0);
+            imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        }
         return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+       // dialog = ProgressDialog.show(getContext(), "Loading", "Please wait...", true);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(dialog!=null)
+        dialog.dismiss();
     }
 }

@@ -2,10 +2,10 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/search_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchFragment"
-    android:id="@+id/search_fragment">
+    tools:context=".SearchFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -62,11 +62,12 @@
                     android:layout_toEndOf="@id/search_icon"
                     android:layout_toRightOf="@id/search_icon"
                     android:background="#FFFFFF"
-                    android:maxLines="1"
-                    android:lines="1"
-                    android:imeOptions="actionNext"
                     android:completionThreshold="1"
-                    android:inputType="text"/>
+                    android:hint="Click here to search items"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:lines="1"
+                    android:maxLines="1" />
 
             </RelativeLayout>
         </LinearLayout>
@@ -74,17 +75,31 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1.5dp"
-            android:background="#000000"/>
+            android:background="#000000" />
 
-        <ListView
-            android:id="@+id/searchedItems"
+        <RelativeLayout
+            android:id="@+id/search_parent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:divider="@android:color/transparent"
-            android:focusable="true"
-            android:background="@color/primary">
+            android:layout_height="wrap_content">
 
-        </ListView>
+            <ListView
+                android:id="@+id/searchedItems"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:clickable="true"
+                android:divider="@android:color/transparent"
+                android:focusable="true">
+
+            </ListView>
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+            </android.support.design.widget.TabLayout>
+        </RelativeLayout>
     </LinearLayout>
 </FrameLayout>

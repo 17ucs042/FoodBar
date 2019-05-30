@@ -8,7 +8,11 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,66 +47,100 @@ import java.util.logging.Handler;
 public class ItemAdapter extends ArrayAdapter<Item> {
 
     ItemDatabaseHelper itemDatabaseHelper;
+    TextView count;
 
     public ItemAdapter(Context context, ArrayList<Item> allItems) {
         super(context, 0, allItems);
         itemDatabaseHelper = new ItemDatabaseHelper(context);
     }
 
+    static class ViewHolder {
+        private TextView name;
+        private TextView price;
+        private ImageView display;
+        ImageButton add;
+        ImageButton subtract;
+        Button addButton;
+        LinearLayout addLayout;
+        TextView item_num;
+        Spinner quantity_spinner;
+        byte[][] image;
+    }
+
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
 
+        //ProgressDialog dialog = ProgressDialog.show(getContext(), "Loading", "Please wait...", true);
+
         View listItemView = convertView;
+        final ViewHolder holder;
 
         if (listItemView == null) {
             listItemView = LayoutInflater.from(getContext()).inflate(
                     R.layout.items_view, parent, false);
-        }
 
-        final Item currentItem = getItem(position);
+            holder = new ViewHolder();
+            holder.name = listItemView.findViewById(R.id.name);
+            holder.price = listItemView.findViewById(R.id.price);
+            holder.display = listItemView.findViewById(R.id.display);
+            holder.add = listItemView.findViewById(R.id.add);
+            holder.subtract = listItemView.findViewById(R.id.subtract);
+            holder.addButton = listItemView.findViewById(R.id.add_button);
+            holder.addLayout = listItemView.findViewById(R.id.add_layout);
+            holder.item_num = listItemView.findViewById(R.id.quantity_value);
+            holder.quantity_spinner = listItemView.findViewById(R.id.quantity);
+            holder.image = new byte[1][1];
+            listItemView.setTag(holder);
 
-        HashMap.Entry<String, String> entry1 = currentItem.getQuant_price().entrySet().iterator().next();
-        String priceValue = entry1.getValue();
+            final Item currentItem = getItem(position);
 
-        ArrayList<String> quantities = new ArrayList<>();
+            HashMap.Entry<String, String> entry1 = currentItem.getQuant_price().entrySet().iterator().next();
+            String priceValue = entry1.getValue();
 
-        for (HashMap.Entry<String, String> entry : currentItem.getQuant_price().entrySet()) {
-            quantities.add(entry.getKey());
-        }
+            ArrayList<String> quantities = new ArrayList<>();
 
-        Collections.sort(quantities);
+            for (HashMap.Entry<String, String> entry : currentItem.getQuant_price().entrySet()) {
+                quantities.add(entry.getKey());
+            }
 
-        TextView name = listItemView.findViewById(R.id.name);
-        name.setText(currentItem.getName());
+            Collections.sort(quantities);
 
-        final TextView price = listItemView.findViewById(R.id.price);
-        price.setText(priceValue);
-
-        final ImageView display = listItemView.findViewById(R.id.display);
-        Picasso.with(getContext()).load(currentItem.getUrl()).into(display);
-
-        final ImageButton add = listItemView.findViewById(R.id.add);
-        final ImageButton subtract = listItemView.findViewById(R.id.subtract);
-        final Button addButton = listItemView.findViewById(R.id.add_button);
-        final LinearLayout addLayout = listItemView.findViewById(R.id.add_layout);
-
-        final TextView item_num = listItemView.findViewById(R.id.quantity_value);
-
-        ProgressDialog dialog = null;
-        final byte[][] image = new byte[1][1];
+            holder.name.setText(currentItem.getName());
+            holder.price.setText(priceValue);
+            GlideApp.with(getContext()).load(currentItem.getUrl()).into(holder.display);
 
         /*while ((display.getDrawable()==null)) {
             dialog = ProgressDialog.show(getContext(), "Loading Images", "Please wait...", true);
         }*/
+            ArrayAdapter<String> quantityAdapter = new ArrayAdapter<>(getContext(),
+                    android.R.layout.simple_spinner_item, quantities);
 
-        final Spinner quantity_spinner = listItemView.findViewById(R.id.quantity);
-        ArrayAdapter<String> quantityAdapter = new ArrayAdapter<>(getContext(),
-                android.R.layout.simple_spinner_item, quantities);
+            quantityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            holder.quantity_spinner.setAdapter(quantityAdapter);
+            Log.d("Test.....","NO");
 
-        quantityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        quantity_spinner.setAdapter(quantityAdapter);
+            RelativeLayout relativeLayout = (RelativeLayout) parent.getParent();
+            if (relativeLayout.getId() == R.id.show_parent) {
 
-        quantity_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                final TabLayout tabLayout = relativeLayout.findViewById(R.id.tabs);
+                final RelativeLayout basketLayout = (RelativeLayout) tabLayout.getTabAt(4).getCustomView();
+                count = basketLayout.findViewById(R.id.count);
+            } else if (relativeLayout.getId() == R.id.search_parent) {
+                FrameLayout frameLayout = ((FrameLayout) relativeLayout.getParent().getParent());
+                RelativeLayout relativeLayout1 = (RelativeLayout) frameLayout.getParent().getParent();
+                TabLayout tabLayout = relativeLayout1.findViewById(R.id.tabs);
+                final RelativeLayout basketLayout = (RelativeLayout) tabLayout.getTabAt(4).getCustomView();
+                count = basketLayout.findViewById(R.id.count);
+            }
+        }
+        else {
+            Log.d("Test.....","YES");
+            holder = (ViewHolder) listItemView.getTag();
+        }
+
+        final Item currentItem = getItem(position);
+
+        holder.quantity_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
@@ -110,16 +148,26 @@ public class ItemAdapter extends ArrayAdapter<Item> {
 
                 for (HashMap.Entry<String, String> entry : currentItem.getQuant_price().entrySet()) {
                     if (entry.getKey().equals(quantity)) {
-                        price.setText(entry.getValue());
+                        holder.price.setText(entry.getValue());
                     }
                 }
 
-                Boolean containsItem = itemDatabaseHelper.containsItem(currentItem.getName(), quantity_spinner.getSelectedItem().toString());
+                Boolean containsItem = itemDatabaseHelper.containsItem(currentItem.getName(), holder.quantity_spinner.getSelectedItem().toString());
 
                 if (containsItem == Boolean.TRUE) {
-                    item_num.setText(Integer.toString(itemDatabaseHelper.getItemNum(currentItem.getName(), quantity_spinner.getSelectedItem().toString())));
+                    holder.item_num.setText(Integer.toString(itemDatabaseHelper.getItemNum(currentItem.getName(), holder.quantity_spinner.getSelectedItem().toString())));
                 } else {
-                    item_num.setText("0");
+                    holder.item_num.setText("0");
+                }
+
+                int itemNum = Integer.parseInt(holder.item_num.getText().toString());
+
+                if (itemNum != 0) {
+                    holder.addButton.setVisibility(View.GONE);
+                    holder.addLayout.setVisibility(View.VISIBLE);
+                } else {
+                    holder.addButton.setVisibility(View.VISIBLE);
+                    holder.addLayout.setVisibility(View.GONE);
                 }
             }
 
@@ -129,125 +177,104 @@ public class ItemAdapter extends ArrayAdapter<Item> {
             }
         });
 
-        Boolean containsItem = itemDatabaseHelper.containsItem(currentItem.getName(), quantity_spinner.getSelectedItem().toString());
+        Boolean containsItem = itemDatabaseHelper.containsItem(currentItem.getName(), holder.quantity_spinner.getSelectedItem().toString());
 
         if (containsItem == Boolean.TRUE) {
-            item_num.setText(Integer.toString(itemDatabaseHelper.getItemNum(currentItem.getName(), quantity_spinner.getSelectedItem().toString())));
+            holder.item_num.setText(Integer.toString(itemDatabaseHelper.getItemNum(currentItem.getName(), holder.quantity_spinner.getSelectedItem().toString())));
         } else {
-            item_num.setText("0");
+            holder.item_num.setText("0");
         }
 
-        int itemNum = Integer.parseInt(item_num.getText().toString());
-
-        if(itemNum!=0)
-        {
-            addButton.setVisibility(View.GONE);
-            addLayout.setVisibility(View.VISIBLE);
-        }
-        else {
-            addButton.setVisibility(View.VISIBLE);
-            addLayout.setVisibility(View.GONE);
-        }
-
-        final TabLayout tabLayout = ((RelativeLayout)parent.getParent()).findViewById(R.id.tabs);
-        final RelativeLayout baketLayout = (RelativeLayout)tabLayout.getTabAt(4).getCustomView();
-        final TextView count = baketLayout.findViewById(R.id.count);
-
-
-        addButton.setOnClickListener(new View.OnClickListener() {
+        holder.addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                int itemNum = Integer.parseInt(item_num.getText().toString());
+                int itemNum = Integer.parseInt(holder.item_num.getText().toString());
 
-                if(display.getDrawable()!=null)
-                {
-                    BitmapDrawable drawable = (BitmapDrawable) display.getDrawable();
+                if (holder.display.getDrawable() != null) {
+                    BitmapDrawable drawable = (BitmapDrawable) holder.display.getDrawable();
                     Bitmap bitmap = drawable.getBitmap();
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    image[0] = stream.toByteArray();
+                    holder.image[0] = stream.toByteArray();
                 }
 
-                item_num.setText(Integer.toString(itemNum + 1));
+                holder.item_num.setText(Integer.toString(itemNum + 1));
 
-                addButton.setVisibility(View.GONE);
-                addLayout.setVisibility(View.VISIBLE);
+                holder.addButton.setVisibility(View.GONE);
+                holder.addLayout.setVisibility(View.VISIBLE);
 
-                itemDatabaseHelper.insertData(currentItem.getName(), quantity_spinner.getSelectedItem().toString(),
-                        price.getText().toString(), itemNum + 1, image[0],currentItem.getType());
+                itemDatabaseHelper.insertData(currentItem.getName(), holder.quantity_spinner.getSelectedItem().toString(),
+                        holder.price.getText().toString(), itemNum + 1, holder.image[0], currentItem.getType());
 
-                itemDatabaseHelper.update(currentItem.getName(), quantity_spinner.getSelectedItem().toString(),
-                        price.getText().toString(), itemNum + 1, image[0],currentItem.getType());
+                itemDatabaseHelper.update(currentItem.getName(), holder.quantity_spinner.getSelectedItem().toString(),
+                        holder.price.getText().toString(), itemNum + 1, holder.image[0], currentItem.getType());
 
+                //Cursor data = itemDatabaseHelper.getAllData();
                 count.setVisibility(View.VISIBLE);
                 count.setText(String.valueOf(itemDatabaseHelper.getTotalItems()));
             }
         });
 
-        add.setOnClickListener(new View.OnClickListener() {
+        holder.add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                int itemNum = Integer.parseInt(item_num.getText().toString());
+                int itemNum = Integer.parseInt(holder.item_num.getText().toString());
 
-                if(display.getDrawable()!=null)
-                {
-                    BitmapDrawable drawable = (BitmapDrawable) display.getDrawable();
+                if (holder.display.getDrawable() != null) {
+                    BitmapDrawable drawable = (BitmapDrawable) holder.display.getDrawable();
                     Bitmap bitmap = drawable.getBitmap();
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    image[0] = stream.toByteArray();
+                    holder.image[0] = stream.toByteArray();
                 }
 
                 if (itemNum < 12) {
-                    item_num.setText(Integer.toString(itemNum + 1));
+                    holder.item_num.setText(Integer.toString(itemNum + 1));
 
-                        itemDatabaseHelper.update(currentItem.getName(), quantity_spinner.getSelectedItem().toString(),
-                                price.getText().toString(), itemNum + 1, image[0],currentItem.getType());
+                    itemDatabaseHelper.update(currentItem.getName(), holder.quantity_spinner.getSelectedItem().toString(),
+                            holder.price.getText().toString(), itemNum + 1, holder.image[0], currentItem.getType());
                 }
 
                 count.setText(String.valueOf(itemDatabaseHelper.getTotalItems()));
             }
         });
 
-        subtract.setOnClickListener(new View.OnClickListener() {
+        holder.subtract.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                int itemNum = Integer.parseInt(item_num.getText().toString());
+                int itemNum = Integer.parseInt(holder.item_num.getText().toString());
 
-                if(display.getDrawable()!=null)
-                {
-                    BitmapDrawable drawable = (BitmapDrawable) display.getDrawable();
+                if (holder.display.getDrawable() != null) {
+                    BitmapDrawable drawable = (BitmapDrawable) holder.display.getDrawable();
                     Bitmap bitmap = drawable.getBitmap();
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    image[0] = stream.toByteArray();
+                    holder.image[0] = stream.toByteArray();
                 }
 
                 if (itemNum > 1) {
-                    item_num.setText(Integer.toString(itemNum - 1));
+                    holder.item_num.setText(Integer.toString(itemNum - 1));
 
-                    itemDatabaseHelper.update(currentItem.getName(), quantity_spinner.getSelectedItem().toString(),
-                            price.getText().toString(), itemNum - 1, image[0],currentItem.getType());
+                    itemDatabaseHelper.update(currentItem.getName(), holder.quantity_spinner.getSelectedItem().toString(),
+                            holder.price.getText().toString(), itemNum - 1, holder.image[0], currentItem.getType());
 
                 }
-                if(itemNum==1)
-                {
-                    item_num.setText(Integer.toString(itemNum - 1));
+                if (itemNum == 1) {
+                    holder.item_num.setText(Integer.toString(itemNum - 1));
 
-                    itemDatabaseHelper.update(currentItem.getName(), quantity_spinner.getSelectedItem().toString(),
-                            price.getText().toString(), itemNum - 1, image[0],currentItem.getType());
+                    itemDatabaseHelper.update(currentItem.getName(), holder.quantity_spinner.getSelectedItem().toString(),
+                            holder.price.getText().toString(), itemNum - 1, holder.image[0], currentItem.getType());
 
-                    addButton.setVisibility(View.VISIBLE);
-                    addLayout.setVisibility(View.GONE);
+                    holder.addButton.setVisibility(View.VISIBLE);
+                    holder.addLayout.setVisibility(View.GONE);
 
                     count.setText(String.valueOf(itemDatabaseHelper.getTotalItems()));
                 }
 
-                if(itemDatabaseHelper.getTotalItems()==0)
-                {
+                if (itemDatabaseHelper.getTotalItems() == 0) {
                     count.setText(String.valueOf(itemDatabaseHelper.getTotalItems()));
                     count.setVisibility(View.GONE);
                 }
@@ -255,5 +282,15 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         });
 
         return listItemView;
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return getCount();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 }

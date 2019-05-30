@@ -135,7 +135,8 @@ public class ItemDatabaseHelper extends SQLiteOpenHelper {
             do
             {
                 i=res.getString(1);
-                if(!items.contains(i))
+                q=res.getString(2);
+                if(!items.contains(i) || !items.contains(q))
                 {
                     items.add(i);
                 }

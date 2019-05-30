@@ -104,6 +104,7 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/show_parent"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -111,9 +112,9 @@
                 android:id="@+id/itemsList"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-               android:layout_above="@id/tabs"
-                android:divider="@android:color/transparent"
-                android:layout_alignParentTop="true" />
+                android:layout_above="@id/tabs"
+                android:layout_alignParentTop="true"
+                android:divider="@android:color/transparent" />
 
             <View
                 android:id="@+id/line"
@@ -129,13 +130,13 @@
                 android:layout_alignParentBottom="true"
                 android:layout_gravity="bottom"
                 android:elevation="10dp"
+                android:overScrollMode="always"
                 app:tabGravity="fill"
                 app:tabMaxWidth="0dp"
                 app:tabMode="fixed"
                 app:tabSelectedTextColor="@color/primary_dark"
                 app:tabTextAppearance="@style/MineCustomTabText"
-                app:tabTextColor="#000000"
-                android:overScrollMode="always" />
+                app:tabTextColor="#000000" />
 
         </RelativeLayout>
     </LinearLayout>

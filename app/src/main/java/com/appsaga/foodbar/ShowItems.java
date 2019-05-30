@@ -52,6 +52,7 @@ public class ShowItems extends AppCompatActivity {
     TabLayout tabLayout;
 
     ItemDatabaseHelper itemDatabaseHelper;
+    ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,11 +157,19 @@ public class ShowItems extends AppCompatActivity {
                 {
                     tabLayout.setVisibility(View.GONE);
                 }
-                if(mLastFirstVisibleItem>firstVisibleItem)
+                else if(mLastFirstVisibleItem>firstVisibleItem)
                 {
-                    Log.i("SCROLLING UP","TRUE");
+                    tabLayout.setVisibility(View.VISIBLE);
                 }
                 mLastFirstVisibleItem=firstVisibleItem;
+
+            }
+        });
+
+        itemsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
 
             }
         });
@@ -247,5 +256,11 @@ public class ShowItems extends AppCompatActivity {
         } else {
             count.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+         //dialog = ProgressDialog.show(ShowItems.this, "Loading", "Please wait...", true);
     }
 }

@@ -2,6 +2,7 @@ package com.appsaga.foodbar;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -105,6 +106,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
     TextView count;
     TabLayout tabLayout;
     ItemDatabaseHelper itemDatabaseHelper;
+    ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -239,12 +241,12 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
 
-                if( tab.getPosition()==4)
+                if( tab.getPosition()==4 )
                 {
                     searchFrame.setVisibility(View.GONE);
                     tabLayout.setVisibility(View.GONE);
                 }
-                else if(tab.getPosition()==2 )
+                else if(tab.getPosition()==2)
                 {
                     searchFrame.setVisibility(View.GONE);
                     tabLayout.setVisibility(View.VISIBLE);
@@ -282,14 +284,14 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
+        /*if (requestCode == 1) {
             if(resultCode == RESULT_OK) {
                 placeName = data.getStringExtra("Place Name");
                 PlaceName.setText(placeName);
             }
-        }
+        }*/
 
-        /*if (requestCode == 10) {
+        if (requestCode == 10) {
             if(resultCode == Activity.RESULT_OK){
                 String result=data.getStringExtra("result");
 
@@ -315,7 +317,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
                     viewPager.setCurrentItem(4);
                 }
             }
-        }*/
+        }
     }
 
     @Override
@@ -416,5 +418,15 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
         {
             count.setVisibility(View.GONE);
         }
+
+        if(dialog!=null) {
+            dialog.dismiss();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+       // dialog = ProgressDialog.show(HomeScreen.this, "Loading", "Please wait...", true);
     }
 }
