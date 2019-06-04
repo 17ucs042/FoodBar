@@ -1,6 +1,7 @@
 package com.appsaga.foodbar;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
@@ -18,10 +19,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.signature.ObjectKey;
 import com.google.firebase.storage.FirebaseStorage;
@@ -140,13 +143,34 @@ public class HomeFragment extends Fragment {
                 }
             }, 5000);
 
+            final TextView placeName = getActivity().findViewById(R.id.placeName);
+            final Dialog customDialog = new Dialog(getContext());
+            customDialog.setContentView(R.layout.custom_dialog);
+
+            EditText dialogPincode = customDialog.findViewById(R.id.dialog_pincode);
+            final Button go = customDialog.findViewById(R.id.button_go);
+
             im3_1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
-                    intent.putExtra("value", "Fruits & Vegetables");
-                    startActivityForResult(intent,10);
+                    if(placeName.getText().length()==6) {
+                        Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
+                        intent.putExtra("value", "Fruits & Vegetables");
+                        startActivity(intent);
+                    }
+                    else {
+                        customDialog.show();
+                        go.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                customDialog.dismiss();
+                                Toast.makeText(getContext(),"Yes",Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        //Toast.makeText(getContext(),"Please turn on GPS\nto view item list",Toast.LENGTH_LONG).show();
+                    }
                 }
             });
 
@@ -156,7 +180,7 @@ public class HomeFragment extends Fragment {
 
                     Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
                     intent.putExtra("value", "Foodgrains, Oils & Masalas");
-                    startActivityForResult(intent,10);
+                    startActivity(intent);
                 }
             });
 
@@ -166,7 +190,7 @@ public class HomeFragment extends Fragment {
 
                     Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
                     intent.putExtra("value", "Bakery, Cakes & Dairy");
-                    startActivityForResult(intent,10);
+                    startActivity(intent);
                 }
             });
 
@@ -176,7 +200,7 @@ public class HomeFragment extends Fragment {
 
                     Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
                     intent.putExtra("value", "Beverages & Snacks");
-                    startActivityForResult(intent,10);
+                    startActivity(intent);
                 }
             });
 
@@ -186,7 +210,7 @@ public class HomeFragment extends Fragment {
 
                     Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
                     intent.putExtra("value", "Medicine");
-                    startActivityForResult(intent,10);
+                    startActivity(intent);
                 }
             });
 
@@ -196,7 +220,7 @@ public class HomeFragment extends Fragment {
 
                     Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
                     intent.putExtra("value", "Stationary");
-                    startActivityForResult(intent,10);
+                    startActivity(intent);
                 }
             });
 
@@ -206,7 +230,7 @@ public class HomeFragment extends Fragment {
 
                     Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
                     intent.putExtra("value", "Cleaning, Kitchen & Baby Care");
-                    startActivityForResult(intent,10);
+                    startActivity(intent);
                 }
             });
 
@@ -216,7 +240,7 @@ public class HomeFragment extends Fragment {
 
                     Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
                     intent.putExtra("value", "Pet Supplies");
-                    startActivityForResult(intent,10);
+                    startActivity(intent);
                 }
             });
 
@@ -226,7 +250,7 @@ public class HomeFragment extends Fragment {
 
                     Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
                     intent.putExtra("value", "Eggs, Meat, Fish");
-                    startActivityForResult(intent,10);
+                    startActivity(intent);
                 }
             });
 

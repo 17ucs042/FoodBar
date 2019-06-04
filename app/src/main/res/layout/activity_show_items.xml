@@ -28,6 +28,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="3dp">
 
+                <ImageView
+                    android:id="@+id/back_navigate"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:src="@drawable/back_navigation"
+                    android:padding="6dp"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/ripple_effect4"/>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -35,7 +44,8 @@
                     android:paddingBottom="3dp"
                     android:text="@string/app_name"
                     android:textColor="#FFFFFF"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    android:layout_centerVertical="true"/>
 
                 <ImageView
                     android:id="@+id/search_icon"
@@ -48,7 +58,8 @@
                     android:layout_marginRight="5dp"
                     android:layout_marginBottom="3dp"
                     android:padding="3dp"
-                    android:src="@drawable/search_white" />
+                    android:src="@drawable/search_white"
+                    android:background="@drawable/ripple_effect4"/>
             </RelativeLayout>
 
         </android.support.v7.widget.Toolbar>
@@ -56,13 +67,16 @@
         <TextView
             android:id="@+id/itemsTitle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:background="#FFFFFF"
             android:gravity="center"
             android:text="title"
             android:textAllCaps="true"
             android:textColor="#000000"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:fontFamily="sans-serif-light"
+            android:textStyle="bold"
+            android:padding="2dp"/>
 
         <RelativeLayout
             android:id="@+id/itemsNum_layout"
@@ -134,7 +148,6 @@
                 app:tabGravity="fill"
                 app:tabMaxWidth="0dp"
                 app:tabMode="fixed"
-                app:tabSelectedTextColor="@color/primary_dark"
                 app:tabTextAppearance="@style/MineCustomTabText"
                 app:tabTextColor="#000000" />
 

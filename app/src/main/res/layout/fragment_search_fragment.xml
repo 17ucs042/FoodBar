@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".SearchFragment">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -29,9 +29,19 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
+            <ImageView
+                android:id="@+id/back_navigate"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/back_navigation"
+                android:padding="6dp"
+                android:background="@drawable/ripple_effect4"/>
+
         </android.support.v7.widget.Toolbar>
 
         <LinearLayout
+            android:id="@+id/search_layout"
+            android:layout_below="@id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/primary"
@@ -73,14 +83,17 @@
         </LinearLayout>
 
         <View
+            android:id="@+id/search_view"
             android:layout_width="match_parent"
             android:layout_height="1.5dp"
-            android:background="#000000" />
+            android:background="#000000"
+            android:layout_below="@id/search_layout"/>
 
         <RelativeLayout
             android:id="@+id/search_parent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/search_view">
 
             <ListView
                 android:id="@+id/searchedItems"
@@ -101,5 +114,5 @@
 
             </android.support.design.widget.TabLayout>
         </RelativeLayout>
-    </LinearLayout>
+    </RelativeLayout>
 </FrameLayout>

@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -23,6 +24,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class BasketFragment extends Fragment {
 
@@ -36,22 +38,26 @@ public class BasketFragment extends Fragment {
     TextView totalPrice;
     RelativeLayout checkoutLayout;
     Button checkout;
+    ImageView backNavigate;
+    ImageView searchIcon;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-            view = inflater.inflate(R.layout.fragment_basket_fragment, container, false);
+        view = inflater.inflate(R.layout.fragment_basket_fragment, container, false);
 
-            startShopping = view.findViewById(R.id.start_shopping);
-            totalPrice = view.findViewById(R.id.total_price);
-            checkoutLayout = view.findViewById(R.id.checkout_layout);
-            checkout = view.findViewById(R.id.checkout);
+        startShopping = view.findViewById(R.id.start_shopping);
+        totalPrice = view.findViewById(R.id.total_price);
+        checkoutLayout = view.findViewById(R.id.checkout_layout);
+        checkout = view.findViewById(R.id.checkout);
+        backNavigate = view.findViewById(R.id.back_navigate);
+        searchIcon = view.findViewById(R.id.search_icon);
 
-            startShopping.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+        startShopping.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
                 /*HomeFragment homeFragment = new HomeFragment();
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -59,18 +65,18 @@ public class BasketFragment extends Fragment {
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();*/
 
-                    ViewPager viewPager = getActivity().findViewById(R.id.viewpager);
-                    viewPager.setCurrentItem(0);
-                }
-            });
+                ViewPager viewPager = getActivity().findViewById(R.id.viewpager);
+                viewPager.setCurrentItem(0);
+            }
+        });
 
-            itemDatabaseHelper = new ItemDatabaseHelper(getContext());
-            basket = new ArrayList<>();
-            itemName = new ArrayList<>();
-            basketLayout = view.findViewById(R.id.basket_layout);
-            basketList = view.findViewById(R.id.basketList);
+        itemDatabaseHelper = new ItemDatabaseHelper(getContext());
+        basket = new ArrayList<>();
+        itemName = new ArrayList<>();
+        basketLayout = view.findViewById(R.id.basket_layout);
+        basketList = view.findViewById(R.id.basketList);
 
-            Cursor data = itemDatabaseHelper.getAllData();
+        Cursor data = itemDatabaseHelper.getAllData();
 
         /* (data.moveToNext()) {
             if (data.getInt(1) != 0) {
@@ -81,58 +87,65 @@ public class BasketFragment extends Fragment {
             }
         }*/
 
-            if (itemDatabaseHelper.getTotalItems() != 0) {
+        if (itemDatabaseHelper.getTotalItems() != 0) {
 
-                basketList.setVisibility(View.VISIBLE);
-                BaksetItemsAdapter baksetItemsAdapter = new BaksetItemsAdapter(getContext(), data);
-                basketList.setAdapter(null);
-                basketList.setAdapter(baksetItemsAdapter);
-                basketLayout.setVisibility(View.GONE);
-            } else {
-                basketList.setVisibility(View.GONE);
-                basketLayout.setVisibility(View.VISIBLE);
+            basketList.setVisibility(View.VISIBLE);
+            BaksetItemsAdapter baksetItemsAdapter = new BaksetItemsAdapter(getContext(), data);
+            basketList.setAdapter(null);
+            basketList.setAdapter(baksetItemsAdapter);
+            basketLayout.setVisibility(View.GONE);
+        } else {
+            basketList.setVisibility(View.GONE);
+            basketLayout.setVisibility(View.VISIBLE);
+        }
+
+        backNavigate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Objects.requireNonNull(getActivity()).onBackPressed();
             }
+        });
 
-            basketList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        searchIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-                    Log.d("clicked", "Clicked");
-                    if (basketList.getCount() == 0) {
-                        basketList.setVisibility(View.GONE);
-                        basketLayout.setVisibility(View.VISIBLE);
-                    }
-                }
-            });
-
-            totalPrice.setText("₹ " + String.valueOf(itemDatabaseHelper.getTotalPrice()));
-
-            if (itemDatabaseHelper.getTotalPrice() == 0) {
-                checkoutLayout.setVisibility(View.GONE);
-            } else {
-                checkoutLayout.setVisibility(View.VISIBLE);
+                ViewPager viewPager = getActivity().findViewById(R.id.viewpager);
+                viewPager.setCurrentItem(2);
             }
+        });
 
-            checkout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+        basketList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                    //detach();
-                    startActivity(new Intent(getContext(), com.appsaga.foodbar.EnterDetails.class));
+                Log.d("clicked", "Clicked");
+                if (basketList.getCount() == 0) {
+                    basketList.setVisibility(View.GONE);
+                    basketLayout.setVisibility(View.VISIBLE);
                 }
-            });
+            }
+        });
+
+        totalPrice.setText("₹ " + String.valueOf(itemDatabaseHelper.getTotalPrice()));
+
+        if (itemDatabaseHelper.getTotalPrice() == 0) {
+            checkoutLayout.setVisibility(View.GONE);
+        } else {
+            checkoutLayout.setVisibility(View.VISIBLE);
+        }
+
+        checkout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //detach();
+                startActivity(new Intent(getContext(), com.appsaga.foodbar.EnterDetails.class));
+            }
+        });
 
         return view;
-    }
-
-    public void detach()
-    {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            getFragmentManager().beginTransaction().detach(this).commitNow();
-            getFragmentManager().beginTransaction().attach(this).commitNow();
-        } else {
-            getFragmentManager().beginTransaction().detach(this).attach(this).commit();
-        }
     }
 
     @Override
@@ -148,9 +161,11 @@ public class BasketFragment extends Fragment {
             basketList.setAdapter(null);
             basketList.setAdapter(baksetItemsAdapter);
             basketLayout.setVisibility(View.GONE);
+            checkoutLayout.setVisibility(View.VISIBLE);
         } else {
             basketList.setVisibility(View.GONE);
             basketLayout.setVisibility(View.VISIBLE);
+            checkoutLayout.setVisibility(View.GONE);
         }
     }
 }

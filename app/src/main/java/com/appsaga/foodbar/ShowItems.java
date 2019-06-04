@@ -3,6 +3,10 @@ package com.appsaga.foodbar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -22,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -32,6 +37,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Objects;
 
 public class ShowItems extends AppCompatActivity {
 
@@ -43,6 +50,7 @@ public class ShowItems extends AppCompatActivity {
     ItemAdapter itemAdapter;
     TextView title;
     TextView itemsNum;
+    ImageView backNavigate;
 
     Toolbar toolbar;
 
@@ -67,6 +75,7 @@ public class ShowItems extends AppCompatActivity {
         title = findViewById(R.id.itemsTitle);
         toolbar = findViewById(R.id.toolbar);
         searchIcon = findViewById(R.id.search_icon);
+        backNavigate = findViewById(R.id.back_navigate);
 
         itemDatabaseHelper = new ItemDatabaseHelper(ShowItems.this);
 
@@ -83,7 +92,8 @@ public class ShowItems extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.offers).setText("Offers"));
         tabLayout.addTab(tabLayout.newTab().setCustomView(R.layout.basket_custom_icon));
 
-        tabLayout.setSelected(false);
+        tabLayout.setSelectedTabIndicatorColor(Color.TRANSPARENT);
+
         count = tabLayout.getTabAt(4).getCustomView().findViewById(R.id.count);
 
         if (itemDatabaseHelper.getTotalItems() != 0) {
@@ -141,6 +151,14 @@ public class ShowItems extends AppCompatActivity {
             }
         });
 
+        backNavigate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                onBackPressed();
+            }
+        });
+
         itemsList.setOnScrollListener(new AbsListView.OnScrollListener() {
             private int mLastFirstVisibleItem;
 
@@ -170,7 +188,24 @@ public class ShowItems extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                String name = ((TextView)view.findViewById(R.id.name)).getText().toString();
+                String quantity = ((Spinner)view.findViewById(R.id.quantity)).getSelectedItem().toString();
+                String price = ((TextView)view.findViewById(R.id.price)).getText().toString();
+                String type = ((TextView)view.findViewById(R.id.type)).getText().toString();
+                Item item = (Item)parent.getItemAtPosition(position);
 
+                Drawable drawable = ((ImageView)view.findViewById(R.id.display)).getDrawable();
+                BitmapDrawable bitmapDrawable = ((BitmapDrawable) drawable);
+                Bitmap image = bitmapDrawable .getBitmap();
+
+                Intent intent = new Intent(ShowItems.this,ItemDescription.class);
+                intent.putExtra("name",name);
+                intent.putExtra("quantity",quantity);
+                intent.putExtra("price",price);
+                intent.putExtra("image",image);
+                intent.putExtra("type",type);
+                intent.putExtra("item",item);
+                startActivity(intent);
             }
         });
 
@@ -179,30 +214,30 @@ public class ShowItems extends AppCompatActivity {
             public void onTabSelected(TabLayout.Tab tab) {
 
                 if (tab.getPosition() == 0) {
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("result", "Home");
-                    setResult(Activity.RESULT_OK, returnIntent);
+                    //Intent returnIntent = new Intent();
+                    //returnIntent.putExtra("result", "Home");
+                   // setResult(Activity.RESULT_OK, returnIntent);
                     finish();
                 } else if (tab.getPosition() == 1) {
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("result", "Categories");
-                    setResult(Activity.RESULT_OK, returnIntent);
-                    finish();
+
+                    Intent intent = new Intent(ShowItems.this,HomeScreen.class);
+                    intent.putExtra("result", "Categories");
+                    startActivity(intent);
+
                 } else if (tab.getPosition() == 2) {
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("result", "Search");
-                    setResult(Activity.RESULT_OK, returnIntent);
-                    finish();
+
+                    Intent intent = new Intent(ShowItems.this,HomeScreen.class);
+                    intent.putExtra("result", "Search");
+                    startActivity(intent);
+
                 } else if (tab.getPosition() == 3) {
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("result", "Offers");
-                    setResult(Activity.RESULT_OK, returnIntent);
-                    finish();
+                    Intent intent = new Intent(ShowItems.this,HomeScreen.class);
+                    intent.putExtra("result", "Offers");
+                    startActivity(intent);
                 } else {
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("result", "Basket");
-                    setResult(Activity.RESULT_OK, returnIntent);
-                    finish();
+                    Intent intent = new Intent(ShowItems.this,HomeScreen.class);
+                    intent.putExtra("result", "Basket");
+                    startActivity(intent);
                 }
             }
 
@@ -214,6 +249,33 @@ public class ShowItems extends AppCompatActivity {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
 
+                if (tab.getPosition() == 0) {
+                    //Intent returnIntent = new Intent();
+                    //returnIntent.putExtra("result", "Home");
+                    //setResult(Activity.RESULT_OK, returnIntent);
+                    finish();
+
+                } else if (tab.getPosition() == 1) {
+
+                    Intent intent = new Intent(ShowItems.this,HomeScreen.class);
+                    intent.putExtra("result", "Categories");
+                    startActivity(intent);
+
+                } else if (tab.getPosition() == 2) {
+
+                    Intent intent = new Intent(ShowItems.this,HomeScreen.class);
+                    intent.putExtra("result", "Search");
+                    startActivity(intent);
+
+                } else if (tab.getPosition() == 3) {
+                    Intent intent = new Intent(ShowItems.this,HomeScreen.class);
+                    intent.putExtra("result", "Offers");
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(ShowItems.this,HomeScreen.class);
+                    intent.putExtra("result", "Basket");
+                    startActivity(intent);
+                }
             }
         });
 
@@ -227,10 +289,9 @@ public class ShowItems extends AppCompatActivity {
                 frameLayout.removeAllViews();
                 transaction.replace(R.id.frame_layout, fragment);
                 transaction.commit();*/
-                Intent returnIntent = new Intent();
-                returnIntent.putExtra("result", "Search");
-                setResult(Activity.RESULT_OK, returnIntent);
-                finish();
+                Intent intent = new Intent(ShowItems.this,HomeScreen.class);
+                intent.putExtra("result", "Search");
+                startActivity(intent);
             }
         });
     }
@@ -249,6 +310,12 @@ public class ShowItems extends AppCompatActivity {
         super.onResume();
 
         count = tabLayout.getTabAt(4).getCustomView().findViewById(R.id.count);
+
+        if(itemAdapter!=null)
+        {
+            itemsList.setAdapter(null);
+            itemsList.setAdapter(itemAdapter);
+        }
 
         if (itemDatabaseHelper.getTotalItems() != 0) {
             count.setVisibility(View.VISIBLE);

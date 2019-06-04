@@ -1,17 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="single"
+        android:id="@+id/group1">
         <item
-            android:id="@+id/item1"
-            android:title="item1" />
+            android:id="@+id/homy_home"
+            android:title="Home" />
         <item
-            android:id="@+id/item2"
-            android:title="item2" />
+            android:id="@+id/categories"
+            android:title="Shop By Category" />
         <item
-            android:id="@+id/item3"
-            android:title="item3" />
+            android:id="@+id/search"
+            android:title="Search My Item" />
+        <item
+            android:id="@+id/offers"
+            android:title="Offers" />
+        <item
+            android:id="@+id/homy_basket"
+            android:title="Basket" />
+    </group>
+
+    <group android:checkableBehavior="single"
+        android:id="@+id/group2">
+        <item
+            android:id="@+id/my_orders"
+            android:title="My Orders" />
+        <item
+            android:id="@+id/address"
+            android:title="My Delivery Address" />
+        <item
+            android:id="@+id/about"
+            android:title="About Us" />
         <item
             android:id="@+id/log_out"
             android:title="Log Out" />
+
+        <item
+            android:id="@+id/menu_none"
+            android:title=""
+            android:visible="false"/>
     </group>
 </menu>

@@ -2,10 +2,15 @@ package com.appsaga.foodbar;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -21,10 +26,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -61,10 +68,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import com.facebook.FacebookSdk;
@@ -79,11 +90,13 @@ import com.facebook.login.widget.ProfilePictureView;
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
 import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator;
 
-public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
+public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     String TAG = "CHECK....";
 
     private DrawerLayout drawerLayout;
+    ImageView navButton;
+    NavigationView navigationView;
 
     ImageView pic;
     TextView name;
@@ -92,6 +105,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
     private GoogleSignInOptions gso;
 
     String from;
+    String my_name;
 
     WormDotsIndicator wormdotsIndicator;
 
@@ -113,9 +127,9 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_screen);
 
-        from = "" +getIntent().getStringExtra("from");
+        from = "" + getIntent().getStringExtra("from");
 
-        mDatabaseHelper=new DatabaseHelper(getApplicationContext());
+        mDatabaseHelper = new DatabaseHelper(getApplicationContext());
         searchFrame = findViewById(R.id.search_frame);
         itemDatabaseHelper = new ItemDatabaseHelper(HomeScreen.this);
 
@@ -131,8 +145,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
         tabLayout.getTabAt(3).setIcon(R.drawable.offers);
         tabLayout.getTabAt(4).setCustomView(R.layout.basket_custom_icon);
 
-        if(from.equals("google"))
-        {
+        if (from.equals("google")) {
             gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestEmail()
                     .build();
@@ -146,25 +159,25 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
+        //actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setDisplayShowTitleEnabled(false);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        //actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
         String userID = getIntent().getStringExtra("User Id");
-        String my_name = getIntent().getStringExtra("name");
+        my_name = getIntent().getStringExtra("name");
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         View hView = navigationView.getHeaderView(0);
 
         pic = hView.findViewById(R.id.pic);
         name = hView.findViewById(R.id.name);
 
-        if(from.equals("facebook")) {
+        if (from.equals("facebook")) {
 
             Picasso.with(getApplicationContext()).load("https://graph.facebook.com/" + userID + "/picture?type=large").into(pic);
         }
 
-        //Log.d("Reference....",imagesRef+"");
+        PlaceName = findViewById(R.id.placeName);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
@@ -178,7 +191,18 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
             // for ActivityCompat#requestPermissions for more details.
         }
 
+        setLocation();
+
         drawerLayout = findViewById(R.id.drawer_layout);
+        navButton = findViewById(R.id.nav_button);
+
+        navButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                drawerLayout.openDrawer(Gravity.START);
+            }
+        });
 
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -187,14 +211,12 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
                         // set item as selected to persist highlight
                         menuItem.setChecked(true);
 
-                        if(menuItem.getItemId()==R.id.log_out)
-                        {
-                            if(from.equals("facebook")) {
+                        if (menuItem.getItemId() == R.id.log_out) {
+                            if (from.equals("facebook")) {
                                 LoginManager.getInstance().logOut();
-                                startActivity(new Intent(HomeScreen.this,com.appsaga.foodbar.MainActivity.class));
+                                startActivity(new Intent(HomeScreen.this, com.appsaga.foodbar.MainActivity.class));
                                 HomeScreen.this.finish();
-                            }
-                            else {
+                            } else {
                                 FirebaseAuth.getInstance().signOut();
                                 Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(
                                         new ResultCallback<Status>() {
@@ -208,12 +230,21 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
                                             }
                                         });
                             }
+                        } else if (menuItem.getItemId() == R.id.homy_home) {
+                            viewPager.setCurrentItem(0);
+                        } else if (menuItem.getItemId() == R.id.categories) {
+                            viewPager.setCurrentItem(1);
+                        } else if (menuItem.getItemId() == R.id.search) {
+                            viewPager.setCurrentItem(2);
+                        } else if (menuItem.getItemId() == R.id.offers) {
+                            viewPager.setCurrentItem(3);
+                        } else if (menuItem.getItemId() == R.id.homy_basket) {
+                            viewPager.setCurrentItem(4);
+                        } else if (menuItem.getItemId() == R.id.address) {
+                            startActivity(new Intent(HomeScreen.this, MyDeliveryAddress.class));
                         }
                         // close drawer when item is tapped
                         drawerLayout.closeDrawers();
-
-                        // Add code here to update the UI based on the item selected
-                        // For example, swap UI fragments here
 
                         return true;
                     }
@@ -231,28 +262,31 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
             @Override
             public void onClick(View v) {
 
-                startActivityForResult(new Intent(HomeScreen.this,EnterLocation.class),1);
+                LocationManager locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+                if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+                {
+                    Toast.makeText(HomeScreen.this,"Please Wait\nOR\nCheck Internet Connection",Toast.LENGTH_LONG).show();
+                    setLocation();
+                }
+                else {
+
+                    Toast.makeText(HomeScreen.this,"Please turn on GPS",Toast.LENGTH_LONG).show();
+                }
             }
         });
-
-        PlaceName = findViewById(R.id.placeName);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
 
-                if( tab.getPosition()==4 )
-                {
+                if (tab.getPosition() == 4 || tab.getPosition() == 2) {
                     searchFrame.setVisibility(View.GONE);
                     tabLayout.setVisibility(View.GONE);
-                }
-                else if(tab.getPosition()==2)
-                {
+                } else if (tab.getPosition() == 3 || tab.getPosition() == 1) {
                     searchFrame.setVisibility(View.GONE);
                     tabLayout.setVisibility(View.VISIBLE);
-                }
-                else
-                {
+                } else {
                     searchFrame.setVisibility(View.VISIBLE);
                     tabLayout.setVisibility(View.VISIBLE);
                 }
@@ -271,13 +305,10 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
 
         count = tabLayout.getTabAt(4).getCustomView().findViewById(R.id.count);
 
-        if(itemDatabaseHelper.getTotalItems()!=0)
-        {
+        if (itemDatabaseHelper.getTotalItems() != 0) {
             count.setVisibility(View.VISIBLE);
             count.setText(String.valueOf(itemDatabaseHelper.getTotalItems()));
-        }
-        else
-        {
+        } else {
             count.setVisibility(View.GONE);
         }
     }
@@ -292,28 +323,18 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
         }*/
 
         if (requestCode == 10) {
-            if(resultCode == Activity.RESULT_OK){
-                String result=data.getStringExtra("result");
+            if (resultCode == Activity.RESULT_OK) {
+                String result = data.getStringExtra("result");
 
-                if(result.equalsIgnoreCase("Home"))
-                {
+                if (result.equalsIgnoreCase("Home")) {
                     viewPager.setCurrentItem(0);
-                }
-                else if(result.equalsIgnoreCase("Categories"))
-                {
-                    Log.d("test....","Yese");
+                } else if (result.equalsIgnoreCase("Categories")) {
                     viewPager.setCurrentItem(1);
-                }
-                else if(result.equalsIgnoreCase("Search"))
-                {
+                } else if (result.equalsIgnoreCase("Search")) {
                     viewPager.setCurrentItem(2);
-                }
-                else if(result.equalsIgnoreCase("Offers"))
-                {
+                } else if (result.equalsIgnoreCase("Offers")) {
                     viewPager.setCurrentItem(3);
-                }
-                else
-                {
+                } else if (result.equalsIgnoreCase("Basket")) {
                     viewPager.setCurrentItem(4);
                 }
             }
@@ -334,7 +355,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
     protected void onStart() {
         super.onStart();
 
-        if(from.equals("google")) {
+        if (from.equals("google")) {
             OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(googleApiClient);
             if (opr.isDone()) {
                 GoogleSignInResult result = opr.get();
@@ -349,23 +370,25 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
             }
         }
     }
-    private void handleSignInResult(GoogleSignInResult result){
-        if(result.isSuccess()){
-            GoogleSignInAccount account=result.getSignInAccount();
-            name.setText(account.getDisplayName());
-            try{
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        if (result.isSuccess()) {
+            GoogleSignInAccount account = result.getSignInAccount();
+            name.setText(Objects.requireNonNull(account).getDisplayName());
+            try {
                 Glide.with(this).load(account.getPhotoUrl()).into(pic);
-            }catch (NullPointerException e){
-                Toast.makeText(getApplicationContext(),"image not found",Toast.LENGTH_LONG).show();
+            } catch (NullPointerException e) {
+                Toast.makeText(getApplicationContext(), "image not found", Toast.LENGTH_LONG).show();
             }
 
-        }else{
+        } else {
             //gotoMainActivity();
             HomeScreen.this.finish();
         }
     }
-    private void gotoMainActivity(){
-        Intent intent=new Intent(this,MainActivity.class);
+
+    private void gotoMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
         // intent.putExtra("from","google");
         startActivity(intent);
         finish();
@@ -379,21 +402,29 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
     @Override
     public void onBackPressed() {
 
-        if(viewPager.getCurrentItem()!=0) {
+        ActivityManager mngr = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+
+        List<ActivityManager.RunningTaskInfo> taskList = mngr.getRunningTasks(10);
+
+        navigationView.setCheckedItem(R.id.menu_none);
+
+        if (drawerLayout.isDrawerOpen(Gravity.START)) {
+            drawerLayout.closeDrawer(Gravity.START);
+        } else if (taskList.get(0).numActivities == 1 &&
+                taskList.get(0).topActivity.getClassName().equals(this.getClass().getName()) && viewPager.getCurrentItem() != 0) {
+
+            Log.i(TAG, "This is last activity in the stack");
             viewPager.setCurrentItem(0);
-        }
-        else if(viewPager.getCurrentItem()==0)
-        {
+        } else if (taskList.get(0).numActivities != 1) {
+            super.onBackPressed();
+        } else if (viewPager.getCurrentItem() == 0) {
             finish();
             //System.exit(0);
         }
-        if(itemDatabaseHelper.getTotalItems()!=0)
-        {
+        if (itemDatabaseHelper.getTotalItems() != 0) {
             count.setVisibility(View.VISIBLE);
             count.setText(String.valueOf(itemDatabaseHelper.getTotalItems()));
-        }
-        else
-        {
+        } else {
             count.setVisibility(View.GONE);
         }
     }
@@ -409,24 +440,145 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
     protected void onResume() {
         super.onResume();
 
-        if(itemDatabaseHelper.getTotalItems()!=0)
-        {
+        navigationView.setCheckedItem(R.id.menu_none);
+
+        if (itemDatabaseHelper.getTotalItems() != 0) {
             count.setVisibility(View.VISIBLE);
             count.setText(String.valueOf(itemDatabaseHelper.getTotalItems()));
-        }
-        else
-        {
+        } else {
             count.setVisibility(View.GONE);
         }
 
-        if(dialog!=null) {
+        if (dialog != null) {
             dialog.dismiss();
+        }
+
+        String intent = getIntent().getStringExtra("intent");
+        if (intent != null)
+            if (intent.equals("Basket")) {
+                viewPager.setCurrentItem(4);
+            } else if (intent.equals("Search")) {
+                viewPager.setCurrentItem(2);
+            }
+
+        String result = getIntent().getStringExtra("result");
+        if (result != null) {
+            if (result.equals("Categories")) {
+                viewPager.setCurrentItem(1);
+            } else if (result.equals("Search")) {
+                viewPager.setCurrentItem(2);
+            } else if (result.equals("Offers")) {
+                viewPager.setCurrentItem(3);
+            } else if (result.equals("Basket")) {
+                viewPager.setCurrentItem(4);
+            }
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-       // dialog = ProgressDialog.show(HomeScreen.this, "Loading", "Please wait...", true);
+        // dialog = ProgressDialog.show(HomeScreen.this, "Loading", "Please wait...", true);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+        double latitude ;
+        double longitude ;
+
+        if(location!=null) {
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+
+            Geocoder myLocation = new Geocoder(HomeScreen.this, Locale.getDefault());
+            List<android.location.Address> myList = null;
+            try {
+                myList = myLocation.getFromLocation(latitude, longitude, 1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(myList!=null) {
+                android.location.Address address = Objects.requireNonNull(myList).get(0);
+                String addressStr = "";
+                addressStr += address.getPostalCode();
+                PlaceName.setText(addressStr);
+            }
+        }
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+    public void setLocation() {
+        LocationManager locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+                ActivityCompat.requestPermissions(this, permissions, 2);
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 500.0f, HomeScreen.this);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+                ActivityCompat.requestPermissions(this, permissions, 1);
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+
+            Location location = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+            double latitude ;
+            double longitude ;
+
+            if(location!=null) {
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+
+                Geocoder myLocation = new Geocoder(HomeScreen.this, Locale.getDefault());
+                List<android.location.Address> myList = null;
+                try {
+                    myList = myLocation.getFromLocation(latitude, longitude, 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if(myList!=null) {
+                    android.location.Address address = Objects.requireNonNull(myList).get(0);
+                    String addressStr = "";
+                    addressStr += address.getPostalCode();
+                    PlaceName.setText(addressStr);
+                }
+            }
+        }
+        else
+        {
+            Toast.makeText(HomeScreen.this,"Please turn on GPS",Toast.LENGTH_LONG).show();
+        }
     }
 }

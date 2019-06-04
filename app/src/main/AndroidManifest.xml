@@ -60,6 +60,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
         <activity
             android:name=".MapsActivity"
@@ -71,7 +74,8 @@
             android:theme="@style/AppTheme" />
         <activity android:name=".EnterDetails" />
         <activity android:name=".SelectPaymentOptions" />
-        <activity android:name=".ItemDescription"></activity>
+        <activity android:name=".ItemDescription" />
+        <activity android:name=".MyDeliveryAddress"></activity>
     </application>
 
 </manifest>

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 public class EnterDetails extends AppCompatActivity {
@@ -22,7 +23,7 @@ public class EnterDetails extends AppCompatActivity {
     EditText areaDetails;
     EditText pincode;
     EditText nickname;
-    Button selectPayment;
+    ImageButton next;
 
     String name;
     String phoneNumber;
@@ -58,9 +59,9 @@ public class EnterDetails extends AppCompatActivity {
         saveAddress = findViewById(R.id.save_address);
         copyAddress = findViewById(R.id.copy_saved_address);
 
-        selectPayment = findViewById(R.id.select_payment);
+        next = findViewById(R.id.next);
 
-        selectPayment.setOnClickListener(new View.OnClickListener() {
+        next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 

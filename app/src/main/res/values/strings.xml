@@ -4,7 +4,7 @@
     <string name="fb_login_protocol_scheme">fb234167524177969</string>
     <string name="title_activity_maps">Map</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_show_items">ShowItems</string>
+    <string name="custom_dialog">Location not set.\nTurn on GPS and set location\nOR</string>
 </resources>

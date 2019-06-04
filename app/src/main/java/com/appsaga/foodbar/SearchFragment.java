@@ -24,6 +24,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,6 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class SearchFragment extends Fragment {
@@ -46,6 +49,7 @@ public class SearchFragment extends Fragment {
     ArrayList<String> itemsName;
 
     ImageView searchIcon;
+    ImageView backNavigate;
 
     ArrayList<Item> searchedItemsArray;
     ListView searchedItems;
@@ -69,6 +73,7 @@ public class SearchFragment extends Fragment {
             searchIcon = view.findViewById(R.id.search_icon);
             searchedItemsArray = new ArrayList<>();
             searchedItems = view.findViewById(R.id.searchedItems);
+            backNavigate = view.findViewById(R.id.back_navigate);
 
             DatabaseReference myRef = databaseReference.child("Categories");
 
@@ -83,13 +88,13 @@ public class SearchFragment extends Fragment {
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                         for (DataSnapshot dataSnapshot1 : ds.getChildren()) {
                             items.add(dataSnapshot1.getValue(Item.class));
-                            itemsName.add(dataSnapshot1.getValue(Item.class).getName());
+                            itemsName.add(Objects.requireNonNull(dataSnapshot1.getValue(Item.class)).getName());
                         }
                     }
 
                     Log.d("Checkup", items.get(1).getName());
 
-                    ArrayAdapter<String> itemArrayAdapter = new ArrayAdapter<>(getContext(),
+                    ArrayAdapter<String> itemArrayAdapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()),
                             android.R.layout.simple_list_item_1, itemsName);
 
                     searchText.setAdapter(itemArrayAdapter);
@@ -97,7 +102,7 @@ public class SearchFragment extends Fragment {
                     dialog.dismiss();
 
                     searchText.requestFocus();
-                    InputMethodManager imgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imgr = (InputMethodManager) Objects.requireNonNull(getActivity()).getSystemService(Context.INPUT_METHOD_SERVICE);
                     imgr.showSoftInput(searchText, 0);
                     imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
                 }
@@ -105,6 +110,14 @@ public class SearchFragment extends Fragment {
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                }
+            });
+
+            backNavigate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Objects.requireNonNull(getActivity()).onBackPressed();
                 }
             });
 
@@ -116,6 +129,7 @@ public class SearchFragment extends Fragment {
 
                     searchedItemsArray.clear();
                     if (!searchText.getText().toString().equals("")) {
+
                         for (Item item : items) {
 
                             if (item.getName().equalsIgnoreCase(searchText.getText().toString()) || item.getName().toLowerCase().contains(searchText.getText().toString().toLowerCase()) ||
@@ -126,10 +140,15 @@ public class SearchFragment extends Fragment {
                             }
                         }
 
-                        ItemAdapter itemAdapter = new ItemAdapter(getContext(), searchedItemsArray);
-                        searchedItems.setAdapter(null);
-                        searchedItems.setAdapter(itemAdapter);
-
+                        if(searchedItemsArray.size()!=0) {
+                            ItemAdapter itemAdapter = new ItemAdapter(getContext(), searchedItemsArray);
+                            searchedItems.setAdapter(null);
+                            searchedItems.setAdapter(itemAdapter);
+                        }
+                        else {
+                            Toast.makeText(getContext(),"No items found",Toast.LENGTH_LONG).show();
+                            dialog.dismiss();
+                        }
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
@@ -157,10 +176,10 @@ public class SearchFragment extends Fragment {
         }
         else
         {
-            searchText.requestFocus();
-            InputMethodManager imgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imgr.showSoftInput(searchText, 0);
-            imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+            //searchText.requestFocus();
+            //InputMethodManager imgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            //imgr.showSoftInput(searchText, 0);
+            //imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
         }
         return view;
     }
@@ -178,5 +197,19 @@ public class SearchFragment extends Fragment {
 
         if(dialog!=null)
         dialog.dismiss();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+
+        if(isVisibleToUser==Boolean.TRUE) {
+            if (searchText != null) {
+
+                searchText.requestFocus();
+                InputMethodManager imgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imgr.showSoftInput(searchText, 0);
+                imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+            }
+        }
     }
 }

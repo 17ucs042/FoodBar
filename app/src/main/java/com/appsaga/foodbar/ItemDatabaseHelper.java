@@ -157,7 +157,7 @@ public class ItemDatabaseHelper extends SQLiteOpenHelper {
         Boolean contains = Boolean.FALSE;
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res= db.rawQuery("select * from "+TABLE_NAME,null);
+        Cursor res= db.rawQuery("select * from "+TABLE_NAME+ " WHERE  itemNum > ?",new String[]{"0"});
 
         if(res.moveToFirst())
         {
@@ -195,9 +195,9 @@ public class ItemDatabaseHelper extends SQLiteOpenHelper {
         return 0;
     }
 
-    public int getTotalPrice()
+    public double getTotalPrice()
     {
-        int totalPrice=0;
+        double totalPrice=0;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res= db.rawQuery("select * from "+TABLE_NAME+ " WHERE  itemNum > ?",new String[]{"0"});
@@ -206,7 +206,7 @@ public class ItemDatabaseHelper extends SQLiteOpenHelper {
         {
             do {
                     String price = res.getString(3).replace("₹","").trim();
-                    totalPrice = totalPrice + Integer.parseInt(price)*res.getInt(4);
+                    totalPrice = totalPrice + Double.parseDouble(price)*res.getInt(4);
 
             }while (res.moveToNext());
         }

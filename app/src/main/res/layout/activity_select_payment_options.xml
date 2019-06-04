@@ -6,14 +6,61 @@
     android:layout_height="match_parent"
     tools:context=".SelectPaymentOptions">
 
-    <TextView
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/primary">
+
+        <RelativeLayout
+            android:id="@+id/getLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="3dp"
+                android:text="Select Payment Options"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <TextView
+        android:id="@+id/COD"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
         android:text="COD"
         android:gravity="center"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_marginTop="30dp"/>
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/toolbar"
+        android:textColor="#000000"
+        android:fontFamily="sans-serif-light"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/ripple_effect3"/>
+
+    <TextView
+        android:id="@+id/UPI"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="UPI"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/COD"
+        android:textColor="#000000"
+        android:fontFamily="sans-serif-light"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/ripple_effect3"
+        android:drawableEnd="@drawable/go_next" />
 
     <Button
         android:id="@+id/confirm_button"
@@ -28,5 +75,6 @@
         android:paddingStart="15dp"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
-        android:paddingEnd="15dp"/>
+        android:paddingEnd="15dp"
+        android:clickable="false" />
 </RelativeLayout>

@@ -27,11 +27,23 @@
                 android:background="?attr/colorPrimary"
                 android:paddingBottom="5dp">
 
+                <ImageView
+                    android:id="@+id/nav_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/navigation_menu"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/ripple_effect4"
+                    android:padding="3dp" />
+
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
+                    android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+                    android:layout_toEndOf="@id/nav_button"
+                    android:layout_centerVertical="true">
 
                     <LinearLayout
                         android:id="@+id/getLocation"
@@ -59,9 +71,10 @@
                             android:ellipsize="end"
                             android:maxLength="50"
                             android:maxLines="1"
-                            android:text="location"
+                            android:text="Click here to set location"
                             android:textColor="#FFFFFF"
-                            android:textSize="17sp" />
+                            android:textSize="17sp"
+                            android:gravity="center"/>
                     </LinearLayout>
 
                 </android.support.v7.widget.Toolbar>

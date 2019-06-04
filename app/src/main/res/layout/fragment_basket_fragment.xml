@@ -20,11 +20,13 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/back_navigate"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/back_navigation"
+                android:padding="6dp"
                 android:layout_centerVertical="true"
-                android:layout_gravity="start"
-                android:src="@drawable/ic_menu" />
+                android:background="@drawable/ripple_effect4"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -36,6 +38,20 @@
                 android:textColor="#FFFFFF"
                 android:textSize="20sp"
                 android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/search_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="3dp"
+                android:padding="3dp"
+                android:src="@drawable/search_white"
+                android:background="@drawable/ripple_effect4"/>
 
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
@@ -119,7 +135,8 @@
                 android:text="Total Price"
                 android:textColor="#FFFFFF"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-light"/>
 
             <TextView
                 android:id="@+id/total_price"
@@ -128,7 +145,8 @@
                 android:text="Price Value"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-light"/>
 
         </LinearLayout>
 

@@ -112,7 +112,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 google.setVisibility(View.INVISIBLE);
 
                 userID = loginResult.getAccessToken().getUserId();
-
                 Log.d("userId",userID);
 
                 Intent intent = new Intent(MainActivity.this,com.appsaga.foodbar.HomeScreen.class);

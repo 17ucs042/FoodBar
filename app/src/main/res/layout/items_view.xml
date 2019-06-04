@@ -10,7 +10,8 @@
         android:id="@+id/complete_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="3dp">
+        android:layout_marginBottom="3dp"
+        android:descendantFocusability="blocksDescendants">
 
         <ImageView
             android:id="@+id/display"
@@ -34,6 +35,16 @@
             android:layout_toEndOf="@id/display"
             android:layout_toRightOf="@id/display"/>
 
+        <TextView
+            android:id="@+id/type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="type"
+            android:layout_toEndOf="@id/name"
+            android:textSize="20sp"
+            android:layout_marginStart="20dp"
+            android:visibility="invisible"/>
+
         <RelativeLayout
             android:id="@+id/spinner_layout"
             android:layout_width="match_parent"
@@ -45,7 +56,9 @@
             android:layout_marginRight="25dp"
             android:layout_marginEnd="25dp"
             android:layout_toEndOf="@id/display"
-            android:layout_toRightOf="@id/display">
+            android:layout_toRightOf="@id/display"
+            android:focusable="false"
+            android:focusableInTouchMode="false">
 
             <Spinner
                 android:id="@+id/quantity"
@@ -57,7 +70,9 @@
                 android:layout_marginLeft="5dp"
                 android:background="@android:color/transparent"
                 android:gravity="center"
-                android:spinnerMode="dropdown" />
+                android:spinnerMode="dropdown"
+                android:focusable="false"
+                android:focusableInTouchMode="false"/>
 
             <ImageView
                 android:layout_width="30dp"
@@ -105,7 +120,9 @@
             android:layout_marginTop="12dp"
             android:background="@drawable/start_shopping"
             android:text="Add"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
 
         <LinearLayout
             android:id="@+id/add_layout"

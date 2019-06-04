@@ -65,6 +65,7 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         TextView item_num;
         Spinner quantity_spinner;
         byte[][] image;
+        TextView type;
     }
 
     @Override
@@ -89,6 +90,7 @@ public class ItemAdapter extends ArrayAdapter<Item> {
             holder.addLayout = listItemView.findViewById(R.id.add_layout);
             holder.item_num = listItemView.findViewById(R.id.quantity_value);
             holder.quantity_spinner = listItemView.findViewById(R.id.quantity);
+            holder.type = listItemView.findViewById(R.id.type);
             holder.image = new byte[1][1];
             listItemView.setTag(holder);
 
@@ -105,6 +107,7 @@ public class ItemAdapter extends ArrayAdapter<Item> {
 
             Collections.sort(quantities);
 
+            holder.type.setText(currentItem.getType());
             holder.name.setText(currentItem.getName());
             holder.price.setText(priceValue);
             GlideApp.with(getContext()).load(currentItem.getUrl()).into(holder.display);
