@@ -38,6 +38,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class ShowItems extends AppCompatActivity {
@@ -60,14 +61,14 @@ public class ShowItems extends AppCompatActivity {
     TabLayout tabLayout;
 
     ItemDatabaseHelper itemDatabaseHelper;
-    ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_items);
 
-        String value = getIntent().getStringExtra("value");
+        final String value = getIntent().getStringExtra("value");
+        final String pin = getIntent().getStringExtra("pin");
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference();
@@ -103,46 +104,92 @@ public class ShowItems extends AppCompatActivity {
             count.setVisibility(View.GONE);
         }
 
-        DatabaseReference myRef = databaseReference.child("Categories").child(value);
+        final ProgressDialog progressDialog = ProgressDialog.show(ShowItems.this, "Loading", "Getting nearby stores...", true);
 
-        final ProgressDialog dialog = ProgressDialog.show(ShowItems.this, "Loading", "Please wait...", true);
-
-        myRef.addValueEventListener(new ValueEventListener() {
+        databaseReference.child("Delivers").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                int count = (int) dataSnapshot.getChildrenCount();
+                HashMap<String,String> delivers;
+                ArrayList<String> delivery_pincode = new ArrayList<>();
 
-                itemsNum = findViewById(R.id.itemsNum);
+                for(DataSnapshot ds: dataSnapshot.getChildren())
+                {
+                    delivers = (HashMap<String,String>)ds.getValue();
 
-                if (count == 1) {
-                    itemsNum.setText(Integer.toString(count) + " item");
-                } else {
-                    itemsNum.setText(Integer.toString(count) + " items");
-                }
-                if (opened == Boolean.TRUE) {
-                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        Item item = ds.getValue(Item.class);
-                        allItems.add(item);
-
-                    }
-
-                    itemAdapter = new ItemAdapter(ShowItems.this, allItems);
-                    itemsList.setAdapter(null);
-                    itemsList.setAdapter(itemAdapter);
-
-                    opened = Boolean.FALSE;
-
-                    Handler handler = new Handler();
-
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            dialog.dismiss();
+                    for(Map.Entry<String,String> entry : delivers.entrySet())
+                    {
+                        if(entry.getValue().equalsIgnoreCase(pin))
+                        {
+                            if(!delivery_pincode.contains(entry.getKey()))
+                            {
+                                delivery_pincode.add(entry.getKey());
+                            }
                         }
-                    }, 2000);
+                    }
                 }
+
+                Handler handler = new Handler();
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        progressDialog.dismiss();
+                    }
+                }, 2000);
+
+                final ProgressDialog progressDialog1 = ProgressDialog.show(ShowItems.this, "Loading", "Fetching items...", true);
+
+                for(int i =0;i<delivery_pincode.size();i++)
+                {
+                    DatabaseReference myRef = databaseReference.child("Categories").child(delivery_pincode.get(i)).child(value);
+
+                    myRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            int count = (int) dataSnapshot.getChildrenCount();
+
+                            itemsNum = findViewById(R.id.itemsNum);
+
+                            if (count == 1) {
+                                itemsNum.setText(Integer.toString(count) + " item");
+                            } else {
+                                itemsNum.setText(Integer.toString(count) + " items");
+                            }
+                            if (opened == Boolean.TRUE) {
+                                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                    Item item = ds.getValue(Item.class);
+                                    allItems.add(item);
+
+                                }
+
+                                if(allItems.size()!=0) {
+                                    itemAdapter = new ItemAdapter(ShowItems.this, allItems);
+                                   // itemsList.setAdapter(null);
+                                    itemsList.setAdapter(itemAdapter);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+
+                Handler handler1 = new Handler();
+
+                handler1.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        opened = Boolean.FALSE;
+                        progressDialog1.dismiss();
+                    }
+                }, 4000);
             }
 
             @Override
@@ -216,7 +263,7 @@ public class ShowItems extends AppCompatActivity {
                 if (tab.getPosition() == 0) {
                     //Intent returnIntent = new Intent();
                     //returnIntent.putExtra("result", "Home");
-                   // setResult(Activity.RESULT_OK, returnIntent);
+                    // setResult(Activity.RESULT_OK, returnIntent);
                     finish();
                 } else if (tab.getPosition() == 1) {
 
@@ -328,6 +375,6 @@ public class ShowItems extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-         //dialog = ProgressDialog.show(ShowItems.this, "Loading", "Please wait...", true);
+        //dialog = ProgressDialog.show(ShowItems.this, "Loading", "Please wait...", true);
     }
 }

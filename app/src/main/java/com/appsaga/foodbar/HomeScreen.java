@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
@@ -106,8 +107,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
 
     String from;
     String my_name;
-
-    WormDotsIndicator wormdotsIndicator;
+    String userID;
 
     DatabaseHelper mDatabaseHelper;
 
@@ -121,6 +121,8 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
     TabLayout tabLayout;
     ItemDatabaseHelper itemDatabaseHelper;
     ProgressDialog dialog;
+    MyPincodeDatabaseHelper myPincodeDatabaseHelper;
+    ImageView editPin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +134,8 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
         mDatabaseHelper = new DatabaseHelper(getApplicationContext());
         searchFrame = findViewById(R.id.search_frame);
         itemDatabaseHelper = new ItemDatabaseHelper(HomeScreen.this);
+        myPincodeDatabaseHelper = new MyPincodeDatabaseHelper(HomeScreen.this);
+        editPin = findViewById(R.id.edit_pin);
 
         viewPager = findViewById(R.id.viewpager);
         FragmentAdapter adapter = new FragmentAdapter(this, getSupportFragmentManager());
@@ -163,7 +167,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
         actionbar.setDisplayShowTitleEnabled(false);
         //actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
-        String userID = getIntent().getStringExtra("User Id");
+        userID = getIntent().getStringExtra("User Id");
         my_name = getIntent().getStringExtra("name");
 
         navigationView = findViewById(R.id.nav_view);
@@ -242,6 +246,10 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
                             viewPager.setCurrentItem(4);
                         } else if (menuItem.getItemId() == R.id.address) {
                             startActivity(new Intent(HomeScreen.this, MyDeliveryAddress.class));
+                        } else if (menuItem.getItemId() == R.id.my_orders) {
+                            startActivity(new Intent(HomeScreen.this, MyOrders.class));
+                        } else if (menuItem.getItemId() == R.id.about) {
+                            startActivity(new Intent(HomeScreen.this, AboutUs.class));
                         }
                         // close drawer when item is tapped
                         drawerLayout.closeDrawers();
@@ -264,14 +272,12 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
 
                 LocationManager locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-                if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
-                {
-                    Toast.makeText(HomeScreen.this,"Please Wait\nOR\nCheck Internet Connection",Toast.LENGTH_LONG).show();
+                if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    Toast.makeText(HomeScreen.this, "Please Wait\nOR\nCheck Internet Connection", Toast.LENGTH_LONG).show();
                     setLocation();
-                }
-                else {
+                } else {
 
-                    Toast.makeText(HomeScreen.this,"Please turn on GPS",Toast.LENGTH_LONG).show();
+                    Toast.makeText(HomeScreen.this, "Please turn on GPS", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -311,6 +317,14 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
         } else {
             count.setVisibility(View.GONE);
         }
+
+        editPin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivityForResult(new Intent(HomeScreen.this, EnterPincode.class), 30);
+            }
+        });
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -337,6 +351,13 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
                 } else if (result.equalsIgnoreCase("Basket")) {
                     viewPager.setCurrentItem(4);
                 }
+            }
+        }
+
+        if (requestCode == 30) {
+            if (resultCode == Activity.RESULT_OK) {
+                String result = data.getStringExtra("result");
+                PlaceName.setText(result);
             }
         }
     }
@@ -415,11 +436,11 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
 
             Log.i(TAG, "This is last activity in the stack");
             viewPager.setCurrentItem(0);
-        } else if (taskList.get(0).numActivities != 1) {
-            super.onBackPressed();
         } else if (viewPager.getCurrentItem() == 0) {
+            finishAffinity();
             finish();
-            //System.exit(0);
+        } else {
+            super.onBackPressed();
         }
         if (itemDatabaseHelper.getTotalItems() != 0) {
             count.setVisibility(View.VISIBLE);
@@ -473,6 +494,12 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
                 viewPager.setCurrentItem(4);
             }
         }
+
+        if (PlaceName.getText().toString().length() != 6) {
+            if (myPincodeDatabaseHelper.getTotalItems() != 0) {
+                PlaceName.setText(myPincodeDatabaseHelper.getPincode());
+            }
+        }
     }
 
     @Override
@@ -484,10 +511,10 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
     @Override
     public void onLocationChanged(Location location) {
 
-        double latitude ;
-        double longitude ;
+        double latitude;
+        double longitude;
 
-        if(location!=null) {
+        if (location != null) {
             latitude = location.getLatitude();
             longitude = location.getLongitude();
 
@@ -498,7 +525,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if(myList!=null) {
+            if (myList != null) {
                 android.location.Address address = Objects.requireNonNull(myList).get(0);
                 String addressStr = "";
                 addressStr += address.getPostalCode();
@@ -554,10 +581,10 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
 
             Location location = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-            double latitude ;
-            double longitude ;
+            double latitude;
+            double longitude;
 
-            if(location!=null) {
+            if (location != null) {
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
 
@@ -568,17 +595,15 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                if(myList!=null) {
+                if (myList != null) {
                     android.location.Address address = Objects.requireNonNull(myList).get(0);
                     String addressStr = "";
                     addressStr += address.getPostalCode();
                     PlaceName.setText(addressStr);
                 }
             }
-        }
-        else
-        {
-            Toast.makeText(HomeScreen.this,"Please turn on GPS",Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(HomeScreen.this, "Please turn on GPS", Toast.LENGTH_LONG).show();
         }
     }
 }

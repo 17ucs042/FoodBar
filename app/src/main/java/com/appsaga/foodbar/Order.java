@@ -7,10 +7,20 @@ public class Order {
 
     HashMap<String, String> customerDetails;
     ArrayList<HashMap<String, String>> itemsOrdered;
+    String paymentType;
 
-    public Order(HashMap<String, String> customerDetails, ArrayList<HashMap<String, String>> itemsOrdered) {
+    public Order(HashMap<String, String> customerDetails, ArrayList<HashMap<String, String>> itemsOrdered, String paymentType) {
         this.customerDetails = customerDetails;
         this.itemsOrdered = itemsOrdered;
+        this.paymentType = paymentType;
+    }
+
+    public String getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(String paymentType) {
+        this.paymentType = paymentType;
     }
 
     public HashMap<String, String> getCustomerDetails() {

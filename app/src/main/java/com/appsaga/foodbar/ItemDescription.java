@@ -1,5 +1,6 @@
 package com.appsaga.foodbar;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -64,6 +66,7 @@ public class ItemDescription extends AppCompatActivity {
 
     static ProgressDialog dialog;
 
+    @SuppressLint("WrongThread")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +106,7 @@ public class ItemDescription extends AppCompatActivity {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
         byteArray = stream.toByteArray();
         final Uri uri = Uri.parse(item.getUrl());
 
@@ -111,6 +115,7 @@ public class ItemDescription extends AppCompatActivity {
         }
 
         packList = findViewById(R.id.pack_list);
+        Collections.sort(selectedItems);
         packSizeAdapter = new PackSizeAdapter(ItemDescription.this, selectedItems);
         packList.setAdapter(packSizeAdapter);
 

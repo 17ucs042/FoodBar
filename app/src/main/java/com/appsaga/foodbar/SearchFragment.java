@@ -34,6 +34,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -44,6 +46,7 @@ public class SearchFragment extends Fragment {
 
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
+    DatabaseReference myRef;
 
     ArrayList<Item> items;
     ArrayList<String> itemsName;
@@ -54,6 +57,7 @@ public class SearchFragment extends Fragment {
     ArrayList<Item> searchedItemsArray;
     ListView searchedItems;
     ProgressDialog dialog;
+    TextView placeName;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -75,43 +79,87 @@ public class SearchFragment extends Fragment {
             searchedItems = view.findViewById(R.id.searchedItems);
             backNavigate = view.findViewById(R.id.back_navigate);
 
-            DatabaseReference myRef = databaseReference.child("Categories");
+            placeName = getActivity().findViewById(R.id.placeName);
 
-            final ProgressDialog dialog = ProgressDialog.show(getContext(), "Loading", "Please wait...", true);
+            if(placeName.getText().toString().trim().length()==6) {
 
-            dialog.show();
+                final ProgressDialog dialog = ProgressDialog.show(getContext(), "Loading", "Please wait...", true);
+                dialog.show();
 
-            myRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                DatabaseReference delivers = databaseReference.child("Delivers");
 
-                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        for (DataSnapshot dataSnapshot1 : ds.getChildren()) {
-                            items.add(dataSnapshot1.getValue(Item.class));
-                            itemsName.add(Objects.requireNonNull(dataSnapshot1.getValue(Item.class)).getName());
+                delivers.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        HashMap<String,String> delivers;
+                        final ArrayList<String> delivery_pincode = new ArrayList<>();
+
+                        for(DataSnapshot ds: dataSnapshot.getChildren())
+                        {
+                            delivers = (HashMap<String,String>)ds.getValue();
+
+                            for(Map.Entry<String,String> entry : delivers.entrySet())
+                            {
+                                if(entry.getValue().equalsIgnoreCase(placeName.getText().toString().trim()))
+                                {
+                                    if(!delivery_pincode.contains(entry.getKey()))
+                                    {
+                                        delivery_pincode.add(entry.getKey());
+                                    }
+                                }
+                            }
+                        }
+
+                        for(int i=0;i<delivery_pincode.size();i++) {
+                            myRef = databaseReference.child("Categories").child(delivery_pincode.get(i));
+
+                            myRef.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                        for (DataSnapshot dataSnapshot1 : ds.getChildren()) {
+
+                                            if(!itemsName.contains(dataSnapshot1.getValue(Item.class).getName()))
+                                            {
+                                                itemsName.add(Objects.requireNonNull(dataSnapshot1.getValue(Item.class)).getName());
+                                                items.add(dataSnapshot1.getValue(Item.class));
+                                            }
+                                        }
+                                    }
+
+                                    ArrayAdapter<String> itemArrayAdapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()),
+                                            android.R.layout.simple_list_item_1, itemsName);
+
+                                    searchText.setAdapter(itemArrayAdapter);
+
+                                    dialog.dismiss();
+
+                                    searchText.requestFocus();
+                                    InputMethodManager imgr = (InputMethodManager) Objects.requireNonNull(getActivity()).getSystemService(Context.INPUT_METHOD_SERVICE);
+                                    imgr.showSoftInput(searchText, 0);
+                                    imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
                         }
                     }
 
-                    Log.d("Checkup", items.get(1).getName());
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                    ArrayAdapter<String> itemArrayAdapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()),
-                            android.R.layout.simple_list_item_1, itemsName);
-
-                    searchText.setAdapter(itemArrayAdapter);
-
-                    dialog.dismiss();
-
-                    searchText.requestFocus();
-                    InputMethodManager imgr = (InputMethodManager) Objects.requireNonNull(getActivity()).getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imgr.showSoftInput(searchText, 0);
-                    imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
+                    }
+                });
+            }
+            else
+            {
+                Toast.makeText(getContext(),"Location not set",Toast.LENGTH_LONG).show();
+            }
 
             backNavigate.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -125,38 +173,47 @@ public class SearchFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                    final ProgressDialog dialog = ProgressDialog.show(getContext(), "Loading", "Please wait...", true);
+                    if(placeName.getText().toString().trim().length()==6) {
+                        final ProgressDialog dialog = ProgressDialog.show(getContext(), "Loading", "Please wait...", true);
 
-                    searchedItemsArray.clear();
-                    if (!searchText.getText().toString().equals("")) {
+                        Log.d("Checkup", items.size()+"");
+                        Log.d("Checkup", searchedItemsArray.size()+"");
 
-                        for (Item item : items) {
+                        searchedItemsArray.clear();
+                        if (!searchText.getText().toString().equals("")) {
+                            for (Item item : items) {
 
-                            if (item.getName().equalsIgnoreCase(searchText.getText().toString()) || item.getName().toLowerCase().contains(searchText.getText().toString().toLowerCase()) ||
-                                    searchText.getText().toString().toLowerCase().contains(item.getName().toLowerCase()) || searchText.getText().toString().toLowerCase().contains(item.getType().toLowerCase())
-                                    || item.getType().equalsIgnoreCase(searchText.getText().toString()) || item.getType().toLowerCase().contains(searchText.getText().toString().toLowerCase())) {
+                                if (item.getName().equalsIgnoreCase(searchText.getText().toString()) || item.getName().toLowerCase().contains(searchText.getText().toString().toLowerCase()) ||
+                                        searchText.getText().toString().toLowerCase().contains(item.getName().toLowerCase()) || searchText.getText().toString().toLowerCase().contains(item.getType().toLowerCase())
+                                        || item.getType().equalsIgnoreCase(searchText.getText().toString()) || item.getType().toLowerCase().contains(searchText.getText().toString().toLowerCase())) {
 
-                                searchedItemsArray.add(item);
+                                    if(!searchedItemsArray.contains(item))
+                                    {
+                                        searchedItemsArray.add(item);
+                                    }
+                                }
                             }
-                        }
 
-                        if(searchedItemsArray.size()!=0) {
-                            ItemAdapter itemAdapter = new ItemAdapter(getContext(), searchedItemsArray);
-                            searchedItems.setAdapter(null);
-                            searchedItems.setAdapter(itemAdapter);
-                        }
-                        else {
-                            Toast.makeText(getContext(),"No items found",Toast.LENGTH_LONG).show();
-                            dialog.dismiss();
-                        }
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                dialog.dismiss();
+                            if (searchedItemsArray.size() != 0) {
+                                ItemAdapter itemAdapter = new ItemAdapter(getContext(), searchedItemsArray);
+                                searchedItems.setAdapter(null);
+                                searchedItems.setAdapter(itemAdapter);
+                            } else {
+                                Toast.makeText(getContext(), "No items found", Toast.LENGTH_LONG).show();
                             }
-                        },5000);
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    dialog.dismiss();
+                                }
+                            }, 5000);
+                        }
+                    }
+                    else
+                    {
+                        Toast.makeText(getContext(),"Please set location",Toast.LENGTH_LONG).show();
                     }
                 }
             });
@@ -197,6 +254,88 @@ public class SearchFragment extends Fragment {
 
         if(dialog!=null)
         dialog.dismiss();
+
+        if(placeName.getText().toString().trim().length()==6) {
+
+            final ProgressDialog dialog = ProgressDialog.show(getContext(), "Loading", "Please wait...", true);
+            dialog.show();
+
+            DatabaseReference delivers = databaseReference.child("Delivers");
+
+            delivers.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    HashMap<String,String> delivers;
+                    ArrayList<String> delivery_pincode = new ArrayList<>();
+
+                    for(DataSnapshot ds: dataSnapshot.getChildren())
+                    {
+                        delivers = (HashMap<String,String>)ds.getValue();
+
+                        for(Map.Entry<String,String> entry : delivers.entrySet())
+                        {
+                            if(entry.getValue().equalsIgnoreCase(placeName.getText().toString().trim()))
+                            {
+                                if(!delivery_pincode.contains(entry.getKey()))
+                                {
+                                    delivery_pincode.add(entry.getKey());
+                                }
+                            }
+                        }
+                    }
+
+                    for(int i=0;i<delivery_pincode.size();i++) {
+                        myRef = databaseReference.child("Categories").child(delivery_pincode.get(i));
+
+                        myRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                    for (DataSnapshot dataSnapshot1 : ds.getChildren()) {
+
+                                        if(!itemsName.contains(dataSnapshot1.getValue(Item.class).getName()))
+                                        {
+                                            itemsName.add(Objects.requireNonNull(dataSnapshot1.getValue(Item.class)).getName());
+                                            items.add(dataSnapshot1.getValue(Item.class));
+                                        }
+                                    }
+                                }
+
+                                Log.d("Checkup", items.get(0).getName());
+
+                                ArrayAdapter<String> itemArrayAdapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()),
+                                        android.R.layout.simple_list_item_1, itemsName);
+
+                                searchText.setAdapter(itemArrayAdapter);
+
+                                dialog.dismiss();
+
+                                searchText.requestFocus();
+                                InputMethodManager imgr = (InputMethodManager) Objects.requireNonNull(getActivity()).getSystemService(Context.INPUT_METHOD_SERVICE);
+                                imgr.showSoftInput(searchText, 0);
+                                imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+        else
+        {
+            Toast.makeText(getContext(),"Location not set",Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

@@ -59,12 +59,6 @@ public class BasketFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                /*HomeFragment homeFragment = new HomeFragment();
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.viewpager, homeFragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();*/
-
                 ViewPager viewPager = getActivity().findViewById(R.id.viewpager);
                 viewPager.setCurrentItem(0);
             }

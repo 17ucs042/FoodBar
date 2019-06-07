@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class ItemDatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME=" basket.db";
-    public static final String TABLE_NAME="BasketTable";
+    public static final String TABLE_NAME=" BasketTable";
     public static final String COL_1=" _id";
     public static final String COL_2=" name";
     public static final String COL_3=" quantity";

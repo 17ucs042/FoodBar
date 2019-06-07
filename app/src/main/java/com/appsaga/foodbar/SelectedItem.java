@@ -1,8 +1,9 @@
 package com.appsaga.foodbar;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class SelectedItem {
+public class SelectedItem implements Serializable,Comparable<SelectedItem> {
 
     String price;
     String quantity;
@@ -36,5 +37,11 @@ public class SelectedItem {
 
     public void setInStock(String inStock) {
         this.inStock = inStock;
+    }
+
+    @Override
+    public int compareTo(SelectedItem o) {
+
+        return this.quantity.compareTo(o.getQuantity());
     }
 }

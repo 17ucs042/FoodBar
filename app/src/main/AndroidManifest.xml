@@ -18,6 +18,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".AboutUs"></activity>
+        <activity android:name=".MyOrders" />
+        <activity android:name=".EnterPincode" />
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -75,7 +79,7 @@
         <activity android:name=".EnterDetails" />
         <activity android:name=".SelectPaymentOptions" />
         <activity android:name=".ItemDescription" />
-        <activity android:name=".MyDeliveryAddress"></activity>
+        <activity android:name=".MyDeliveryAddress" />
     </application>
 
 </manifest>

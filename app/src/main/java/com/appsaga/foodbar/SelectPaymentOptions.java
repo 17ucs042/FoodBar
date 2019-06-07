@@ -1,9 +1,12 @@
 package com.appsaga.foodbar;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -33,6 +36,7 @@ public class SelectPaymentOptions extends AppCompatActivity {
 
     CustomerDatabaseHelper customerDatabaseHelper;
     ItemDatabaseHelper itemDatabaseHelper;
+    MyOrdersDatabaseHelper myOrdersDatabaseHelper;
 
     HashMap<String, String> customerDetails = new HashMap<>();
     ArrayList<HashMap<String, String>> itemsOrdered = new ArrayList<>();
@@ -55,8 +59,8 @@ public class SelectPaymentOptions extends AppCompatActivity {
         address = (Address)getIntent().getSerializableExtra("address");
 
         customerDatabaseHelper = new CustomerDatabaseHelper(SelectPaymentOptions.this);
-
         itemDatabaseHelper = new ItemDatabaseHelper(SelectPaymentOptions.this);
+        myOrdersDatabaseHelper = new MyOrdersDatabaseHelper(SelectPaymentOptions.this);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference();
@@ -125,7 +129,11 @@ public class SelectPaymentOptions extends AppCompatActivity {
                         intent.setData(uri);
 
                         Intent chooser = Intent.createChooser(intent,"Pay With");
-                        startActivityForResult(chooser,10);
+                        if(null != chooser.resolveActivity(getPackageManager())) {
+                            startActivityForResult(chooser, 10);
+                        } else {
+                            Toast.makeText(SelectPaymentOptions.this,"No UPI app found, please install one to continue",Toast.LENGTH_SHORT).show();
+                        }
                     }
                 },1500);
             }
@@ -137,7 +145,7 @@ public class SelectPaymentOptions extends AppCompatActivity {
 
                 final ProgressDialog dialog = ProgressDialog.show(SelectPaymentOptions.this, "Confirming Order", "Please wait...", true);
 
-                final Order order = new Order(customerDetails, itemsOrdered);
+                final Order order = new Order(customerDetails, itemsOrdered,"COD");
 
                 databaseReference.child("orders").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -146,6 +154,9 @@ public class SelectPaymentOptions extends AppCompatActivity {
                         int numChildren = (int) dataSnapshot.getChildrenCount();
                         databaseReference.child("orders").child("Homy"+String.valueOf(numChildren+1)+"Bee"+(int)(Math.random()*100)+address.getName()+"Order"+address.getPincode()+(int)(Math.random()*100)).setValue(order);
 
+                        Cursor data = itemDatabaseHelper.getAllData();
+
+                        myOrdersDatabaseHelper.insertData(data);
                         Toast.makeText(SelectPaymentOptions.this,"Order Confirmed",Toast.LENGTH_SHORT).show();
 
                         itemDatabaseHelper.deleteAllData();
@@ -172,9 +183,57 @@ public class SelectPaymentOptions extends AppCompatActivity {
         {
             if(resultCode==RESULT_OK)
             {
+                if (data != null) {
+                    String trxt = data.getStringExtra("response");
+                    Log.d("UPI", "onActivityResult: " + trxt);
+                    ArrayList<String> dataList = new ArrayList<>();
+                    dataList.add(trxt);
+                    upiPaymentDataOperation(dataList);
+                } else {
+                    Log.d("UPI", "onActivityResult: " + "Return data is null");
+                    ArrayList<String> dataList = new ArrayList<>();
+                    dataList.add("nothing");
+                    upiPaymentDataOperation(dataList);
+                }
+            }
+            else {
+                Log.d("UPI", "onActivityResult: " + "Return data is null"); //when user simply back without payment
+                ArrayList<String> dataList = new ArrayList<>();
+                dataList.add("nothing");
+                upiPaymentDataOperation(dataList);
+            }
+        }
+    }
+
+    private void upiPaymentDataOperation(ArrayList<String> data) {
+        if (isConnectionAvailable(SelectPaymentOptions.this)) {
+            String str = data.get(0);
+            Log.d("UPIPAY", "upiPaymentDataOperation: "+str);
+            String paymentCancel = "";
+            if(str == null) str = "discard";
+            String status = "";
+            String approvalRefNo = "";
+            String response[] = str.split("&");
+            for (int i = 0; i < response.length; i++) {
+                String equalStr[] = response[i].split("=");
+                if(equalStr.length >= 2) {
+                    if (equalStr[0].toLowerCase().equals("Status".toLowerCase())) {
+                        status = equalStr[1].toLowerCase();
+                    }
+                    else if (equalStr[0].toLowerCase().equals("ApprovalRefNo".toLowerCase()) || equalStr[0].toLowerCase().equals("txnRef".toLowerCase())) {
+                        approvalRefNo = equalStr[1];
+                    }
+                }
+                else {
+                    paymentCancel = "Payment cancelled by user.";
+                }
+            }
+
+            if (status.equals("success")) {
+                //Code to handle successful transaction here.
                 final ProgressDialog dialog = ProgressDialog.show(SelectPaymentOptions.this, "Confirming Order", "Please wait...", true);
 
-                final Order order = new Order(customerDetails, itemsOrdered);
+                final Order order = new Order(customerDetails, itemsOrdered,"UPI");
 
                 databaseReference.child("orders").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -198,11 +257,30 @@ public class SelectPaymentOptions extends AppCompatActivity {
                         finish();
                     }
                 });
+                Toast.makeText(SelectPaymentOptions.this, "Transaction successful.", Toast.LENGTH_SHORT).show();
+                Log.d("UPI", "responseStr: "+approvalRefNo);
             }
-            else
-            {
-                Toast.makeText(SelectPaymentOptions.this,"Failed Placing Order",Toast.LENGTH_LONG).show();
+            else if("Payment cancelled by user.".equals(paymentCancel)) {
+                Toast.makeText(SelectPaymentOptions.this, "Payment cancelled by user.", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Toast.makeText(SelectPaymentOptions.this, "Transaction failed.Please try again", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(SelectPaymentOptions.this, "Internet connection is not available. Please check and try again", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public static boolean isConnectionAvailable(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo netInfo = connectivityManager.getActiveNetworkInfo();
+            if (netInfo != null && netInfo.isConnected()
+                    && netInfo.isConnectedOrConnecting()
+                    && netInfo.isAvailable()) {
+                return true;
             }
         }
+        return false;
     }
 }

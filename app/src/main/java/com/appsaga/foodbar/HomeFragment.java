@@ -37,6 +37,7 @@ public class HomeFragment extends Fragment {
     ViewPager viewPager;
     ScrollView scrollView;
     TabLayout tabLayout;
+    MyPincodeDatabaseHelper myPincodeDatabaseHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,17 +55,15 @@ public class HomeFragment extends Fragment {
             viewPager = getActivity().findViewById(R.id.viewpager);
             scrollView = view.findViewById(R.id.scroll);
             tabLayout = getActivity().findViewById(R.id.tabs);
+            myPincodeDatabaseHelper = new MyPincodeDatabaseHelper(getContext());
 
             scrollView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
                 @Override
                 public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
 
-                    if(scrollY-oldScrollY>3 || scrollY==scrollView.getHeight())
-                    {
+                    if (scrollY - oldScrollY > 3 || scrollY == scrollView.getHeight()) {
                         tabLayout.setVisibility(View.GONE);
-                    }
-                    else if(scrollY+1<oldScrollY || scrollY==0)
-                    {
+                    } else if (scrollY + 1 < oldScrollY || scrollY == 0) {
                         tabLayout.setVisibility(View.VISIBLE);
                     }
                 }
@@ -131,7 +130,7 @@ public class HomeFragment extends Fragment {
                     GlideApp.with(HomeFragment.this).load(imagesRef13).into(im13);
                     GlideApp.with(HomeFragment.this).load(imagesRef14).into(im14);
                 }
-            },3000);
+            }, 3000);
 
             Handler handler1 = new Handler();
 
@@ -147,29 +146,40 @@ public class HomeFragment extends Fragment {
             final Dialog customDialog = new Dialog(getContext());
             customDialog.setContentView(R.layout.custom_dialog);
 
-            EditText dialogPincode = customDialog.findViewById(R.id.dialog_pincode);
+            final EditText dialogPincode = customDialog.findViewById(R.id.dialog_pincode);
             final Button go = customDialog.findViewById(R.id.button_go);
 
             im3_1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    if(placeName.getText().length()==6) {
+                    if (placeName.getText().length() == 6) {
+
                         Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
                         intent.putExtra("value", "Fruits & Vegetables");
+                        intent.putExtra("pin", placeName.getText().toString());
                         startActivity(intent);
-                    }
-                    else {
+
+
+                    } else {
                         customDialog.show();
                         go.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
 
-                                customDialog.dismiss();
-                                Toast.makeText(getContext(),"Yes",Toast.LENGTH_LONG).show();
+                                if (dialogPincode.getText().toString().trim().length() == 6) {
+                                    Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
+                                    intent.putExtra("value", "Fruits & Vegetables");
+                                    intent.putExtra("pin", dialogPincode.getText().toString());
+                                    placeName.setText(dialogPincode.getText().toString());
+                                    myPincodeDatabaseHelper.insertData(dialogPincode.getText().toString());
+                                    startActivity(intent);
+                                    customDialog.dismiss();
+                                } else {
+                                    dialogPincode.setError("Invalid Pincode");
+                                }
                             }
                         });
-                        //Toast.makeText(getContext(),"Please turn on GPS\nto view item list",Toast.LENGTH_LONG).show();
                     }
                 }
             });
@@ -178,9 +188,31 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
-                    intent.putExtra("value", "Foodgrains, Oils & Masalas");
-                    startActivity(intent);
+                    if (placeName.getText().length() == 6) {
+
+                        Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
+                        intent.putExtra("value", "Foodgrains, Oils & Masalas");
+                        intent.putExtra("pin", placeName.getText().toString());
+                        startActivity(intent);
+
+                    } else {
+                        customDialog.show();
+                        go.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                if (dialogPincode.getText().toString().trim().length() == 6) {
+                                    Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
+                                    intent.putExtra("value", "Foodgrains, Oils & Masalas");
+                                    intent.putExtra("pin", dialogPincode.getText().toString());
+                                    startActivity(intent);
+                                    customDialog.dismiss();
+                                } else {
+                                    dialogPincode.setError("Invalid Pincode");
+                                }
+                            }
+                        });
+                    }
                 }
             });
 
@@ -188,9 +220,31 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
-                    intent.putExtra("value", "Bakery, Cakes & Dairy");
-                    startActivity(intent);
+                    if (placeName.getText().length() == 6) {
+
+                                Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
+                                intent.putExtra("value", "Bakery, Cakes & Dairy");
+                                intent.putExtra("pin", placeName.getText().toString());
+                                startActivity(intent);
+
+                    } else {
+                        customDialog.show();
+                        go.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                if (dialogPincode.getText().toString().trim().length() == 6) {
+                                    Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
+                                    intent.putExtra("value", "Bakery, Cakes & Dairy");
+                                    intent.putExtra("pin", dialogPincode.getText().toString());
+                                    startActivity(intent);
+                                    customDialog.dismiss();
+                                } else {
+                                    dialogPincode.setError("Invalid Pincode");
+                                }
+                            }
+                        });
+                    }
                 }
             });
 
@@ -198,9 +252,32 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
-                    intent.putExtra("value", "Beverages & Snacks");
-                    startActivity(intent);
+                    if (placeName.getText().length() == 6) {
+
+                        Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
+                        intent.putExtra("value", "Beverages & Snacks");
+                        intent.putExtra("pin", placeName.getText().toString());
+                        startActivity(intent);
+                    } else {
+                        customDialog.show();
+                        go.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                if (dialogPincode.getText().toString().trim().length() == 6) {
+                                    Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
+                                    intent.putExtra("value", "Beverages & Snacks");
+                                    placeName.setText(dialogPincode.getText().toString());
+                                    myPincodeDatabaseHelper.insertData(dialogPincode.getText().toString());
+                                    intent.putExtra("pin", dialogPincode.getText().toString());
+                                    startActivity(intent);
+                                    customDialog.dismiss();
+                                } else {
+                                    dialogPincode.setError("Invalid Pincode");
+                                }
+                            }
+                        });
+                    }
                 }
             });
 
@@ -208,9 +285,33 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
-                    intent.putExtra("value", "Medicine");
-                    startActivity(intent);
+                    if (placeName.getText().length() == 6) {
+
+                        Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
+                        intent.putExtra("value", "Medicine");
+                        intent.putExtra("pin", placeName.getText().toString());
+                        startActivity(intent);
+
+                    } else {
+                        customDialog.show();
+                        go.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                if (dialogPincode.getText().toString().trim().length() == 6) {
+                                    Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
+                                    intent.putExtra("value", "Medicine");
+                                    intent.putExtra("pin", dialogPincode.getText().toString());
+                                    placeName.setText(dialogPincode.getText().toString());
+                                    myPincodeDatabaseHelper.insertData(dialogPincode.getText().toString());
+                                    startActivity(intent);
+                                    customDialog.dismiss();
+                                } else {
+                                    dialogPincode.setError("Invalid Pincode");
+                                }
+                            }
+                        });
+                    }
                 }
             });
 
@@ -218,9 +319,33 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
-                    intent.putExtra("value", "Stationary");
-                    startActivity(intent);
+                    if (placeName.getText().length() == 6) {
+
+                        Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
+                        intent.putExtra("value", "Stationary");
+                        intent.putExtra("pin", placeName.getText().toString());
+                        startActivity(intent);
+
+                    } else {
+                        customDialog.show();
+                        go.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                if (dialogPincode.getText().toString().trim().length() == 6) {
+                                    Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
+                                    intent.putExtra("value", "Stationary");
+                                    intent.putExtra("pin", dialogPincode.getText().toString());
+                                    placeName.setText(dialogPincode.getText().toString());
+                                    myPincodeDatabaseHelper.insertData(dialogPincode.getText().toString());
+                                    startActivity(intent);
+                                    customDialog.dismiss();
+                                } else {
+                                    dialogPincode.setError("Invalid Pincode");
+                                }
+                            }
+                        });
+                    }
                 }
             });
 
@@ -228,9 +353,33 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
-                    intent.putExtra("value", "Cleaning, Kitchen & Baby Care");
-                    startActivity(intent);
+                    if (placeName.getText().length() == 6) {
+
+                        Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
+                        intent.putExtra("value", "Cleaning, Kitchen & Baby Care");
+                        intent.putExtra("pin", placeName.getText().toString());
+                        startActivity(intent);
+
+                    } else {
+                        customDialog.show();
+                        go.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                if (dialogPincode.getText().toString().trim().length() == 6) {
+                                    Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
+                                    intent.putExtra("value", "Cleaning, Kitchen & Baby Care");
+                                    intent.putExtra("pin", dialogPincode.getText().toString());
+                                    placeName.setText(dialogPincode.getText().toString());
+                                    myPincodeDatabaseHelper.insertData(dialogPincode.getText().toString());
+                                    startActivity(intent);
+                                    customDialog.dismiss();
+                                } else {
+                                    dialogPincode.setError("Invalid Pincode");
+                                }
+                            }
+                        });
+                    }
                 }
             });
 
@@ -238,9 +387,32 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
-                    intent.putExtra("value", "Pet Supplies");
-                    startActivity(intent);
+                    if (placeName.getText().length() == 6) {
+
+                        Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
+                        intent.putExtra("value", "Pet Supplies");
+                        intent.putExtra("pin", placeName.getText().toString());
+                        startActivity(intent);
+                    } else {
+                        customDialog.show();
+                        go.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                if (dialogPincode.getText().toString().trim().length() == 6) {
+                                    Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
+                                    intent.putExtra("value", "Pet Supplies");
+                                    intent.putExtra("pin", dialogPincode.getText().toString());
+                                    placeName.setText(dialogPincode.getText().toString());
+                                    myPincodeDatabaseHelper.insertData(dialogPincode.getText().toString());
+                                    startActivity(intent);
+                                    customDialog.dismiss();
+                                } else {
+                                    dialogPincode.setError("Invalid Pincode");
+                                }
+                            }
+                        });
+                    }
                 }
             });
 
@@ -248,9 +420,33 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
-                    intent.putExtra("value", "Eggs, Meat, Fish");
-                    startActivity(intent);
+                    if (placeName.getText().length() == 6) {
+
+                        Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
+                        intent.putExtra("value", "Eggs, Meat, Fish");
+                        intent.putExtra("pin", placeName.getText().toString());
+                        startActivity(intent);
+
+                    } else {
+                        customDialog.show();
+                        go.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                if (dialogPincode.getText().toString().trim().length() == 6) {
+                                    Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
+                                    intent.putExtra("value", "Eggs, Meat, Fish");
+                                    intent.putExtra("pin", dialogPincode.getText().toString());
+                                    placeName.setText(dialogPincode.getText().toString());
+                                    myPincodeDatabaseHelper.insertData(dialogPincode.getText().toString());
+                                    startActivity(intent);
+                                    customDialog.dismiss();
+                                } else {
+                                    dialogPincode.setError("Invalid Pincode");
+                                }
+                            }
+                        });
+                    }
                 }
             });
 
@@ -280,28 +476,19 @@ public class HomeFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 10) {
-            if(resultCode == Activity.RESULT_OK){
-                String result=data.getStringExtra("result");
+            if (resultCode == Activity.RESULT_OK) {
+                String result = data.getStringExtra("result");
 
-                if(result.equalsIgnoreCase("Home"))
-                {
+                if (result.equalsIgnoreCase("Home")) {
                     viewPager.setCurrentItem(0);
-                }
-                else if(result.equalsIgnoreCase("Categories"))
-                {
-                    Log.d("test....","Yese");
+                } else if (result.equalsIgnoreCase("Categories")) {
+                    Log.d("test....", "Yese");
                     viewPager.setCurrentItem(1);
-                }
-                else if(result.equalsIgnoreCase("Search"))
-                {
+                } else if (result.equalsIgnoreCase("Search")) {
                     viewPager.setCurrentItem(2);
-                }
-                else if(result.equalsIgnoreCase("Offers"))
-                {
+                } else if (result.equalsIgnoreCase("Offers")) {
                     viewPager.setCurrentItem(3);
-                }
-                else
-                {
+                } else {
                     viewPager.setCurrentItem(4);
                 }
             }
