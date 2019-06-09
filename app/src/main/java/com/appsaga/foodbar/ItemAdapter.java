@@ -61,6 +61,7 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         ImageButton add;
         ImageButton subtract;
         Button addButton;
+        Button outOfStock;
         LinearLayout addLayout;
         TextView item_num;
         Spinner quantity_spinner;
@@ -87,6 +88,7 @@ public class ItemAdapter extends ArrayAdapter<Item> {
             holder.add = listItemView.findViewById(R.id.add);
             holder.subtract = listItemView.findViewById(R.id.subtract);
             holder.addButton = listItemView.findViewById(R.id.add_button);
+            holder.outOfStock = listItemView.findViewById(R.id.out_of_stock);
             holder.addLayout = listItemView.findViewById(R.id.add_layout);
             holder.item_num = listItemView.findViewById(R.id.quantity_value);
             holder.quantity_spinner = listItemView.findViewById(R.id.quantity);
@@ -151,7 +153,24 @@ public class ItemAdapter extends ArrayAdapter<Item> {
 
                 for (HashMap.Entry<String, String> entry : currentItem.getQuant_price().entrySet()) {
                     if (entry.getKey().equals(quantity)) {
-                        holder.price.setText(entry.getValue());
+
+                        if(entry.getValue().contains("Out of Stock"))
+                        {
+                            holder.price.setText(entry.getValue().replace("Out of Stock","").trim());
+                            holder.outOfStock.setVisibility(View.VISIBLE);
+                            holder.addButton.setVisibility(View.INVISIBLE);
+                            holder.add.setVisibility(View.GONE);
+                            holder.subtract.setVisibility(View.GONE);
+                            holder.item_num.setVisibility(View.GONE);
+                        }
+                        else {
+                            holder.price.setText(entry.getValue());
+                            holder.outOfStock.setVisibility(View.INVISIBLE);
+                            holder.addButton.setVisibility(View.VISIBLE);
+                            holder.add.setVisibility(View.VISIBLE);
+                            holder.subtract.setVisibility(View.VISIBLE);
+                            holder.item_num.setVisibility(View.VISIBLE);
+                        }
                     }
                 }
 

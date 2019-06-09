@@ -254,6 +254,26 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/out_of_stock_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:background="#DC143C"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:textColor="#FFFFFF"
+                    android:text="OUT OF STOCK"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:textSize="17sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/itemNumLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

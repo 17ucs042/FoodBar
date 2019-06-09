@@ -103,10 +103,8 @@ public class BaksetItemsAdapter extends CursorAdapter {
                     changeCursor(newCursor);
                     notifyDataSetChanged();
 
-                    Log.d("clicked", "Clicked");
                     if (((ListView) view.getParent()).getCount() == 0) {
                         ((ListView) view.getParent()).setVisibility(View.GONE);
-                        Log.d("clicked", "Clicked");
 
                         ((RelativeLayout) view.getParent().getParent()).findViewById(R.id.basket_layout).setVisibility(View.VISIBLE);
                     }

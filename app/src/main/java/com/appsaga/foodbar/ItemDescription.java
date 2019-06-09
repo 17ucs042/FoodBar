@@ -12,6 +12,7 @@ import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
@@ -49,6 +50,7 @@ public class ItemDescription extends AppCompatActivity {
     ItemDatabaseHelper itemDatabaseHelper;
     LinearLayout addLayout;
     LinearLayout itemNumLayout;
+    LinearLayout stockLayout;
     TextView itemNum;
     ImageButton add;
     ImageButton subtract;
@@ -90,6 +92,7 @@ public class ItemDescription extends AppCompatActivity {
         count = findViewById(R.id.count);
         addLayout = findViewById(R.id.add_layout);
         itemNumLayout = findViewById(R.id.itemNumLayout);
+        stockLayout = findViewById(R.id.out_of_stock_layout);
         itemNum = findViewById(R.id.itemsNum);
         add = findViewById(R.id.add_item);
         subtract = findViewById(R.id.subtract_item);
@@ -119,26 +122,60 @@ public class ItemDescription extends AppCompatActivity {
         packSizeAdapter = new PackSizeAdapter(ItemDescription.this, selectedItems);
         packList.setAdapter(packSizeAdapter);
 
+        String selectedPrice = null;
+
+        for(SelectedItem selectedItem : selectedItems)
+        {
+            if(selectedItem.getQuantity().equals(quantity1))
+            {
+                selectedPrice = selectedItem.getPrice();
+                break;
+            }
+        }
+
+        if(selectedPrice.contains("Out of Stock"))
+        {
+            addLayout.setVisibility(View.GONE);
+            addLayout.setEnabled(Boolean.FALSE);
+            itemNumLayout.setVisibility(View.GONE);
+            stockLayout.setVisibility(View.VISIBLE);
+        }
+        else {
+
+            addLayout.setVisibility(View.VISIBLE);
+            addLayout.setEnabled(Boolean.TRUE);
+            itemNumLayout.setVisibility(View.VISIBLE);
+            stockLayout.setVisibility(View.GONE);
+        }
+
         packList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 String price1 = ((TextView)view.findViewById(R.id.price)).getText().toString();
                 String quantity1 = ((TextView)view.findViewById(R.id.quantity)).getText().toString();
+                String stock = ((TextView)view.findViewById(R.id.inStock)).getText().toString();
 
                 price.setText(price1);
                 quantity.setText(quantity1);
 
-                if(itemDatabaseHelper.getItemNum(name1,quantity1)!=0)
+                if(stock.equalsIgnoreCase("Out of Stock"))
                 {
+                    stockLayout.setVisibility(View.VISIBLE);
                     addLayout.setVisibility(View.GONE);
-                    itemNumLayout.setVisibility(View.VISIBLE);
-                    itemNum.setText(String.valueOf(itemDatabaseHelper.getItemNum(name1,quantity1)));
-                }
-                else
-                {
-                    addLayout.setVisibility(View.VISIBLE);
                     itemNumLayout.setVisibility(View.GONE);
+                }
+                else {
+                    stockLayout.setVisibility(View.GONE);
+
+                    if (itemDatabaseHelper.getItemNum(name1, quantity1) != 0) {
+                        addLayout.setVisibility(View.GONE);
+                        itemNumLayout.setVisibility(View.VISIBLE);
+                        itemNum.setText(String.valueOf(itemDatabaseHelper.getItemNum(name1, quantity1)));
+                    } else {
+                        addLayout.setVisibility(View.VISIBLE);
+                        itemNumLayout.setVisibility(View.GONE);
+                    }
                 }
             }
         });

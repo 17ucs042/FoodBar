@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -243,16 +244,23 @@ public class ShowItems extends AppCompatActivity {
 
                 Drawable drawable = ((ImageView)view.findViewById(R.id.display)).getDrawable();
                 BitmapDrawable bitmapDrawable = ((BitmapDrawable) drawable);
-                Bitmap image = bitmapDrawable .getBitmap();
 
-                Intent intent = new Intent(ShowItems.this,ItemDescription.class);
-                intent.putExtra("name",name);
-                intent.putExtra("quantity",quantity);
-                intent.putExtra("price",price);
-                intent.putExtra("image",image);
-                intent.putExtra("type",type);
-                intent.putExtra("item",item);
-                startActivity(intent);
+                if(bitmapDrawable==null)
+                {
+                    Toast.makeText(ShowItems.this,"Loading please wait",Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    Bitmap image = bitmapDrawable .getBitmap();
+                    Intent intent = new Intent(ShowItems.this,ItemDescription.class);
+                    intent.putExtra("name",name);
+                    intent.putExtra("quantity",quantity);
+                    intent.putExtra("price",price);
+                    intent.putExtra("image",image);
+                    intent.putExtra("type",type);
+                    intent.putExtra("item",item);
+                    startActivity(intent);
+                }
             }
         });
 

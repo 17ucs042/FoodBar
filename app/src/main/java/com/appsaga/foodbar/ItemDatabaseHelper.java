@@ -205,7 +205,8 @@ public class ItemDatabaseHelper extends SQLiteOpenHelper {
         if(res.moveToFirst())
         {
             do {
-                    String price = res.getString(3).replace("₹","").trim();
+                    String price = res.getString(3).replace("₹","")
+                            .replace("Out of Stock","").trim();
                     totalPrice = totalPrice + Double.parseDouble(price)*res.getInt(4);
 
             }while (res.moveToNext());
