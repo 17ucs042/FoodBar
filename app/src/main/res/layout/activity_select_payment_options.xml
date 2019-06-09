@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".SelectPaymentOptions">
 
     <android.support.v7.widget.Toolbar
@@ -31,50 +32,93 @@
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 
-    <TextView
-        android:id="@+id/COD"
+    <RelativeLayout
+        android:id="@+id/COD_layout"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:text="COD"
-        android:gravity="center"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_marginTop="30dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
-        android:textColor="#000000"
-        android:fontFamily="sans-serif-light"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/ripple_effect3"/>
+        android:layout_marginTop="30dp">
 
-    <TextView
-        android:id="@+id/UPI"
+        <RadioButton
+            android:id="@+id/rb1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_centerVertical="true"/>
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/cod"
+            android:layout_centerHorizontal="true"
+            android:padding="3dp"/>
+
+        <TextView
+            android:id="@+id/COD"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_toEndOf="@id/rb1"
+            android:layout_centerVertical="true"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:text="COD"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginStart="10dp"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/UPI_layout"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:text="UPI"
-        android:gravity="center"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_marginTop="30dp"
-        android:layout_below="@+id/COD"
-        android:textColor="#000000"
-        android:fontFamily="sans-serif-light"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/ripple_effect3"
-        android:drawableEnd="@drawable/go_next" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/COD_layout"
+        android:layout_marginTop="30dp">
+
+        <RadioButton
+            android:id="@+id/rb2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_centerVertical="true"/>
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/upi" />
+
+        <TextView
+            android:id="@+id/UPI"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:text="UPI"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_toEndOf="@id/rb2"
+            android:layout_marginStart="10dp"/>
+
+    </RelativeLayout>
 
     <Button
         android:id="@+id/confirm_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Confirm Order"
-        android:background="@drawable/ripple_effect2"
-        android:textColor="#FFFFFF"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
+        android:background="@drawable/ripple_effect2"
+        android:clickable="false"
         android:paddingStart="15dp"
         android:paddingLeft="15dp"
-        android:paddingRight="15dp"
         android:paddingEnd="15dp"
-        android:clickable="false" />
+        android:paddingRight="15dp"
+        android:text="Confirm Order"
+        android:textColor="#FFFFFF" />
+
 </RelativeLayout>

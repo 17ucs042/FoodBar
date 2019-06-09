@@ -1,5 +1,6 @@
 package com.appsaga.foodbar;
 
+import android.app.Dialog;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ public class MyDeliveryAddress extends AppCompatActivity {
     Button saveAddress;
 
     CustomerDatabaseHelper customerDatabaseHelper;
+    MyPincodeDatabaseHelper myPincodeDatabaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +56,15 @@ public class MyDeliveryAddress extends AppCompatActivity {
         saveAddress = findViewById(R.id.save_address);
 
         customerDatabaseHelper = new CustomerDatabaseHelper(MyDeliveryAddress.this);
+        myPincodeDatabaseHelper = new MyPincodeDatabaseHelper(MyDeliveryAddress.this);
 
         Cursor address = customerDatabaseHelper.getAllData();
         address.moveToFirst();
+
+        if(myPincodeDatabaseHelper.getTotalItems()!=0)
+        {
+            pincode.setText(myPincodeDatabaseHelper.getPincode());
+        }
 
         if (address.getCount() != 0) {
 
@@ -76,51 +84,62 @@ public class MyDeliveryAddress extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(firstName.getText().toString().trim().length()<3)
-                {
+                if (firstName.getText().toString().trim().length() < 3) {
                     firstName.setError("Name should be of atleast 3 letters");
                     firstName.requestFocus();
-                }
-                else if(phoneNum.getText().toString().trim().length() != 10)
-                {
+                } else if (phoneNum.getText().toString().trim().length() != 10) {
                     phoneNum.setError("Incorrect Number\nPlease don't add +91");
                     phoneNum.requestFocus();
-                }
-                else if(houseNo.getText().toString().trim().length()==0)
-                {
+                } else if (houseNo.getText().toString().trim().length() == 0) {
                     houseNo.setError("House number should not be empty");
                     houseNo.requestFocus();
-                }
-                else if(areaDetails.getText().toString().trim().length()==0)
-                {
+                } else if (areaDetails.getText().toString().trim().length() == 0) {
                     areaDetails.setError("Area should not be empty");
                     areaDetails.requestFocus();
-                }
-                else if(pincode.getText().toString().trim().length()!=6)
-                {
+                } else if (pincode.getText().toString().trim().length() != 6) {
                     pincode.setError("Incorrect pincode");
                     pincode.requestFocus();
-                }
-                else if(nickname.getText().toString().trim().length()==0)
-                {
+                } else if (nickname.getText().toString().trim().length() == 0) {
                     nickname.setError("Please enter nickname");
                     nickname.requestFocus();
-                }
-                else
-                {
-                    name = firstName.getText().toString()+" "+lastName.getText().toString();
+                } else if (myPincodeDatabaseHelper.getTotalItems() != 0) {
+
+                    if (!myPincodeDatabaseHelper.getPincode().equalsIgnoreCase(pincode.getText().toString())) {
+
+                        pincode.setError("The pincode you entered doesn't match with the currently set pincode");
+                    }
+                    else
+                    {
+                        name = firstName.getText().toString() + " " + lastName.getText().toString();
+                        phoneNumber = phoneNum.getText().toString();
+                        house = houseNo.getText().toString() + " " + apartmentName.getText().toString() + " " +
+                                streetDetails.getText().toString() + " " + landmark.getText().toString();
+                        area = areaDetails.getText().toString();
+                        pincode1 = pincode.getText().toString();
+                        nickname1 = nickname.getText().toString();
+
+                        customerDatabaseHelper.insertData(firstName.getText().toString(), lastName.getText().toString(),
+                                phoneNumber, houseNo.getText().toString(), apartmentName.getText().toString(), streetDetails.getText().toString(),
+                                landmark.getText().toString(), area, pincode1, nickname1);
+
+                        myPincodeDatabaseHelper.insertData(pincode1);
+                        Toast.makeText(MyDeliveryAddress.this, "Address saved", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    name = firstName.getText().toString() + " " + lastName.getText().toString();
                     phoneNumber = phoneNum.getText().toString();
-                    house = houseNo.getText().toString()+" "+apartmentName.getText().toString()+" "+
-                            streetDetails.getText().toString()+" "+landmark.getText().toString();
+                    house = houseNo.getText().toString() + " " + apartmentName.getText().toString() + " " +
+                            streetDetails.getText().toString() + " " + landmark.getText().toString();
                     area = areaDetails.getText().toString();
                     pincode1 = pincode.getText().toString();
                     nickname1 = nickname.getText().toString();
 
-                    customerDatabaseHelper.insertData(firstName.getText().toString(),lastName.getText().toString(),
-                            phoneNumber,houseNo.getText().toString(),apartmentName.getText().toString(),streetDetails.getText().toString(),
-                            landmark.getText().toString(),area,pincode1,nickname1);
+                    customerDatabaseHelper.insertData(firstName.getText().toString(), lastName.getText().toString(),
+                            phoneNumber, houseNo.getText().toString(), apartmentName.getText().toString(), streetDetails.getText().toString(),
+                            landmark.getText().toString(), area, pincode1, nickname1);
 
-                    Toast.makeText(MyDeliveryAddress.this,"Address saved",Toast.LENGTH_SHORT).show();
+                    myPincodeDatabaseHelper.insertData(pincode1);
+                    Toast.makeText(MyDeliveryAddress.this, "Address saved", Toast.LENGTH_SHORT).show();
                 }
             }
         });

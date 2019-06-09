@@ -36,6 +36,7 @@ public class EnterDetails extends AppCompatActivity {
     Button copyAddress;
 
     CustomerDatabaseHelper customerDatabaseHelper;
+    MyPincodeDatabaseHelper myPincodeDatabaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,7 @@ public class EnterDetails extends AppCompatActivity {
         setContentView(R.layout.activity_enter_details);
 
         customerDatabaseHelper = new CustomerDatabaseHelper(EnterDetails.this);
+        myPincodeDatabaseHelper = new MyPincodeDatabaseHelper(EnterDetails.this);
 
         firstName = findViewById(R.id.first_name);
         lastName = findViewById(R.id.last_name);
@@ -60,6 +62,11 @@ public class EnterDetails extends AppCompatActivity {
         copyAddress = findViewById(R.id.copy_saved_address);
 
         next = findViewById(R.id.next);
+
+        if(myPincodeDatabaseHelper.getTotalItems()!=0)
+        {
+            pincode.setText(myPincodeDatabaseHelper.getPincode());
+        }
 
         next.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,6 +101,29 @@ public class EnterDetails extends AppCompatActivity {
                 {
                     nickname.setError("Please enter nickname");
                     nickname.requestFocus();
+                }
+                else if (myPincodeDatabaseHelper.getTotalItems() != 0) {
+
+                    if (!myPincodeDatabaseHelper.getPincode().equalsIgnoreCase(pincode.getText().toString())) {
+
+                        pincode.setError("The pincode you entered doesn't match with the currently set pincode");
+                    }
+                    else
+                    {
+                        name = firstName.getText().toString() + " " + lastName.getText().toString();
+                        phoneNumber = phoneNum.getText().toString();
+                        house = houseNo.getText().toString() + " " + apartmentName.getText().toString() + " " +
+                                streetDetails.getText().toString() + " " + landmark.getText().toString();
+                        area = areaDetails.getText().toString();
+                        pincode1 = pincode.getText().toString();
+                        nickname1 = nickname.getText().toString();
+
+                        customerDatabaseHelper.insertData(firstName.getText().toString(), lastName.getText().toString(),
+                                phoneNumber, houseNo.getText().toString(), apartmentName.getText().toString(), streetDetails.getText().toString(),
+                                landmark.getText().toString(), area, pincode1, nickname1);
+
+                        Toast.makeText(EnterDetails.this, "Address saved", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 else
                 {
@@ -149,6 +179,29 @@ public class EnterDetails extends AppCompatActivity {
                 {
                     nickname.setError("Please enter nickname");
                     nickname.requestFocus();
+                }
+                else if (myPincodeDatabaseHelper.getTotalItems() != 0) {
+
+                    if (!myPincodeDatabaseHelper.getPincode().equalsIgnoreCase(pincode.getText().toString())) {
+
+                        pincode.setError("The pincode you entered doesn't match with the currently set pincode");
+                    }
+                    else
+                    {
+                        name = firstName.getText().toString() + " " + lastName.getText().toString();
+                        phoneNumber = phoneNum.getText().toString();
+                        house = houseNo.getText().toString() + " " + apartmentName.getText().toString() + " " +
+                                streetDetails.getText().toString() + " " + landmark.getText().toString();
+                        area = areaDetails.getText().toString();
+                        pincode1 = pincode.getText().toString();
+                        nickname1 = nickname.getText().toString();
+
+                        customerDatabaseHelper.insertData(firstName.getText().toString(), lastName.getText().toString(),
+                                phoneNumber, houseNo.getText().toString(), apartmentName.getText().toString(), streetDetails.getText().toString(),
+                                landmark.getText().toString(), area, pincode1, nickname1);
+
+                        Toast.makeText(EnterDetails.this, "Address saved", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 else
                 {

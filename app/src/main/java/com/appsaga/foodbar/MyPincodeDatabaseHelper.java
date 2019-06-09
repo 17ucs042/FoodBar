@@ -85,4 +85,10 @@ public class MyPincodeDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL ("delete from "+TABLE_NAME);
     }
+
+    public void deleteAllData()
+    {
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.execSQL("Delete from "+TABLE_NAME);
+    }
 }

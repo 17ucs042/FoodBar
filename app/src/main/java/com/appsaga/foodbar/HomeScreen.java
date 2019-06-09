@@ -120,8 +120,10 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
     TextView count;
     TabLayout tabLayout;
     ItemDatabaseHelper itemDatabaseHelper;
+    CustomerDatabaseHelper customerDatabaseHelper;
     ProgressDialog dialog;
     MyPincodeDatabaseHelper myPincodeDatabaseHelper;
+    MyOrdersDatabaseHelper myOrdersDatabaseHelper;
     ImageView editPin;
 
     @Override
@@ -135,6 +137,8 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
         searchFrame = findViewById(R.id.search_frame);
         itemDatabaseHelper = new ItemDatabaseHelper(HomeScreen.this);
         myPincodeDatabaseHelper = new MyPincodeDatabaseHelper(HomeScreen.this);
+        customerDatabaseHelper = new CustomerDatabaseHelper(HomeScreen.this);
+        myOrdersDatabaseHelper = new MyOrdersDatabaseHelper(HomeScreen.this);
         editPin = findViewById(R.id.edit_pin);
 
         viewPager = findViewById(R.id.viewpager);
@@ -216,6 +220,11 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
                         menuItem.setChecked(true);
 
                         if (menuItem.getItemId() == R.id.log_out) {
+                            itemDatabaseHelper.deleteAllData();
+                            customerDatabaseHelper.deleteAllData();
+                            myPincodeDatabaseHelper.deleteAllData();
+                            myOrdersDatabaseHelper.deleteAllData();
+
                             if (from.equals("facebook")) {
                                 LoginManager.getInstance().logOut();
                                 startActivity(new Intent(HomeScreen.this, com.appsaga.foodbar.MainActivity.class));
@@ -600,6 +609,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
                     String addressStr = "";
                     addressStr += address.getPostalCode();
                     PlaceName.setText(addressStr);
+                    myPincodeDatabaseHelper.insertData(addressStr);
                 }
             }
         } else {

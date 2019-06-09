@@ -16,6 +16,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +47,11 @@ public class SelectPaymentOptions extends AppCompatActivity {
     TextView upi;
     Address address;
 
+    RadioButton rb1;
+    RadioButton rb2;
+    RelativeLayout codLayout;
+    RelativeLayout upiLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +62,11 @@ public class SelectPaymentOptions extends AppCompatActivity {
 
         cod = findViewById(R.id.COD);
         upi = findViewById(R.id.UPI);
+
+        rb1 = findViewById(R.id.rb1);
+        rb2 = findViewById(R.id.rb2);
+        codLayout = findViewById(R.id.COD_layout);
+        upiLayout = findViewById(R.id.UPI_layout);
 
         address = (Address)getIntent().getSerializableExtra("address");
 
@@ -89,53 +101,25 @@ public class SelectPaymentOptions extends AppCompatActivity {
             }while (data1.moveToNext());
         }
 
-        cod.setOnClickListener(new View.OnClickListener() {
+        rb1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                cod.setBackgroundColor(Color.parseColor("#FFC107"));
-                upi.setBackgroundColor(Color.WHITE);
+                codLayout.setBackgroundColor(Color.parseColor("#FFC107"));
+                upiLayout.setBackgroundColor(Color.WHITE);
                 confirmButton.setEnabled(Boolean.TRUE);
+                rb2.setChecked(false);
             }
         });
 
-        upi.setOnClickListener(new View.OnClickListener() {
+        rb2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                upi.setBackgroundColor(Color.parseColor("#FFC107"));
-                cod.setBackgroundColor(Color.WHITE);
-                Handler handler = new Handler();
-                confirmButton.setEnabled(Boolean.FALSE);
-                final ProgressDialog dialog = ProgressDialog.show(SelectPaymentOptions.this, "Loading", "Please wait...", true);
-
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        dialog.dismiss();
-
-                        Uri uri =
-                                new Uri.Builder()
-                                        .scheme("upi")
-                                        .authority("pay")
-                                        .appendQueryParameter("pa", "saranshgupta123456789.sg.sg@okhdfcbank")
-                                        .appendQueryParameter("pn", "Ayush Gupta")
-                                        .appendQueryParameter("tn", "Payment to Homy Bee")
-                                        .appendQueryParameter("am", String.valueOf(itemDatabaseHelper.getTotalPrice()))
-                                        .appendQueryParameter("cu", "INR")
-                                        .build();
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(uri);
-
-                        Intent chooser = Intent.createChooser(intent,"Pay With");
-                        if(null != chooser.resolveActivity(getPackageManager())) {
-                            startActivityForResult(chooser, 10);
-                        } else {
-                            Toast.makeText(SelectPaymentOptions.this,"No UPI app found, please install one to continue",Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                },1500);
+                upiLayout.setBackgroundColor(Color.parseColor("#FFC107"));
+                codLayout.setBackgroundColor(Color.WHITE);
+                confirmButton.setEnabled(Boolean.TRUE);
+                rb1.setChecked(false);
             }
         });
 
@@ -143,35 +127,102 @@ public class SelectPaymentOptions extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                final ProgressDialog dialog = ProgressDialog.show(SelectPaymentOptions.this, "Confirming Order", "Please wait...", true);
+                if(rb1.isChecked()) {
+                    final ProgressDialog dialog = ProgressDialog.show(SelectPaymentOptions.this, "Confirming Order", "Please wait...", true);
 
-                final Order order = new Order(customerDetails, itemsOrdered,"COD");
+                    final Order order = new Order(customerDetails, itemsOrdered, "COD");
 
-                databaseReference.child("orders").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    databaseReference.child("Delivers").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                        int numChildren = (int) dataSnapshot.getChildrenCount();
-                        databaseReference.child("orders").child("Homy"+String.valueOf(numChildren+1)+"Bee"+(int)(Math.random()*100)+address.getName()+"Order"+address.getPincode()+(int)(Math.random()*100)).setValue(order);
+                            String branchPin = null;
 
-                        Cursor data = itemDatabaseHelper.getAllData();
+                            for(DataSnapshot ds: dataSnapshot.getChildren())
+                            {
+                                HashMap<String,String> hashMap = (HashMap<String,String>)ds.getValue();
 
-                        myOrdersDatabaseHelper.insertData(data);
-                        Toast.makeText(SelectPaymentOptions.this,"Order Confirmed",Toast.LENGTH_SHORT).show();
+                                for(HashMap.Entry<String,String> entry : hashMap.entrySet())
+                                {
+                                    if(entry.getValue().equalsIgnoreCase(address.getPincode()))
+                                    {
+                                        branchPin = entry.getKey();
+                                        break;
+                                    }
+                                }
+                            }
 
-                        itemDatabaseHelper.deleteAllData();
-                        dialog.dismiss();
-                        finish();
-                    }
+                            final String finalBranchPin = branchPin;
+                            databaseReference.child("orders").child(branchPin).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    int numChildren = (int) dataSnapshot.getChildrenCount();
+                                    databaseReference.child("orders").child(finalBranchPin).child("Homy" + String.valueOf(numChildren + 1) + "Bee" + (int) (Math.random() * 100) + address.getName() + "Order" + address.getPincode() + (int) (Math.random() * 100)).setValue(order);
 
-                        dialog.dismiss();
-                        Toast.makeText(SelectPaymentOptions.this,"Failed Placing Order",Toast.LENGTH_LONG).show();
-                        finish();
-                    }
-                });
+                                    Cursor data = itemDatabaseHelper.getAllData();
+
+                                    myOrdersDatabaseHelper.insertData(data);
+                                    Toast.makeText(SelectPaymentOptions.this, "Order Confirmed", Toast.LENGTH_SHORT).show();
+
+                                    itemDatabaseHelper.deleteAllData();
+                                    dialog.dismiss();
+                                    finish();
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    dialog.dismiss();
+                                    Toast.makeText(SelectPaymentOptions.this, "Failed Placing Order", Toast.LENGTH_LONG).show();
+                                    finish();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+                else if(rb2.isChecked())
+                {
+                    Handler handler = new Handler();
+                    final ProgressDialog dialog = ProgressDialog.show(SelectPaymentOptions.this, "Loading", "Please wait...", true);
+
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            dialog.dismiss();
+
+                            Uri uri =
+                                    new Uri.Builder()
+                                            .scheme("upi")
+                                            .authority("pay")
+                                            .appendQueryParameter("pa", "saranshgupta123456789.sg.sg@okhdfcbank")
+                                            .appendQueryParameter("pn", "Ayush Gupta")
+                                            .appendQueryParameter("tn", "Payment to Homy Bee")
+                                            .appendQueryParameter("am", String.valueOf(itemDatabaseHelper.getTotalPrice()))
+                                            .appendQueryParameter("cu", "INR")
+                                            .build();
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(uri);
+
+                            Intent chooser = Intent.createChooser(intent,"Pay With");
+                            if(null != chooser.resolveActivity(getPackageManager())) {
+                                startActivityForResult(chooser, 10);
+                            } else {
+                                Toast.makeText(SelectPaymentOptions.this,"No UPI app found, please install one to continue",Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    },1500);
+                }
+                else
+                {
+                    Toast.makeText(SelectPaymentOptions.this,"Please select a payment option",Toast.LENGTH_LONG).show();
+                }
             }
         });
     }
@@ -233,28 +284,59 @@ public class SelectPaymentOptions extends AppCompatActivity {
                 //Code to handle successful transaction here.
                 final ProgressDialog dialog = ProgressDialog.show(SelectPaymentOptions.this, "Confirming Order", "Please wait...", true);
 
-                final Order order = new Order(customerDetails, itemsOrdered,"UPI");
+                final Order order = new Order(customerDetails, itemsOrdered, "COD");
 
-                databaseReference.child("orders").addListenerForSingleValueEvent(new ValueEventListener() {
+                databaseReference.child("Delivers").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                        int numChildren = (int) dataSnapshot.getChildrenCount();
-                        databaseReference.child("orders").child("Homy"+String.valueOf(numChildren+1)+"Bee"+(int)(Math.random()*100)+address.getName()+"Order"+address.getPincode()+(int)(Math.random()*100)).setValue(order);
+                        String branchPin = null;
 
-                        Toast.makeText(SelectPaymentOptions.this,"Order Confirmed",Toast.LENGTH_SHORT).show();
+                        for(DataSnapshot ds: dataSnapshot.getChildren())
+                        {
+                            HashMap<String,String> hashMap = (HashMap<String,String>)ds.getValue();
 
-                        itemDatabaseHelper.deleteAllData();
-                        dialog.dismiss();
-                        finish();
+                            for(HashMap.Entry<String,String> entry : hashMap.entrySet())
+                            {
+                                if(entry.getValue().equalsIgnoreCase(address.getPincode()))
+                                {
+                                    branchPin = entry.getKey();
+                                    break;
+                                }
+                            }
+                        }
+
+                        final String finalBranchPin = branchPin;
+                        databaseReference.child("orders").child(branchPin).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                int numChildren = (int) dataSnapshot.getChildrenCount();
+                                databaseReference.child("orders").child(finalBranchPin).child("Homy" + String.valueOf(numChildren + 1) + "Bee" + (int) (Math.random() * 100) + address.getName() + "Order" + address.getPincode() + (int) (Math.random() * 100)).setValue(order);
+
+                                Cursor data = itemDatabaseHelper.getAllData();
+
+                                myOrdersDatabaseHelper.insertData(data);
+                                Toast.makeText(SelectPaymentOptions.this, "Order Confirmed", Toast.LENGTH_SHORT).show();
+
+                                itemDatabaseHelper.deleteAllData();
+                                dialog.dismiss();
+                                finish();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                dialog.dismiss();
+                                Toast.makeText(SelectPaymentOptions.this, "Failed Placing Order", Toast.LENGTH_LONG).show();
+                                finish();
+                            }
+                        });
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                        dialog.dismiss();
-                        Toast.makeText(SelectPaymentOptions.this,"Failed Placing Order",Toast.LENGTH_LONG).show();
-                        finish();
                     }
                 });
                 Toast.makeText(SelectPaymentOptions.this, "Transaction successful.", Toast.LENGTH_SHORT).show();

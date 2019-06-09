@@ -115,4 +115,10 @@ public class CustomerDatabaseHelper extends SQLiteOpenHelper {
         }
         return items.size();
     }
+
+    public void deleteAllData()
+    {
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.execSQL("Delete from "+TABLE_NAME);
+    }
 }

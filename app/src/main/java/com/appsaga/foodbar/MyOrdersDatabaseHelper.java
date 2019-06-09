@@ -70,4 +70,10 @@ public class MyOrdersDatabaseHelper extends SQLiteOpenHelper {
         Cursor res= db.rawQuery("select * from "+TABLE_NAME+ " WHERE  itemNum > ?",new String[]{"0"});
         return res;
     }
+
+    public void deleteAllData()
+    {
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.execSQL("Delete from "+TABLE_NAME);
+    }
 }
