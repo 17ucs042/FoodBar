@@ -1,6 +1,8 @@
 package com.appsaga.foodbar;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -143,5 +145,10 @@ public class MyDeliveryAddress extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

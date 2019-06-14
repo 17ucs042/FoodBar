@@ -48,7 +48,6 @@ public class HomeFragment extends Fragment {
             view = inflater.inflate(R.layout.fragment_home_fragment, container, false);
 
             final ProgressDialog dialog = ProgressDialog.show(getContext(), "Loading", "Please wait...", true);
-            dialog.show();
 
             TextView searchText = view.findViewById(R.id.search_text);
             RelativeLayout searchBar = view.findViewById(R.id.search_item_bar);
@@ -129,18 +128,10 @@ public class HomeFragment extends Fragment {
                     GlideApp.with(HomeFragment.this).load(imagesRef12).into(im12);
                     GlideApp.with(HomeFragment.this).load(imagesRef13).into(im13);
                     GlideApp.with(HomeFragment.this).load(imagesRef14).into(im14);
-                }
-            }, 3000);
-
-            Handler handler1 = new Handler();
-
-            handler1.postDelayed(new Runnable() {
-                @Override
-                public void run() {
 
                     dialog.dismiss();
                 }
-            }, 5000);
+            },1000);
 
             final TextView placeName = getActivity().findViewById(R.id.placeName);
             final Dialog customDialog = new Dialog(getContext());
@@ -222,10 +213,10 @@ public class HomeFragment extends Fragment {
 
                     if (placeName.getText().length() == 6) {
 
-                                Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
-                                intent.putExtra("value", "Bakery, Cakes & Dairy");
-                                intent.putExtra("pin", placeName.getText().toString());
-                                startActivity(intent);
+                        Intent intent = new Intent(getContext(), com.appsaga.foodbar.ShowItems.class);
+                        intent.putExtra("value", "Bakery, Cakes & Dairy");
+                        intent.putExtra("pin", placeName.getText().toString());
+                        startActivity(intent);
 
                     } else {
                         customDialog.show();

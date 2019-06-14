@@ -106,8 +106,8 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
     private GoogleSignInOptions gso;
 
     String from;
-    String my_name;
-    String userID;
+    String my_name = null;
+    String userID = null;
 
     DatabaseHelper mDatabaseHelper;
 
@@ -124,6 +124,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
     ProgressDialog dialog;
     MyPincodeDatabaseHelper myPincodeDatabaseHelper;
     MyOrdersDatabaseHelper myOrdersDatabaseHelper;
+    FromDatabaseHelper fromDatabaseHelper;
     ImageView editPin;
 
     @Override
@@ -139,6 +140,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
         myPincodeDatabaseHelper = new MyPincodeDatabaseHelper(HomeScreen.this);
         customerDatabaseHelper = new CustomerDatabaseHelper(HomeScreen.this);
         myOrdersDatabaseHelper = new MyOrdersDatabaseHelper(HomeScreen.this);
+        fromDatabaseHelper = new FromDatabaseHelper(HomeScreen.this);
         editPin = findViewById(R.id.edit_pin);
 
         viewPager = findViewById(R.id.viewpager);
@@ -153,17 +155,6 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
         tabLayout.getTabAt(3).setIcon(R.drawable.offers);
         tabLayout.getTabAt(4).setCustomView(R.layout.basket_custom_icon);
 
-        if (from.equals("google")) {
-            gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestEmail()
-                    .build();
-
-            googleApiClient = new GoogleApiClient.Builder(this)
-                    .enableAutoManage(this, this)
-                    .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                    .build();
-        }
-
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
@@ -174,15 +165,37 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
         userID = getIntent().getStringExtra("User Id");
         my_name = getIntent().getStringExtra("name");
 
+        if(fromDatabaseHelper.getTotalItems()==0)
+        {
+            fromDatabaseHelper.insertData(from,userID,my_name);
+        }
+
+        if (fromDatabaseHelper.getFrom().equals("google")) {
+            gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestEmail()
+                    .build();
+
+            googleApiClient = new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this, this)
+                    .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                    .build();
+        }
+
         navigationView = findViewById(R.id.nav_view);
         View hView = navigationView.getHeaderView(0);
 
         pic = hView.findViewById(R.id.pic);
         name = hView.findViewById(R.id.name);
 
-        if (from.equals("facebook")) {
+        Log.d("Size...",fromDatabaseHelper.getTotalItems()+"");
+        if (fromDatabaseHelper.getFrom().equals("facebook")) {
 
-            Picasso.with(getApplicationContext()).load("https://graph.facebook.com/" + userID + "/picture?type=large").into(pic);
+            Picasso.with(getApplicationContext()).load("https://graph.facebook.com/" + fromDatabaseHelper.getUserID() + "/picture?type=large").into(pic);
+        }
+
+        if(my_name!=null)
+        {
+            Log.d("name...",my_name);
         }
 
         PlaceName = findViewById(R.id.placeName);
@@ -224,6 +237,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
                             customerDatabaseHelper.deleteAllData();
                             myPincodeDatabaseHelper.deleteAllData();
                             myOrdersDatabaseHelper.deleteAllData();
+                            fromDatabaseHelper.deleteAllData();
 
                             if (from.equals("facebook")) {
                                 LoginManager.getInstance().logOut();
@@ -366,6 +380,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
         if (requestCode == 30) {
             if (resultCode == Activity.RESULT_OK) {
                 String result = data.getStringExtra("result");
+                myPincodeDatabaseHelper.insertData(result);
                 PlaceName.setText(result);
             }
         }
@@ -385,7 +400,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
     protected void onStart() {
         super.onStart();
 
-        if (from.equals("google")) {
+        if (fromDatabaseHelper.getFrom().equals("google")) {
             OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(googleApiClient);
             if (opr.isDone()) {
                 GoogleSignInResult result = opr.get();
@@ -442,8 +457,6 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
             drawerLayout.closeDrawer(Gravity.START);
         } else if (taskList.get(0).numActivities == 1 &&
                 taskList.get(0).topActivity.getClassName().equals(this.getClass().getName()) && viewPager.getCurrentItem() != 0) {
-
-            Log.i(TAG, "This is last activity in the stack");
             viewPager.setCurrentItem(0);
         } else if (viewPager.getCurrentItem() == 0) {
             finishAffinity();
@@ -484,12 +497,13 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
         }
 
         String intent = getIntent().getStringExtra("intent");
-        if (intent != null)
+        if (intent != null) {
             if (intent.equals("Basket")) {
                 viewPager.setCurrentItem(4);
             } else if (intent.equals("Search")) {
                 viewPager.setCurrentItem(2);
             }
+        }
 
         String result = getIntent().getStringExtra("result");
         if (result != null) {
@@ -534,7 +548,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (myList != null) {
+            if (myList != null && myPincodeDatabaseHelper.getTotalItems()==0) {
                 android.location.Address address = Objects.requireNonNull(myList).get(0);
                 String addressStr = "";
                 addressStr += address.getPostalCode();
@@ -593,7 +607,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
             double latitude;
             double longitude;
 
-            if (location != null) {
+            if (location != null && myPincodeDatabaseHelper.getTotalItems()==0) {
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
 

@@ -1,5 +1,9 @@
 package com.appsaga.foodbar;
 
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -8,9 +12,12 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,6 +46,7 @@ public class SelectPaymentOptions extends AppCompatActivity {
     CustomerDatabaseHelper customerDatabaseHelper;
     ItemDatabaseHelper itemDatabaseHelper;
     MyOrdersDatabaseHelper myOrdersDatabaseHelper;
+    ScheduledItemsDatabaseHelper scheduledItemsDatabaseHelper;
 
     HashMap<String, String> customerDetails = new HashMap<>();
     ArrayList<HashMap<String, String>> itemsOrdered = new ArrayList<>();
@@ -52,10 +60,19 @@ public class SelectPaymentOptions extends AppCompatActivity {
     RelativeLayout codLayout;
     RelativeLayout upiLayout;
 
+    String scheduled ;
+    long timeInMillis;
+    String time;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_payment_options);
+
+        scheduled = getIntent().getStringExtra("scheduledEveryday");
+        timeInMillis = getIntent().getLongExtra("timeInMillis", 0);
+        address = (Address) getIntent().getSerializableExtra("address");
+        time = getIntent().getStringExtra("time");
 
         confirmButton = findViewById(R.id.confirm_button);
         confirmButton.setEnabled(Boolean.FALSE);
@@ -68,11 +85,10 @@ public class SelectPaymentOptions extends AppCompatActivity {
         codLayout = findViewById(R.id.COD_layout);
         upiLayout = findViewById(R.id.UPI_layout);
 
-        address = (Address)getIntent().getSerializableExtra("address");
-
         customerDatabaseHelper = new CustomerDatabaseHelper(SelectPaymentOptions.this);
         itemDatabaseHelper = new ItemDatabaseHelper(SelectPaymentOptions.this);
         myOrdersDatabaseHelper = new MyOrdersDatabaseHelper(SelectPaymentOptions.this);
+        scheduledItemsDatabaseHelper = new ScheduledItemsDatabaseHelper(SelectPaymentOptions.this);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference();
@@ -86,11 +102,9 @@ public class SelectPaymentOptions extends AppCompatActivity {
 
         Cursor data1 = itemDatabaseHelper.getAllData();
 
-        if(data1.moveToFirst())
-        {
-            do
-            {
-                HashMap<String,String> order_value = new HashMap<>();
+        if (data1.moveToFirst()) {
+            do {
+                HashMap<String, String> order_value = new HashMap<>();
 
                 order_value.put("Name", data1.getString(1));
                 order_value.put("Quantity", data1.getString(2));
@@ -98,7 +112,7 @@ public class SelectPaymentOptions extends AppCompatActivity {
                 order_value.put("Number of items", String.valueOf(data1.getInt(4)));
 
                 itemsOrdered.add(order_value);
-            }while (data1.moveToNext());
+            } while (data1.moveToNext());
         }
 
         rb1.setOnClickListener(new View.OnClickListener() {
@@ -127,101 +141,127 @@ public class SelectPaymentOptions extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(rb1.isChecked()) {
-                    final ProgressDialog dialog = ProgressDialog.show(SelectPaymentOptions.this, "Confirming Order", "Please wait...", true);
+                if (isConnectionAvailable(SelectPaymentOptions.this)) {
+                    if (rb1.isChecked()) {
+                        final ProgressDialog dialog = ProgressDialog.show(SelectPaymentOptions.this, "Confirming Order", "Please wait...", true);
 
-                    final Order order = new Order(customerDetails, itemsOrdered, "COD");
+                        final Order order;
 
-                    databaseReference.child("Delivers").addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(scheduled.equalsIgnoreCase("yes"))
+                        {
+                             order = new Order(customerDetails, itemsOrdered, "COD", time,"yes");
+                        }
+                        else
+                        {
+                            order = new Order(customerDetails, itemsOrdered, "COD", time, "no");
+                        }
 
-                            String branchPin = null;
+                        databaseReference.child("Delivers").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                            for(DataSnapshot ds: dataSnapshot.getChildren())
-                            {
-                                HashMap<String,String> hashMap = (HashMap<String,String>)ds.getValue();
+                                String branchPin = null;
 
-                                for(HashMap.Entry<String,String> entry : hashMap.entrySet())
-                                {
-                                    if(entry.getValue().equalsIgnoreCase(address.getPincode()))
-                                    {
-                                        branchPin = entry.getKey();
-                                        break;
+                                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                    HashMap<String, String> hashMap = (HashMap<String, String>) ds.getValue();
+
+                                    for (HashMap.Entry<String, String> entry : hashMap.entrySet()) {
+                                        if (entry.getValue().equalsIgnoreCase(address.getPincode())) {
+                                            branchPin = entry.getKey();
+                                            break;
+                                        }
                                     }
                                 }
+
+                                final String finalBranchPin = branchPin;
+                                databaseReference.child("orders").child(branchPin).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                        int numChildren = (int) dataSnapshot.getChildrenCount();
+                                        databaseReference.child("orders").child(finalBranchPin).child("Homy" + (numChildren + 1) + "Bee" + (int) (Math.random() * 100) + address.getName() + "Order" + address.getPincode() + (int) (Math.random() * 100)).setValue(order);
+
+                                        Cursor data = itemDatabaseHelper.getAllData();
+
+                                        myOrdersDatabaseHelper.insertData(data);
+
+                                        Toast.makeText(SelectPaymentOptions.this, "Order Confirmed", Toast.LENGTH_SHORT).show();
+
+                                        if (scheduled != null) {
+                                            if (scheduled.equalsIgnoreCase("yes")) {
+                                                scheduledItemsDatabaseHelper.insertData(data);
+                                            }
+                                        }
+
+                                        itemDatabaseHelper.deleteAllData();
+
+                                        showNotfication();
+
+                                        dialog.dismiss();
+                                        finish();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        dialog.dismiss();
+                                        Toast.makeText(SelectPaymentOptions.this, "Failed Placing Order", Toast.LENGTH_LONG).show();
+                                        finish();
+                                    }
+                                });
                             }
 
-                            final String finalBranchPin = branchPin;
-                            databaseReference.child("orders").child(branchPin).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                    int numChildren = (int) dataSnapshot.getChildrenCount();
-                                    databaseReference.child("orders").child(finalBranchPin).child("Homy" + String.valueOf(numChildren + 1) + "Bee" + (int) (Math.random() * 100) + address.getName() + "Order" + address.getPincode() + (int) (Math.random() * 100)).setValue(order);
-
-                                    Cursor data = itemDatabaseHelper.getAllData();
-
-                                    myOrdersDatabaseHelper.insertData(data);
-                                    Toast.makeText(SelectPaymentOptions.this, "Order Confirmed", Toast.LENGTH_SHORT).show();
-
-                                    itemDatabaseHelper.deleteAllData();
-                                    dialog.dismiss();
-                                    finish();
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                    dialog.dismiss();
-                                    Toast.makeText(SelectPaymentOptions.this, "Failed Placing Order", Toast.LENGTH_LONG).show();
-                                    finish();
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                }
-                else if(rb2.isChecked())
-                {
-                    Handler handler = new Handler();
-                    final ProgressDialog dialog = ProgressDialog.show(SelectPaymentOptions.this, "Loading", "Please wait...", true);
-
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            dialog.dismiss();
-
-                            Uri uri =
-                                    new Uri.Builder()
-                                            .scheme("upi")
-                                            .authority("pay")
-                                            .appendQueryParameter("pa", "saranshgupta123456789.sg.sg@okhdfcbank")
-                                            .appendQueryParameter("pn", "Ayush Gupta")
-                                            .appendQueryParameter("tn", "Payment to Homy Bee")
-                                            .appendQueryParameter("am", String.valueOf(itemDatabaseHelper.getTotalPrice()))
-                                            .appendQueryParameter("cu", "INR")
-                                            .build();
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            intent.setData(uri);
-
-                            Intent chooser = Intent.createChooser(intent,"Pay With");
-                            if(null != chooser.resolveActivity(getPackageManager())) {
-                                startActivityForResult(chooser, 10);
-                            } else {
-                                Toast.makeText(SelectPaymentOptions.this,"No UPI app found, please install one to continue",Toast.LENGTH_SHORT).show();
                             }
-                        }
-                    },1500);
-                }
-                else
-                {
-                    Toast.makeText(SelectPaymentOptions.this,"Please select a payment option",Toast.LENGTH_LONG).show();
+                        });
+                    } else if (rb2.isChecked()) {
+                        Handler handler = new Handler();
+                        final ProgressDialog dialog = ProgressDialog.show(SelectPaymentOptions.this, "Loading", "Please wait...", true);
+
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                dialog.dismiss();
+
+                                String amount;
+
+                                if(scheduled.equalsIgnoreCase("yes"))
+                                {
+                                    amount = String.valueOf(itemDatabaseHelper.getTotalPrice()*30);
+                                }
+                                else
+                                {
+                                    amount = String.valueOf(itemDatabaseHelper.getTotalPrice());
+                                }
+                                Uri uri =
+                                        new Uri.Builder()
+                                                .scheme("upi")
+                                                .authority("pay")
+                                                .appendQueryParameter("pa", "saranshgupta123456789.sg.sg@okhdfcbank")
+                                                .appendQueryParameter("pn", "Garvit")
+                                                .appendQueryParameter("tn", "Payment to Homy Bee")
+                                                .appendQueryParameter("am", amount)
+                                                .appendQueryParameter("cu", "INR")
+                                                .build();
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setData(uri);
+
+                                Intent chooser = Intent.createChooser(intent, "Pay With");
+                                if (null != chooser.resolveActivity(getPackageManager())) {
+                                    startActivityForResult(chooser, 10);
+                                } else {
+                                    Toast.makeText(SelectPaymentOptions.this, "No UPI app found, please install one to continue", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }, 1500);
+                    } else {
+                        Toast.makeText(SelectPaymentOptions.this, "Please select a payment option", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(SelectPaymentOptions.this, "No Internet Connection", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -230,10 +270,8 @@ public class SelectPaymentOptions extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
-        if(requestCode==10)
-        {
-            if(resultCode==RESULT_OK)
-            {
+        if (requestCode == 10) {
+            if (resultCode == RESULT_OK) {
                 if (data != null) {
                     String trxt = data.getStringExtra("response");
                     Log.d("UPI", "onActivityResult: " + trxt);
@@ -246,8 +284,7 @@ public class SelectPaymentOptions extends AppCompatActivity {
                     dataList.add("nothing");
                     upiPaymentDataOperation(dataList);
                 }
-            }
-            else {
+            } else {
                 Log.d("UPI", "onActivityResult: " + "Return data is null"); //when user simply back without payment
                 ArrayList<String> dataList = new ArrayList<>();
                 dataList.add("nothing");
@@ -259,23 +296,21 @@ public class SelectPaymentOptions extends AppCompatActivity {
     private void upiPaymentDataOperation(ArrayList<String> data) {
         if (isConnectionAvailable(SelectPaymentOptions.this)) {
             String str = data.get(0);
-            Log.d("UPIPAY", "upiPaymentDataOperation: "+str);
+            Log.d("UPIPAY", "upiPaymentDataOperation: " + str);
             String paymentCancel = "";
-            if(str == null) str = "discard";
+            if (str == null) str = "discard";
             String status = "";
             String approvalRefNo = "";
             String response[] = str.split("&");
             for (int i = 0; i < response.length; i++) {
                 String equalStr[] = response[i].split("=");
-                if(equalStr.length >= 2) {
+                if (equalStr.length >= 2) {
                     if (equalStr[0].toLowerCase().equals("Status".toLowerCase())) {
                         status = equalStr[1].toLowerCase();
-                    }
-                    else if (equalStr[0].toLowerCase().equals("ApprovalRefNo".toLowerCase()) || equalStr[0].toLowerCase().equals("txnRef".toLowerCase())) {
+                    } else if (equalStr[0].toLowerCase().equals("ApprovalRefNo".toLowerCase()) || equalStr[0].toLowerCase().equals("txnRef".toLowerCase())) {
                         approvalRefNo = equalStr[1];
                     }
-                }
-                else {
+                } else {
                     paymentCancel = "Payment cancelled by user.";
                 }
             }
@@ -284,7 +319,12 @@ public class SelectPaymentOptions extends AppCompatActivity {
                 //Code to handle successful transaction here.
                 final ProgressDialog dialog = ProgressDialog.show(SelectPaymentOptions.this, "Confirming Order", "Please wait...", true);
 
-                final Order order = new Order(customerDetails, itemsOrdered, "COD");
+                final Order order;
+                if (scheduled.equalsIgnoreCase("yes")) {
+                    order = new Order(customerDetails, itemsOrdered, "COD", time, "yes");
+                } else {
+                    order = new Order(customerDetails, itemsOrdered, "COD", time, "no");
+                }
 
                 databaseReference.child("Delivers").addValueEventListener(new ValueEventListener() {
                     @Override
@@ -292,14 +332,11 @@ public class SelectPaymentOptions extends AppCompatActivity {
 
                         String branchPin = null;
 
-                        for(DataSnapshot ds: dataSnapshot.getChildren())
-                        {
-                            HashMap<String,String> hashMap = (HashMap<String,String>)ds.getValue();
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            HashMap<String, String> hashMap = (HashMap<String, String>) ds.getValue();
 
-                            for(HashMap.Entry<String,String> entry : hashMap.entrySet())
-                            {
-                                if(entry.getValue().equalsIgnoreCase(address.getPincode()))
-                                {
+                            for (HashMap.Entry<String, String> entry : hashMap.entrySet()) {
+                                if (entry.getValue().equalsIgnoreCase(address.getPincode())) {
                                     branchPin = entry.getKey();
                                     break;
                                 }
@@ -318,6 +355,12 @@ public class SelectPaymentOptions extends AppCompatActivity {
 
                                 myOrdersDatabaseHelper.insertData(data);
                                 Toast.makeText(SelectPaymentOptions.this, "Order Confirmed", Toast.LENGTH_SHORT).show();
+
+                                if (scheduled != null) {
+                                    if (scheduled.equalsIgnoreCase("yes")) {
+                                        scheduledItemsDatabaseHelper.insertData(data);
+                                    }
+                                }
 
                                 itemDatabaseHelper.deleteAllData();
                                 dialog.dismiss();
@@ -340,12 +383,11 @@ public class SelectPaymentOptions extends AppCompatActivity {
                     }
                 });
                 Toast.makeText(SelectPaymentOptions.this, "Transaction successful.", Toast.LENGTH_SHORT).show();
-                Log.d("UPI", "responseStr: "+approvalRefNo);
-            }
-            else if("Payment cancelled by user.".equals(paymentCancel)) {
+                showNotfication();
+                Log.d("UPI", "responseStr: " + approvalRefNo);
+            } else if ("Payment cancelled by user.".equals(paymentCancel)) {
                 Toast.makeText(SelectPaymentOptions.this, "Payment cancelled by user.", Toast.LENGTH_SHORT).show();
-            }
-            else {
+            } else {
                 Toast.makeText(SelectPaymentOptions.this, "Transaction failed.Please try again", Toast.LENGTH_SHORT).show();
             }
         } else {
@@ -364,5 +406,39 @@ public class SelectPaymentOptions extends AppCompatActivity {
             }
         }
         return false;
+    }
+
+    public void showNotfication() {
+        createNotificationChannel();
+
+        Intent intent = new Intent(SelectPaymentOptions.this, MyOrders.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(SelectPaymentOptions.this, 0, intent, 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(SelectPaymentOptions.this, "company notification")
+                .setSmallIcon(R.drawable.homy_bee_main_icon)
+                .setContentTitle("Order Confirmed")
+                .setContentText("Your order has been placed")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(SelectPaymentOptions.this);
+        notificationManager.notify(1, builder.build());
+
+    }
+
+    public void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "company notification";
+            String description = "Include all company notifications";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+
+            NotificationChannel notificationChannel = new NotificationChannel("company notification", name, importance);
+            notificationChannel.setDescription(description);
+
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
     }
 }

@@ -110,19 +110,21 @@ public class EnterDetails extends AppCompatActivity {
                     }
                     else
                     {
-                        name = firstName.getText().toString() + " " + lastName.getText().toString();
+                        name = firstName.getText().toString()+" "+lastName.getText().toString();
                         phoneNumber = phoneNum.getText().toString();
-                        house = houseNo.getText().toString() + " " + apartmentName.getText().toString() + " " +
-                                streetDetails.getText().toString() + " " + landmark.getText().toString();
+                        house = houseNo.getText().toString()+" "+apartmentName.getText().toString()+" "+
+                                streetDetails.getText().toString()+" "+landmark.getText().toString();
                         area = areaDetails.getText().toString();
                         pincode1 = pincode.getText().toString();
                         nickname1 = nickname.getText().toString();
 
-                        customerDatabaseHelper.insertData(firstName.getText().toString(), lastName.getText().toString(),
-                                phoneNumber, houseNo.getText().toString(), apartmentName.getText().toString(), streetDetails.getText().toString(),
-                                landmark.getText().toString(), area, pincode1, nickname1);
+                        Address address = new Address(name,phoneNumber,house,area,pincode1,nickname1);
 
-                        Toast.makeText(EnterDetails.this, "Address saved", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(EnterDetails.this,com.appsaga.foodbar.SelectDeliveryInterval.class);
+                        intent.putExtra("address",address);
+                        startActivity(intent);
+
+                        finish();
                     }
                 }
                 else
@@ -137,7 +139,7 @@ public class EnterDetails extends AppCompatActivity {
 
                     Address address = new Address(name,phoneNumber,house,area,pincode1,nickname1);
 
-                    Intent intent = new Intent(EnterDetails.this,com.appsaga.foodbar.SelectPaymentOptions.class);
+                    Intent intent = new Intent(EnterDetails.this,com.appsaga.foodbar.SelectDeliveryInterval.class);
                     intent.putExtra("address",address);
                     startActivity(intent);
 

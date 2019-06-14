@@ -38,6 +38,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -111,39 +112,26 @@ public class ShowItems extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                HashMap<String,String> delivers;
+                HashMap<String, String> delivers;
                 ArrayList<String> delivery_pincode = new ArrayList<>();
 
-                for(DataSnapshot ds: dataSnapshot.getChildren())
-                {
-                    delivers = (HashMap<String,String>)ds.getValue();
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    delivers = (HashMap<String, String>) ds.getValue();
 
-                    for(Map.Entry<String,String> entry : delivers.entrySet())
-                    {
-                        if(entry.getValue().equalsIgnoreCase(pin))
-                        {
-                            if(!delivery_pincode.contains(entry.getKey()))
-                            {
+                    for (Map.Entry<String, String> entry : delivers.entrySet()) {
+                        if (entry.getValue().equalsIgnoreCase(pin)) {
+                            if (!delivery_pincode.contains(entry.getKey())) {
                                 delivery_pincode.add(entry.getKey());
                             }
                         }
                     }
                 }
 
-                Handler handler = new Handler();
-
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        progressDialog.dismiss();
-                    }
-                }, 2000);
+                progressDialog.dismiss();
 
                 final ProgressDialog progressDialog1 = ProgressDialog.show(ShowItems.this, "Loading", "Fetching items...", true);
 
-                for(int i =0;i<delivery_pincode.size();i++)
-                {
+                for (int i = 0; i < delivery_pincode.size(); i++) {
                     DatabaseReference myRef = databaseReference.child("Categories").child(delivery_pincode.get(i)).child(value);
 
                     myRef.addValueEventListener(new ValueEventListener() {
@@ -166,10 +154,30 @@ public class ShowItems extends AppCompatActivity {
 
                                 }
 
-                                if(allItems.size()!=0) {
+                                if (allItems.size() != 0) {
+
+                                    /*Collections.sort(allItems, new Comparator<Item>() {
+                                        @Override
+                                        public int compare(Item o1, Item o2) {
+
+                                            for(HashMap.Entry<String,String> entry : o1.getQuant_price().entrySet())
+                                            {
+                                                for(HashMap.Entry<String,String> entry1 : o2.getQuant_price().entrySet())
+                                                {
+                                                    Log.d("entry....",entry.getValue().replace("Out of Stock","").trim()+" "+entry1.getValue().replace("Out of Stock","").trim());
+                                                        return entry.getValue().replace("Out of Stock","").trim().compareTo(entry1.getValue().replace("Out of Stock","").trim());
+                                                }
+                                            }
+
+                                            return -1;
+                                        }
+                                    });*/
+
                                     itemAdapter = new ItemAdapter(ShowItems.this, allItems);
-                                   // itemsList.setAdapter(null);
+                                    // itemsList.setAdapter(null);
                                     itemsList.setAdapter(itemAdapter);
+
+                                    opened = Boolean.FALSE;
                                 }
                             }
                         }
@@ -180,17 +188,7 @@ public class ShowItems extends AppCompatActivity {
                         }
                     });
                 }
-
-                Handler handler1 = new Handler();
-
-                handler1.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        opened = Boolean.FALSE;
-                        progressDialog1.dismiss();
-                    }
-                }, 4000);
+                progressDialog1.dismiss();
             }
 
             @Override
@@ -219,15 +217,12 @@ public class ShowItems extends AppCompatActivity {
             public void onScroll(AbsListView view, int firstVisibleItem,
                                  int visibleItemCount, int totalItemCount) {
 
-                if(mLastFirstVisibleItem<firstVisibleItem)
-                {
+                if (mLastFirstVisibleItem < firstVisibleItem) {
                     tabLayout.setVisibility(View.GONE);
-                }
-                else if(mLastFirstVisibleItem>firstVisibleItem)
-                {
+                } else if (mLastFirstVisibleItem > firstVisibleItem) {
                     tabLayout.setVisibility(View.VISIBLE);
                 }
-                mLastFirstVisibleItem=firstVisibleItem;
+                mLastFirstVisibleItem = firstVisibleItem;
 
             }
         });
@@ -236,29 +231,26 @@ public class ShowItems extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                String name = ((TextView)view.findViewById(R.id.name)).getText().toString();
-                String quantity = ((Spinner)view.findViewById(R.id.quantity)).getSelectedItem().toString();
-                String price = ((TextView)view.findViewById(R.id.price)).getText().toString();
-                String type = ((TextView)view.findViewById(R.id.type)).getText().toString();
-                Item item = (Item)parent.getItemAtPosition(position);
+                String name = ((TextView) view.findViewById(R.id.name)).getText().toString();
+                String quantity = ((Spinner) view.findViewById(R.id.quantity)).getSelectedItem().toString();
+                String price = ((TextView) view.findViewById(R.id.price)).getText().toString();
+                String type = ((TextView) view.findViewById(R.id.type)).getText().toString();
+                Item item = (Item) parent.getItemAtPosition(position);
 
-                Drawable drawable = ((ImageView)view.findViewById(R.id.display)).getDrawable();
+                Drawable drawable = ((ImageView) view.findViewById(R.id.display)).getDrawable();
                 BitmapDrawable bitmapDrawable = ((BitmapDrawable) drawable);
 
-                if(bitmapDrawable==null)
-                {
-                    Toast.makeText(ShowItems.this,"Loading please wait",Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    Bitmap image = bitmapDrawable .getBitmap();
-                    Intent intent = new Intent(ShowItems.this,ItemDescription.class);
-                    intent.putExtra("name",name);
-                    intent.putExtra("quantity",quantity);
-                    intent.putExtra("price",price);
-                    intent.putExtra("image",image);
-                    intent.putExtra("type",type);
-                    intent.putExtra("item",item);
+                if (bitmapDrawable == null) {
+                    Toast.makeText(ShowItems.this, "Loading please wait", Toast.LENGTH_SHORT).show();
+                } else {
+                    Bitmap image = bitmapDrawable.getBitmap();
+                    Intent intent = new Intent(ShowItems.this, ItemDescription.class);
+                    intent.putExtra("name", name);
+                    intent.putExtra("quantity", quantity);
+                    intent.putExtra("price", price);
+                    intent.putExtra("image", image);
+                    intent.putExtra("type", type);
+                    intent.putExtra("item", item);
                     startActivity(intent);
                 }
             }
@@ -275,22 +267,22 @@ public class ShowItems extends AppCompatActivity {
                     finish();
                 } else if (tab.getPosition() == 1) {
 
-                    Intent intent = new Intent(ShowItems.this,HomeScreen.class);
+                    Intent intent = new Intent(ShowItems.this, HomeScreen.class);
                     intent.putExtra("result", "Categories");
                     startActivity(intent);
 
                 } else if (tab.getPosition() == 2) {
 
-                    Intent intent = new Intent(ShowItems.this,HomeScreen.class);
+                    Intent intent = new Intent(ShowItems.this, HomeScreen.class);
                     intent.putExtra("result", "Search");
                     startActivity(intent);
 
                 } else if (tab.getPosition() == 3) {
-                    Intent intent = new Intent(ShowItems.this,HomeScreen.class);
+                    Intent intent = new Intent(ShowItems.this, HomeScreen.class);
                     intent.putExtra("result", "Offers");
                     startActivity(intent);
                 } else {
-                    Intent intent = new Intent(ShowItems.this,HomeScreen.class);
+                    Intent intent = new Intent(ShowItems.this, HomeScreen.class);
                     intent.putExtra("result", "Basket");
                     startActivity(intent);
                 }
@@ -312,22 +304,22 @@ public class ShowItems extends AppCompatActivity {
 
                 } else if (tab.getPosition() == 1) {
 
-                    Intent intent = new Intent(ShowItems.this,HomeScreen.class);
+                    Intent intent = new Intent(ShowItems.this, HomeScreen.class);
                     intent.putExtra("result", "Categories");
                     startActivity(intent);
 
                 } else if (tab.getPosition() == 2) {
 
-                    Intent intent = new Intent(ShowItems.this,HomeScreen.class);
+                    Intent intent = new Intent(ShowItems.this, HomeScreen.class);
                     intent.putExtra("result", "Search");
                     startActivity(intent);
 
                 } else if (tab.getPosition() == 3) {
-                    Intent intent = new Intent(ShowItems.this,HomeScreen.class);
+                    Intent intent = new Intent(ShowItems.this, HomeScreen.class);
                     intent.putExtra("result", "Offers");
                     startActivity(intent);
                 } else {
-                    Intent intent = new Intent(ShowItems.this,HomeScreen.class);
+                    Intent intent = new Intent(ShowItems.this, HomeScreen.class);
                     intent.putExtra("result", "Basket");
                     startActivity(intent);
                 }
@@ -344,7 +336,7 @@ public class ShowItems extends AppCompatActivity {
                 frameLayout.removeAllViews();
                 transaction.replace(R.id.frame_layout, fragment);
                 transaction.commit();*/
-                Intent intent = new Intent(ShowItems.this,HomeScreen.class);
+                Intent intent = new Intent(ShowItems.this, HomeScreen.class);
                 intent.putExtra("result", "Search");
                 startActivity(intent);
             }
@@ -366,8 +358,7 @@ public class ShowItems extends AppCompatActivity {
 
         count = tabLayout.getTabAt(4).getCustomView().findViewById(R.id.count);
 
-        if(itemAdapter!=null)
-        {
+        if (itemAdapter != null) {
             itemsList.setAdapter(null);
             itemsList.setAdapter(itemAdapter);
         }

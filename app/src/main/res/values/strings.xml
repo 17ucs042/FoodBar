@@ -7,4 +7,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_show_items">ShowItems</string>
     <string name="custom_dialog">Location not set.\nTurn on GPS and set location\nOR</string>
+
+    <string name="note">Note: Items scheduled here will be delivered everyday</string>
 </resources>
