@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AboutUs">
+    tools:context=".CancelEverydayOrder">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -23,7 +23,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:layout_margin="3dp"
-                android:text="About Us"
+                android:text="Cancel Everyday Order"
                 android:textColor="#FFFFFF"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -31,4 +31,24 @@
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 
+    <TextView
+        android:id="@+id/not_available"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:textColor="#000000"
+        android:textSize="17sp"
+        android:visibility="gone" />
+
+    <ListView
+        android:id="@+id/cancel_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@android:color/transparent"
+        android:visibility="gone"
+        android:layout_below="@id/toolbar">
+
+    </ListView>
 </RelativeLayout>

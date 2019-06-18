@@ -267,7 +267,10 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
                             viewPager.setCurrentItem(3);
                         } else if (menuItem.getItemId() == R.id.homy_basket) {
                             viewPager.setCurrentItem(4);
-                        } else if (menuItem.getItemId() == R.id.address) {
+                        } else if (menuItem.getItemId() == R.id.cancel_order) {
+                            startActivity(new Intent(HomeScreen.this, CancelEverydayOrder.class));
+                        }
+                        else if (menuItem.getItemId() == R.id.address) {
                             startActivity(new Intent(HomeScreen.this, MyDeliveryAddress.class));
                         } else if (menuItem.getItemId() == R.id.my_orders) {
                             startActivity(new Intent(HomeScreen.this, MyOrders.class));

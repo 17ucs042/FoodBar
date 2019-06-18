@@ -28,6 +28,9 @@
             android:id="@+id/address"
             android:title="My Delivery Address" />
         <item
+            android:id="@+id/cancel_order"
+            android:title="Cancel Everyday Order" />
+        <item
             android:id="@+id/about"
             android:title="About Us" />
         <item

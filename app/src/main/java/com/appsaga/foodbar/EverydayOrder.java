@@ -3,7 +3,7 @@ package com.appsaga.foodbar;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Order {
+public class EverydayOrder {
 
     HashMap<String, String> customerDetails;
     ArrayList<HashMap<String, String>> itemsOrdered;
@@ -13,9 +13,10 @@ public class Order {
     String daysLeft;
     String status;
     String id;
+    String branchPin;
 
-    public Order(HashMap<String, String> customerDetails, ArrayList<HashMap<String, String>> itemsOrdered, String paymentType,
-                 String time,String everyday,String daysLeft,String status,String id) {
+    public EverydayOrder(HashMap<String, String> customerDetails, ArrayList<HashMap<String, String>> itemsOrdered, String paymentType,
+                 String time,String everyday,String daysLeft,String status,String id,String branchPin) {
         this.customerDetails = customerDetails;
         this.itemsOrdered = itemsOrdered;
         this.paymentType = paymentType;
@@ -24,9 +25,23 @@ public class Order {
         this.daysLeft=daysLeft;
         this.status = status;
         this.id = id;
+        this.branchPin = branchPin;
     }
 
-    public Order()
+    public EverydayOrder(Order order,String branchPin)
+    {
+        this.customerDetails=order.getCustomerDetails();
+        this.itemsOrdered=order.getItemsOrdered();
+        this.paymentType=order.getPaymentType();
+        this.time=order.getTime();
+        this.everyday=order.getEveryday();
+        this.daysLeft=order.getDaysLeft();
+        this.status=order.getStatus();
+        this.id=order.getId();
+        this.branchPin=branchPin;
+    }
+
+    public EverydayOrder()
     {
 
     }
@@ -93,5 +108,13 @@ public class Order {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getBranchPin() {
+        return branchPin;
+    }
+
+    public void setBranchPin(String branchPin) {
+        this.branchPin = branchPin;
     }
 }

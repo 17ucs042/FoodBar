@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +29,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.signature.ObjectKey;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -38,6 +46,10 @@ public class HomeFragment extends Fragment {
     ScrollView scrollView;
     TabLayout tabLayout;
     MyPincodeDatabaseHelper myPincodeDatabaseHelper;
+    final long ONE_MEGABYTE = 1024 * 1024;
+    ImageView[] im = new ImageView[100];
+    String totalImages;
+    DatabaseReference databaseReference;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,6 +67,7 @@ public class HomeFragment extends Fragment {
             scrollView = view.findViewById(R.id.scroll);
             tabLayout = getActivity().findViewById(R.id.tabs);
             myPincodeDatabaseHelper = new MyPincodeDatabaseHelper(getContext());
+            databaseReference= FirebaseDatabase.getInstance().getReference();
 
             scrollView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
                 @Override
@@ -78,62 +91,118 @@ public class HomeFragment extends Fragment {
             ImageView im3_8 = view.findViewById(R.id.im3_8);
             ImageView im3_9 = view.findViewById(R.id.im3_9);
 
-            final ImageView im1 = view.findViewById(R.id.im1);
-            final ImageView im2 = view.findViewById(R.id.im2);
-            final ImageView im3 = view.findViewById(R.id.im3);
-            final ImageView im4 = view.findViewById(R.id.im4);
-            final ImageView im5 = view.findViewById(R.id.im5);
-            final ImageView im7 = view.findViewById(R.id.im7);
-            final ImageView im8 = view.findViewById(R.id.im8);
-            final ImageView im9 = view.findViewById(R.id.im9);
-            final ImageView im10 = view.findViewById(R.id.im10);
-            final ImageView im11 = view.findViewById(R.id.im11);
-            final ImageView im12 = view.findViewById(R.id.im12);
-            final ImageView im13 = view.findViewById(R.id.im13);
-            final ImageView im14 = view.findViewById(R.id.im14);
+            im[1] = view.findViewById(R.id.im1);
+            im[2] = view.findViewById(R.id.im2);
+            im[3] = view.findViewById(R.id.im3);
+            im[4] = view.findViewById(R.id.im4);
+            im[5] = view.findViewById(R.id.im5);
+            im[6] = view.findViewById(R.id.im6);
+            im[7] = view.findViewById(R.id.im7);
+            im[8] = view.findViewById(R.id.im8);
+
+            ImageView im8_1 = view.findViewById(R.id.im8_1);
+            ImageView im8_2 = view.findViewById(R.id.im8_2);
+            ImageView im8_3 = view.findViewById(R.id.im8_3);
+            ImageView im8_4 = view.findViewById(R.id.im8_4);
+            ImageView im8_5 = view.findViewById(R.id.im8_5);
+            ImageView im8_6 = view.findViewById(R.id.im8_6);
+            ImageView im8_7 = view.findViewById(R.id.im8_7);
+            ImageView im8_8 = view.findViewById(R.id.im8_8);
+
+            im[9] = view.findViewById(R.id.im9);
+            im[10] = view.findViewById(R.id.im10);
+            im[11] = view.findViewById(R.id.im11);
+            im[12] = view.findViewById(R.id.im12);
+            im[13] = view.findViewById(R.id.im13);
+
+            ImageView im11_1 = view.findViewById(R.id.im11_1);
+            ImageView im11_2 = view.findViewById(R.id.im11_2);
+            ImageView im11_3 = view.findViewById(R.id.im11_3);
+            ImageView im11_4 = view.findViewById(R.id.im11_4);
 
             FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference storageRef = storage.getReference();
-
-            final StorageReference imagesRef1 = storageRef.child("Images/im1.jpg");
-            final StorageReference imagesRef2 = storageRef.child("Images/im2.jpg");
-            final StorageReference imagesRef3 = storageRef.child("Images/im3.jpg");
-            final StorageReference imagesRef4 = storageRef.child("Images/im4.jpg");
-            final StorageReference imagesRef5 = storageRef.child("Images/im5.jpg");
-            final StorageReference imagesRef7 = storageRef.child("Images/im7.jpg");
-            final StorageReference imagesRef8 = storageRef.child("Images/im8.jpg");
-            final StorageReference imagesRef9 = storageRef.child("Images/im9.jpg");
-            final StorageReference imagesRef10 = storageRef.child("Images/im10.jpg");
-            final StorageReference imagesRef11 = storageRef.child("Images/im11.jpg");
-            final StorageReference imagesRef12 = storageRef.child("Images/im12.jpg");
-            final StorageReference imagesRef13 = storageRef.child("Images/im13.jpg");
-            final StorageReference imagesRef14 = storageRef.child("Images/im14.jpg");
-
-            Handler handler = new Handler();
-
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-
-                    GlideApp.with(HomeFragment.this).load(imagesRef1).into(im1);
-                    GlideApp.with(HomeFragment.this).load(imagesRef2).into(im2);
-                    GlideApp.with(HomeFragment.this).load(imagesRef3).into(im3);
-                    GlideApp.with(HomeFragment.this).load(imagesRef4).into(im4);
-                    GlideApp.with(HomeFragment.this).load(imagesRef5).into(im5);
-                    GlideApp.with(HomeFragment.this).load(imagesRef7).into(im7);
-                    GlideApp.with(HomeFragment.this).load(imagesRef8).into(im8);
-                    GlideApp.with(HomeFragment.this).load(imagesRef9).into(im9);
-                    GlideApp.with(HomeFragment.this).load(imagesRef10).into(im10);
-                    GlideApp.with(HomeFragment.this).load(imagesRef11).into(im11);
-                    GlideApp.with(HomeFragment.this).load(imagesRef12).into(im12);
-                    GlideApp.with(HomeFragment.this).load(imagesRef13).into(im13);
-                    GlideApp.with(HomeFragment.this).load(imagesRef14).into(im14);
-
-                    dialog.dismiss();
-                }
-            },1000);
-
+            final StorageReference storageRef = storage.getReference();
             final TextView placeName = getActivity().findViewById(R.id.placeName);
+
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    totalImages=dataSnapshot.child("totalImages").getValue(String.class);
+
+                    Log.d("Total...",totalImages+"");
+
+                    for (int i = 1; i <= Integer.valueOf(totalImages); i++) {
+                        final int finalI = i;
+                        storageRef.child("Images/im" + i + ".jpg").getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                            @Override
+                            public void onSuccess(byte[] bytes) {
+
+                                Bitmap bm = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                im[finalI].setImageBitmap(bm);
+                                if(finalI==3)
+                                {
+                                    dialog.dismiss();
+                                }
+                            }
+                        });
+                    }
+
+                    for(int i=1;i<=Integer.valueOf(totalImages);i++) {
+                        final int finalI = i;
+                        im[i].setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                databaseReference.child("imageClick").child(""+ finalI).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                        String clickValue1 = null;
+                                        String clickValue2 = null;
+                                        String clickValue3 = null;
+                                        Intent intent = new Intent(getContext(),ShowItems.class);
+
+                                        if(dataSnapshot.child("name").getValue(String.class)!=null)
+                                        {
+                                            clickValue1=dataSnapshot.child("name").getValue(String.class);
+                                            intent.putExtra("name",clickValue1);
+                                        }
+                                        if(dataSnapshot.child("type").getValue(String.class)!=null)
+                                        {
+                                            clickValue2=dataSnapshot.child("type").getValue(String.class);
+                                            intent.putExtra("type",clickValue2);
+                                            Log.d("Value...",clickValue2);
+                                        }
+                                        if(dataSnapshot.child("category").getValue(String.class)!=null)
+                                        {
+                                            clickValue3=dataSnapshot.child("category").getValue(String.class);
+                                            intent.putExtra("category",clickValue3);
+                                        }
+
+                                        if(clickValue1!=null || clickValue2!=null || clickValue3!=null)
+                                        {
+                                            intent.putExtra("pin", placeName.getText().toString());
+                                        startActivity(intent);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
             final Dialog customDialog = new Dialog(getContext());
             customDialog.setContentView(R.layout.custom_dialog);
 
@@ -459,6 +528,101 @@ public class HomeFragment extends Fragment {
                 }
             });
 
+            im8_1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            im8_2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            im8_3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            im8_4.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            im8_5.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            im8_6.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            im8_7.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            im8_8.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            im11_1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            im11_2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            im11_3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            im11_4.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
         return view;
     }

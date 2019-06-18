@@ -72,6 +72,10 @@ public class ShowItems extends AppCompatActivity {
         final String value = getIntent().getStringExtra("value");
         final String pin = getIntent().getStringExtra("pin");
 
+        final String name = getIntent().getStringExtra("name");
+        final String type = getIntent().getStringExtra("type");
+        final String category = getIntent().getStringExtra("category");
+
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference();
         itemsList = findViewById(R.id.itemsList);
@@ -83,7 +87,6 @@ public class ShowItems extends AppCompatActivity {
         itemDatabaseHelper = new ItemDatabaseHelper(ShowItems.this);
 
         opened = Boolean.TRUE;
-        title.setText(value);
 
         toolbar.setTitle(R.string.app_name);
 
@@ -131,30 +134,37 @@ public class ShowItems extends AppCompatActivity {
 
                 final ProgressDialog progressDialog1 = ProgressDialog.show(ShowItems.this, "Loading", "Fetching items...", true);
 
-                for (int i = 0; i < delivery_pincode.size(); i++) {
-                    DatabaseReference myRef = databaseReference.child("Categories").child(delivery_pincode.get(i)).child(value);
+                if(name!=null)
+                {
+                    title.setText(name);
+                    for (int i = 0; i < delivery_pincode.size(); i++) {
+                        DatabaseReference myRef = databaseReference.child("Categories").child(delivery_pincode.get(i)).child(category);
 
-                    myRef.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        myRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                            int count = (int) dataSnapshot.getChildrenCount();
+                                int count = (int) dataSnapshot.getChildrenCount();
 
-                            itemsNum = findViewById(R.id.itemsNum);
+                                itemsNum = findViewById(R.id.itemsNum);
 
-                            if (count == 1) {
-                                itemsNum.setText(Integer.toString(count) + " item");
-                            } else {
-                                itemsNum.setText(Integer.toString(count) + " items");
-                            }
-                            if (opened == Boolean.TRUE) {
-                                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                                    Item item = ds.getValue(Item.class);
-                                    allItems.add(item);
+                                if (opened == Boolean.TRUE) {
+                                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                        Item item = ds.getValue(Item.class);
 
-                                }
+                                        if(item.getName().equalsIgnoreCase(name) || item.getName().toLowerCase().contains(name.toLowerCase()) || name.toLowerCase().contains(item.getName().toLowerCase()))
+                                        {
+                                            allItems.add(item);
+                                        }
+                                    }
 
-                                if (allItems.size() != 0) {
+                                    if (count == 1) {
+                                        itemsNum.setText(allItems.size() + " item");
+                                    } else {
+                                        itemsNum.setText(allItems.size() + " items");
+                                    }
+
+                                    if (allItems.size() != 0) {
 
                                     /*Collections.sort(allItems, new Comparator<Item>() {
                                         @Override
@@ -173,20 +183,218 @@ public class ShowItems extends AppCompatActivity {
                                         }
                                     });*/
 
-                                    itemAdapter = new ItemAdapter(ShowItems.this, allItems);
-                                    // itemsList.setAdapter(null);
-                                    itemsList.setAdapter(itemAdapter);
+                                        itemAdapter = new ItemAdapter(ShowItems.this, allItems);
+                                        // itemsList.setAdapter(null);
+                                        itemsList.setAdapter(itemAdapter);
 
-                                    opened = Boolean.FALSE;
+                                        opened = Boolean.FALSE;
+                                    }
                                 }
                             }
-                        }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                        }
-                    });
+                            }
+                        });
+                    }
+                }
+                else if(type!=null)
+                {
+                    Log.d("Value...",type);
+                    title.setText(type);
+                    for (int i = 0; i < delivery_pincode.size(); i++) {
+                        DatabaseReference myRef = databaseReference.child("Categories").child(delivery_pincode.get(i)).child(category);
+
+                        myRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                int count = (int) dataSnapshot.getChildrenCount();
+
+                                itemsNum = findViewById(R.id.itemsNum);
+
+                                if (opened == Boolean.TRUE) {
+                                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                        Item item = ds.getValue(Item.class);
+
+                                        if(item.getType().equalsIgnoreCase(type) || item.getType().toLowerCase().contains(type.toLowerCase()) || type.toLowerCase().contains(item.getType().toLowerCase()))
+                                        {
+                                            allItems.add(item);
+                                        }
+
+                                    }
+
+                                    if (count == 1) {
+                                        itemsNum.setText(allItems.size() + " item");
+                                    } else {
+                                        itemsNum.setText(allItems.size() + " items");
+                                    }
+
+                                    if (allItems.size() != 0) {
+
+                                    /*Collections.sort(allItems, new Comparator<Item>() {
+                                        @Override
+                                        public int compare(Item o1, Item o2) {
+
+                                            for(HashMap.Entry<String,String> entry : o1.getQuant_price().entrySet())
+                                            {
+                                                for(HashMap.Entry<String,String> entry1 : o2.getQuant_price().entrySet())
+                                                {
+                                                    Log.d("entry....",entry.getValue().replace("Out of Stock","").trim()+" "+entry1.getValue().replace("Out of Stock","").trim());
+                                                        return entry.getValue().replace("Out of Stock","").trim().compareTo(entry1.getValue().replace("Out of Stock","").trim());
+                                                }
+                                            }
+
+                                            return -1;
+                                        }
+                                    });*/
+
+                                        itemAdapter = new ItemAdapter(ShowItems.this, allItems);
+                                        // itemsList.setAdapter(null);
+                                        itemsList.setAdapter(itemAdapter);
+
+                                        opened = Boolean.FALSE;
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }
+                else if(category!=null)
+                {
+                    Log.d("Value...",category);
+                    title.setText(category);
+                    for (int i = 0; i < delivery_pincode.size(); i++) {
+                        DatabaseReference myRef = databaseReference.child("Categories").child(delivery_pincode.get(i)).child(category);
+
+                        myRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                int count = (int) dataSnapshot.getChildrenCount();
+
+                                itemsNum = findViewById(R.id.itemsNum);
+
+                                if (opened == Boolean.TRUE) {
+                                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                        Item item = ds.getValue(Item.class);
+                                        allItems.add(item);
+
+                                        Log.d("Value1...",category);
+
+                                    }
+
+                                    if (count == 1) {
+                                        itemsNum.setText(allItems.size() + " item");
+                                    } else {
+                                        itemsNum.setText(allItems.size() + " items");
+                                    }
+
+                                    if (allItems.size() != 0) {
+
+                                    /*Collections.sort(allItems, new Comparator<Item>() {
+                                        @Override
+                                        public int compare(Item o1, Item o2) {
+
+                                            for(HashMap.Entry<String,String> entry : o1.getQuant_price().entrySet())
+                                            {
+                                                for(HashMap.Entry<String,String> entry1 : o2.getQuant_price().entrySet())
+                                                {
+                                                    Log.d("entry....",entry.getValue().replace("Out of Stock","").trim()+" "+entry1.getValue().replace("Out of Stock","").trim());
+                                                        return entry.getValue().replace("Out of Stock","").trim().compareTo(entry1.getValue().replace("Out of Stock","").trim());
+                                                }
+                                            }
+
+                                            return -1;
+                                        }
+                                    });*/
+
+                                        itemAdapter = new ItemAdapter(ShowItems.this, allItems);
+                                        // itemsList.setAdapter(null);
+                                        itemsList.setAdapter(itemAdapter);
+
+                                        Log.d("Value1...",category);
+
+                                        opened = Boolean.FALSE;
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }
+                else
+                {
+                    Log.d("Value1...",value);
+                    title.setText(value);
+                    for (int i = 0; i < delivery_pincode.size(); i++) {
+                        DatabaseReference myRef = databaseReference.child("Categories").child(delivery_pincode.get(i)).child(value);
+
+                        myRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                Log.d("Value1...",value);
+                                int count = (int) dataSnapshot.getChildrenCount();
+
+                                itemsNum = findViewById(R.id.itemsNum);
+
+                                if (count == 1) {
+                                    itemsNum.setText(Integer.toString(count) + " item");
+                                } else {
+                                    itemsNum.setText(Integer.toString(count) + " items");
+                                }
+                                if (opened == Boolean.TRUE) {
+                                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                        Item item = ds.getValue(Item.class);
+                                        allItems.add(item);
+
+                                    }
+
+                                    if (allItems.size() != 0) {
+
+                                    /*Collections.sort(allItems, new Comparator<Item>() {
+                                        @Override
+                                        public int compare(Item o1, Item o2) {
+
+                                            for(HashMap.Entry<String,String> entry : o1.getQuant_price().entrySet())
+                                            {
+                                                for(HashMap.Entry<String,String> entry1 : o2.getQuant_price().entrySet())
+                                                {
+                                                    Log.d("entry....",entry.getValue().replace("Out of Stock","").trim()+" "+entry1.getValue().replace("Out of Stock","").trim());
+                                                        return entry.getValue().replace("Out of Stock","").trim().compareTo(entry1.getValue().replace("Out of Stock","").trim());
+                                                }
+                                            }
+
+                                            return -1;
+                                        }
+                                    });*/
+
+                                        itemAdapter = new ItemAdapter(ShowItems.this, allItems);
+                                        // itemsList.setAdapter(null);
+                                        itemsList.setAdapter(itemAdapter);
+
+                                        opened = Boolean.FALSE;
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
                 }
                 progressDialog1.dismiss();
             }

@@ -60,8 +60,7 @@ public class SelectPaymentOptions extends AppCompatActivity {
     RelativeLayout codLayout;
     RelativeLayout upiLayout;
 
-    String scheduled ;
-    long timeInMillis;
+    String scheduled;
     String time;
 
     @Override
@@ -70,7 +69,6 @@ public class SelectPaymentOptions extends AppCompatActivity {
         setContentView(R.layout.activity_select_payment_options);
 
         scheduled = getIntent().getStringExtra("scheduledEveryday");
-        timeInMillis = getIntent().getLongExtra("timeInMillis", 0);
         address = (Address) getIntent().getSerializableExtra("address");
         time = getIntent().getStringExtra("time");
 
@@ -145,17 +143,6 @@ public class SelectPaymentOptions extends AppCompatActivity {
                     if (rb1.isChecked()) {
                         final ProgressDialog dialog = ProgressDialog.show(SelectPaymentOptions.this, "Confirming Order", "Please wait...", true);
 
-                        final Order order;
-
-                        if(scheduled.equalsIgnoreCase("yes"))
-                        {
-                             order = new Order(customerDetails, itemsOrdered, "COD", time,"yes");
-                        }
-                        else
-                        {
-                            order = new Order(customerDetails, itemsOrdered, "COD", time, "no");
-                        }
-
                         databaseReference.child("Delivers").addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -179,7 +166,17 @@ public class SelectPaymentOptions extends AppCompatActivity {
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                                         int numChildren = (int) dataSnapshot.getChildrenCount();
-                                        databaseReference.child("orders").child(finalBranchPin).child("Homy" + (numChildren + 1) + "Bee" + (int) (Math.random() * 100) + address.getName() + "Order" + address.getPincode() + (int) (Math.random() * 100)).setValue(order);
+
+                                        Order order;
+
+                                        String id = "Homy" + (numChildren + 1) + "Bee" + (int) (Math.random() * 100) + address.getName() + "Order" + address.getPincode() + (int) (Math.random() * 100);
+                                        if (scheduled.equalsIgnoreCase("yes")) {
+                                            order = new Order(customerDetails, itemsOrdered, "COD", time, "yes", "30", "Pending for today", id);
+                                        } else {
+                                            order = new Order(customerDetails, itemsOrdered, "COD", time, "no", "0", null, id);
+                                        }
+
+                                        databaseReference.child("orders").child(finalBranchPin).child(id).setValue(order);
 
                                         Cursor data = itemDatabaseHelper.getAllData();
 
@@ -189,6 +186,7 @@ public class SelectPaymentOptions extends AppCompatActivity {
 
                                         if (scheduled != null) {
                                             if (scheduled.equalsIgnoreCase("yes")) {
+                                                scheduledItemsDatabaseHelper.deleteAllData();
                                                 scheduledItemsDatabaseHelper.insertData(data);
                                             }
                                         }
@@ -197,6 +195,48 @@ public class SelectPaymentOptions extends AppCompatActivity {
 
                                         showNotfication();
 
+                                        databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                                if (time.equalsIgnoreCase("7AM - 9AM")) {
+
+                                                    String value = dataSnapshot.child("1").getValue(String.class);
+                                                    Log.d("value...",value);
+                                                    databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).child("1").setValue((Integer.valueOf(value)-1)+"");
+                                                }
+                                                else if (time.equalsIgnoreCase("9AM - 11AM")) {
+
+                                                    String value = dataSnapshot.child("2").getValue(String.class);
+                                                    databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).child("2").setValue((Integer.valueOf(value)-1)+"");
+                                                }
+                                                else if (time.equalsIgnoreCase("11AM - 1PM")) {
+
+                                                    String value = dataSnapshot.child("3").getValue(String.class);
+                                                    databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).child("3").setValue((Integer.valueOf(value)-1)+"");
+                                                }
+                                                else if (time.equalsIgnoreCase("1PM - 3PM")) {
+
+                                                    String value = dataSnapshot.child("4").getValue(String.class);
+                                                    databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).child("4").setValue((Integer.valueOf(value)-1)+"");
+                                                }
+                                                else if (time.equalsIgnoreCase("3PM - 5PM")) {
+
+                                                    String value = dataSnapshot.child("5").getValue(String.class);
+                                                    databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).child("5").setValue((Integer.valueOf(value)-1)+"");
+                                                }
+                                                else if (time.equalsIgnoreCase("5PM - 7PM")) {
+
+                                                    String value = dataSnapshot.child("6").getValue(String.class);
+                                                    databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).child("6").setValue((Integer.valueOf(value)-1)+"");
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
                                         dialog.dismiss();
                                         finish();
                                     }
@@ -228,12 +268,9 @@ public class SelectPaymentOptions extends AppCompatActivity {
 
                                 String amount;
 
-                                if(scheduled.equalsIgnoreCase("yes"))
-                                {
-                                    amount = String.valueOf(itemDatabaseHelper.getTotalPrice()*30);
-                                }
-                                else
-                                {
+                                if (scheduled.equalsIgnoreCase("yes")) {
+                                    amount = String.valueOf(itemDatabaseHelper.getTotalPrice() * 30);
+                                } else {
                                     amount = String.valueOf(itemDatabaseHelper.getTotalPrice());
                                 }
                                 Uri uri =
@@ -319,12 +356,6 @@ public class SelectPaymentOptions extends AppCompatActivity {
                 //Code to handle successful transaction here.
                 final ProgressDialog dialog = ProgressDialog.show(SelectPaymentOptions.this, "Confirming Order", "Please wait...", true);
 
-                final Order order;
-                if (scheduled.equalsIgnoreCase("yes")) {
-                    order = new Order(customerDetails, itemsOrdered, "COD", time, "yes");
-                } else {
-                    order = new Order(customerDetails, itemsOrdered, "COD", time, "no");
-                }
 
                 databaseReference.child("Delivers").addValueEventListener(new ValueEventListener() {
                     @Override
@@ -349,7 +380,17 @@ public class SelectPaymentOptions extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                                 int numChildren = (int) dataSnapshot.getChildrenCount();
-                                databaseReference.child("orders").child(finalBranchPin).child("Homy" + String.valueOf(numChildren + 1) + "Bee" + (int) (Math.random() * 100) + address.getName() + "Order" + address.getPincode() + (int) (Math.random() * 100)).setValue(order);
+
+                                String id = "Homy" + (numChildren + 1) + "Bee" + (int) (Math.random() * 100) + address.getName() + "Order" + address.getPincode() + (int) (Math.random() * 100);
+
+                                Order order;
+                                if (scheduled.equalsIgnoreCase("yes")) {
+                                    order = new Order(customerDetails, itemsOrdered, "COD", time, "yes", "30", "Pending for today", id);
+                                } else {
+                                    order = new Order(customerDetails, itemsOrdered, "COD", time, "no", "0", null, id);
+                                }
+
+                                databaseReference.child("orders").child(finalBranchPin).child(id).setValue(order);
 
                                 Cursor data = itemDatabaseHelper.getAllData();
 
@@ -358,6 +399,7 @@ public class SelectPaymentOptions extends AppCompatActivity {
 
                                 if (scheduled != null) {
                                     if (scheduled.equalsIgnoreCase("yes")) {
+                                        scheduledItemsDatabaseHelper.deleteAllData();
                                         scheduledItemsDatabaseHelper.insertData(data);
                                     }
                                 }

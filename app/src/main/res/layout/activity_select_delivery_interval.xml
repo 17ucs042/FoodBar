@@ -111,6 +111,19 @@
                 android:textColor="#000000"
                 android:textSize="15sp" />
 
+            <TextView
+                android:id="@+id/am7_available"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:fontFamily="sans-serif-light"
+                android:text="(Not Available)"
+                android:textColor="#000000"
+                android:textSize="15sp"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"/>
+
             <RadioButton
                 android:id="@+id/am7"
                 android:layout_width="wrap_content"
@@ -137,6 +150,19 @@
                 android:text="9AM - 11AM"
                 android:textColor="#000000"
                 android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/am9_available"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:fontFamily="sans-serif-light"
+                android:text="(Not Available)"
+                android:textColor="#000000"
+                android:textSize="15sp"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"/>
 
             <RadioButton
                 android:id="@+id/am9"
@@ -165,6 +191,19 @@
                 android:textColor="#000000"
                 android:textSize="15sp" />
 
+            <TextView
+                android:id="@+id/am11_available"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:fontFamily="sans-serif-light"
+                android:text="(Not Available)"
+                android:textColor="#000000"
+                android:textSize="15sp"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"/>
+
             <RadioButton
                 android:id="@+id/am11"
                 android:layout_width="wrap_content"
@@ -191,6 +230,19 @@
                 android:text="1PM - 3PM"
                 android:textColor="#000000"
                 android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/pm1_available"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:fontFamily="sans-serif-light"
+                android:text="(Not Available)"
+                android:textColor="#000000"
+                android:textSize="15sp"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"/>
 
             <RadioButton
                 android:id="@+id/pm1"
@@ -219,6 +271,19 @@
                 android:textColor="#000000"
                 android:textSize="15sp" />
 
+            <TextView
+                android:id="@+id/pm3_available"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:fontFamily="sans-serif-light"
+                android:text="(Not Available)"
+                android:textColor="#000000"
+                android:textSize="15sp"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"/>
+
             <RadioButton
                 android:id="@+id/pm3"
                 android:layout_width="wrap_content"
@@ -245,6 +310,19 @@
                 android:text="5PM - 7PM"
                 android:textColor="#000000"
                 android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/pm5_available"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:fontFamily="sans-serif-light"
+                android:text="(Not Available)"
+                android:textColor="#000000"
+                android:textSize="15sp"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"/>
 
             <RadioButton
                 android:id="@+id/pm5"

@@ -121,4 +121,36 @@ public class CustomerDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db=this.getWritableDatabase();
         db.execSQL("Delete from "+TABLE_NAME);
     }
+
+    public String getPincode()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res= db.rawQuery("select * from "+TABLE_NAME,null);
+        res.moveToFirst();
+        return  res.getString(9);
+    }
+
+    public String getName()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res= db.rawQuery("select * from "+TABLE_NAME,null);
+        res.moveToFirst();
+
+        if(res.getString(2)!=null)
+        {
+            return  res.getString(1)+" "+res.getString(2);
+        }
+        else
+        {
+            return res.getString(1);
+        }
+    }
+
+    public String getPhoneNumber()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res= db.rawQuery("select * from "+TABLE_NAME,null);
+        res.moveToFirst();
+        return  res.getString(3);
+    }
 }
