@@ -92,7 +92,7 @@ public class SelectPaymentOptions extends AppCompatActivity {
         databaseReference = firebaseDatabase.getReference();
 
         customerDetails.put("Name", address.getName());
-        customerDetails.put("Phone Number", address.getPhoneNum());
+        customerDetails.put("Phone Number", address.getPhoneNum().replace("Ph: ","").trim());
         customerDetails.put("House Number", address.getHouseNo());
         customerDetails.put("Area", address.getArea());
         customerDetails.put("Pincode", address.getPincode());
@@ -107,7 +107,7 @@ public class SelectPaymentOptions extends AppCompatActivity {
                 order_value.put("Name", data1.getString(1));
                 order_value.put("Quantity", data1.getString(2));
                 order_value.put("Price", data1.getString(3));
-                order_value.put("Number of items", String.valueOf(data1.getInt(4)));
+                order_value.put("Number_of_items", String.valueOf(data1.getInt(4)));
 
                 itemsOrdered.add(order_value);
             } while (data1.moveToNext());
@@ -141,7 +141,39 @@ public class SelectPaymentOptions extends AppCompatActivity {
 
                 if (isConnectionAvailable(SelectPaymentOptions.this)) {
                     if (rb1.isChecked()) {
-                        final ProgressDialog dialog = ProgressDialog.show(SelectPaymentOptions.this, "Confirming Order", "Please wait...", true);
+
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_VIEW);
+                        Uri uri = Uri.parse("upi://pay").buildUpon()
+                                        .appendQueryParameter("pa", "saranshgupta123456789.sg.sg@okhdfcbank")
+                                        .appendQueryParameter("pn", "Garvit")
+                                        .appendQueryParameter("tn", "Payment to Homy Bee")
+                                        .appendQueryParameter("am", "5")
+                                        .appendQueryParameter("cu", "INR")
+                                        .build();
+                        sendIntent.setData(uri);
+                        startActivity(Intent.createChooser(sendIntent, "Yes"));
+
+                        /*Uri uri =
+                                new Uri.Builder()
+                                        .scheme("upi")
+                                        .authority("pay")
+                                        .appendQueryParameter("pa", "saranshgupta123456789.sg.sg@okhdfcbank")
+                                        .appendQueryParameter("pn", "Garvit")
+                                        .appendQueryParameter("tn", "Payment to Homy Bee")
+                                        .appendQueryParameter("am", "5")
+                                        .appendQueryParameter("cu", "INR")
+                                        .build();
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(uri);
+
+                        Intent chooser = Intent.createChooser(intent, "Pay With");
+                        if (null != chooser.resolveActivity(getPackageManager())) {
+                            startActivityForResult(chooser, 10);
+                        } else {
+                            Toast.makeText(SelectPaymentOptions.this, "No UPI app found, please install one to continue", Toast.LENGTH_SHORT).show();
+                        }*/
+                        /*final ProgressDialog dialog = ProgressDialog.show(SelectPaymentOptions.this, "Confirming Order", "Please wait...", true);
 
                         databaseReference.child("Delivers").addValueEventListener(new ValueEventListener() {
                             @Override
@@ -201,34 +233,34 @@ public class SelectPaymentOptions extends AppCompatActivity {
 
                                                 if (time.equalsIgnoreCase("7AM - 9AM")) {
 
-                                                    String value = dataSnapshot.child("1").getValue(String.class);
+                                                    String value = dataSnapshot.child("0").getValue(String.class);
                                                     Log.d("value...",value);
-                                                    databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).child("1").setValue((Integer.valueOf(value)-1)+"");
+                                                    databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).child("0").setValue((Integer.valueOf(value)-1)+"");
                                                 }
                                                 else if (time.equalsIgnoreCase("9AM - 11AM")) {
+
+                                                    String value = dataSnapshot.child("1").getValue(String.class);
+                                                    databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).child("1").setValue((Integer.valueOf(value)-1)+"");
+                                                }
+                                                else if (time.equalsIgnoreCase("11AM - 1PM")) {
 
                                                     String value = dataSnapshot.child("2").getValue(String.class);
                                                     databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).child("2").setValue((Integer.valueOf(value)-1)+"");
                                                 }
-                                                else if (time.equalsIgnoreCase("11AM - 1PM")) {
+                                                else if (time.equalsIgnoreCase("1PM - 3PM")) {
 
                                                     String value = dataSnapshot.child("3").getValue(String.class);
                                                     databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).child("3").setValue((Integer.valueOf(value)-1)+"");
                                                 }
-                                                else if (time.equalsIgnoreCase("1PM - 3PM")) {
+                                                else if (time.equalsIgnoreCase("3PM - 5PM")) {
 
                                                     String value = dataSnapshot.child("4").getValue(String.class);
                                                     databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).child("4").setValue((Integer.valueOf(value)-1)+"");
                                                 }
-                                                else if (time.equalsIgnoreCase("3PM - 5PM")) {
+                                                else if (time.equalsIgnoreCase("5PM - 7PM")) {
 
                                                     String value = dataSnapshot.child("5").getValue(String.class);
                                                     databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).child("5").setValue((Integer.valueOf(value)-1)+"");
-                                                }
-                                                else if (time.equalsIgnoreCase("5PM - 7PM")) {
-
-                                                    String value = dataSnapshot.child("6").getValue(String.class);
-                                                    databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).child("6").setValue((Integer.valueOf(value)-1)+"");
                                                 }
                                             }
 
@@ -255,7 +287,7 @@ public class SelectPaymentOptions extends AppCompatActivity {
                             public void onCancelled(@NonNull DatabaseError databaseError) {
 
                             }
-                        });
+                        });*/
                     } else if (rb2.isChecked()) {
                         Handler handler = new Handler();
                         final ProgressDialog dialog = ProgressDialog.show(SelectPaymentOptions.this, "Loading", "Please wait...", true);
@@ -286,9 +318,11 @@ public class SelectPaymentOptions extends AppCompatActivity {
                                 Intent intent = new Intent(Intent.ACTION_VIEW);
                                 intent.setData(uri);
 
+                                Log.d("UPI....","yes1");
                                 Intent chooser = Intent.createChooser(intent, "Pay With");
                                 if (null != chooser.resolveActivity(getPackageManager())) {
                                     startActivityForResult(chooser, 10);
+                                    Log.d("UPI....","yes2");
                                 } else {
                                     Toast.makeText(SelectPaymentOptions.this, "No UPI app found, please install one to continue", Toast.LENGTH_SHORT).show();
                                 }
@@ -405,6 +439,50 @@ public class SelectPaymentOptions extends AppCompatActivity {
                                 }
 
                                 itemDatabaseHelper.deleteAllData();
+
+                                databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                        if (time.equalsIgnoreCase("7AM - 9AM")) {
+
+                                            String value = dataSnapshot.child("0").getValue(String.class);
+                                            Log.d("value...",value);
+                                            databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).child("0").setValue((Integer.valueOf(value)-1)+"");
+                                        }
+                                        else if (time.equalsIgnoreCase("9AM - 11AM")) {
+
+                                            String value = dataSnapshot.child("1").getValue(String.class);
+                                            databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).child("1").setValue((Integer.valueOf(value)-1)+"");
+                                        }
+                                        else if (time.equalsIgnoreCase("11AM - 1PM")) {
+
+                                            String value = dataSnapshot.child("2").getValue(String.class);
+                                            databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).child("2").setValue((Integer.valueOf(value)-1)+"");
+                                        }
+                                        else if (time.equalsIgnoreCase("1PM - 3PM")) {
+
+                                            String value = dataSnapshot.child("3").getValue(String.class);
+                                            databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).child("3").setValue((Integer.valueOf(value)-1)+"");
+                                        }
+                                        else if (time.equalsIgnoreCase("3PM - 5PM")) {
+
+                                            String value = dataSnapshot.child("4").getValue(String.class);
+                                            databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).child("4").setValue((Integer.valueOf(value)-1)+"");
+                                        }
+                                        else if (time.equalsIgnoreCase("5PM - 7PM")) {
+
+                                            String value = dataSnapshot.child("5").getValue(String.class);
+                                            databaseReference.child("DeliverGuyAvailable").child(finalBranchPin).child("5").setValue((Integer.valueOf(value)-1)+"");
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
                                 dialog.dismiss();
                                 finish();
                             }

@@ -66,6 +66,29 @@ public class CustomerDatabaseHelper extends SQLiteOpenHelper {
             return  true;
     }
 
+    public  boolean insert(String firstName, String lastName, String phoneNum, String houseNo,String apartmentName,
+                               String street, String landmark, String area, String pincode, String nickname)
+    {
+        SQLiteDatabase db=this.getWritableDatabase();
+        ContentValues contentValues= new ContentValues();
+        contentValues.put(COL_2,firstName);
+        contentValues.put(COL_3,lastName);
+        contentValues.put(COL_4,phoneNum);
+        contentValues.put(COL_5,houseNo);
+        contentValues.put(COL_6,apartmentName);
+        contentValues.put(COL_7,street);
+        contentValues.put(COL_8,landmark);
+        contentValues.put(COL_9,area);
+        contentValues.put(COL_10,pincode);
+        contentValues.put(COL_11,nickname);
+
+        long result=db.insert(TABLE_NAME,null,contentValues);
+        if(result==-1)
+        {return false;}
+        else
+            return  true;
+    }
+
     /*public boolean update(String firstName, String lastName, String phoneNum, String houseNo,String apartmentName,
                           String street, String landmark, String area, String pincode, String nickname){
 

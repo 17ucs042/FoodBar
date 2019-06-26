@@ -31,6 +31,7 @@ public class BasketFragment extends Fragment {
     View view = null;
     Button startShopping;
     ItemDatabaseHelper itemDatabaseHelper;
+    CustomerDatabaseHelper customerDatabaseHelper;
     ArrayList<BasketItems> basket;
     ArrayList<String> itemName;
     LinearLayout basketLayout;
@@ -42,7 +43,7 @@ public class BasketFragment extends Fragment {
     ImageView searchIcon;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
@@ -65,6 +66,7 @@ public class BasketFragment extends Fragment {
         });
 
         itemDatabaseHelper = new ItemDatabaseHelper(getContext());
+        customerDatabaseHelper = new CustomerDatabaseHelper(getContext());
         basket = new ArrayList<>();
         itemName = new ArrayList<>();
         basketLayout = view.findViewById(R.id.basket_layout);
@@ -135,7 +137,14 @@ public class BasketFragment extends Fragment {
             public void onClick(View v) {
 
                 //detach();
-                startActivity(new Intent(getContext(), com.appsaga.foodbar.EnterDetails.class));
+                if(customerDatabaseHelper.getTotalItems()==0)
+                {
+                    startActivity(new Intent(getContext(), com.appsaga.foodbar.EnterDetails.class));
+                }
+                else
+                {
+                    startActivity(new Intent(getContext(),com.appsaga.foodbar.SavedAddresses.class));
+                }
             }
         });
 

@@ -9,4 +9,6 @@
     <string name="custom_dialog">Location not set.\nTurn on GPS and set location\nOR</string>
 
     <string name="note">Note: Items scheduled here will be delivered everyday</string>
+    <string name="cod_text">Please keep exact change with you to help us serve you better</string>
+    <string name="upi_text">Direct bank to bank transfer using UPI</string>
 </resources>

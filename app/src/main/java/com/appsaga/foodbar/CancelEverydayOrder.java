@@ -1,19 +1,14 @@
 package com.appsaga.foodbar;
 
 import android.app.ProgressDialog;
-import android.content.SharedPreferences;
-import android.location.Location;
-import android.location.LocationListener;
-import android.preference.PreferenceManager;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,107 +17,93 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 
 public class CancelEverydayOrder extends AppCompatActivity {
 
-    CustomerDatabaseHelper customerDatabaseHelper;
-    ScheduledItemsDatabaseHelper scheduledItemsDatabaseHelper;
-    TextView notAvailable;
-    ListView cancelListView;
+    CancelItemsAdapter cancelItemsAdapter;
+    ArrayList<ItemsOrdered> cancelItems = new ArrayList<>();
+    Address address;
     DatabaseReference databaseReference;
-
-    ArrayList<EverydayOrder> everydayOrders;
-    CancelAdapter cancelAdapter;
+    ListView cancelItemsListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cancel_everyday_order);
 
-        customerDatabaseHelper = new CustomerDatabaseHelper(CancelEverydayOrder.this);
-        scheduledItemsDatabaseHelper = new ScheduledItemsDatabaseHelper(CancelEverydayOrder.this);
-
+        address = (Address) getIntent().getSerializableExtra("address");
         databaseReference = FirebaseDatabase.getInstance().getReference();
-        notAvailable = findViewById(R.id.not_available);
-        cancelListView = findViewById(R.id.cancel_list_view);
+        cancelItemsListView = findViewById(R.id.cancel_items_list_view);
 
-        if (scheduledItemsDatabaseHelper.getTotalItems() == 0 || customerDatabaseHelper.getTotalItems() == 0) {
-            notAvailable.setVisibility(View.VISIBLE);
-            notAvailable.setText("You don't have any everyday order scheduled\nOR\nYour Delivery Address is not set. Please set delivery address to view your everyday order schedule");
-            cancelListView.setVisibility(View.GONE);
-        } else {
-            final ProgressDialog progressDialog = ProgressDialog.show(CancelEverydayOrder.this, "Loading", "Please Wait...");
+        final ProgressDialog dialog = ProgressDialog.show(CancelEverydayOrder.this, "Getting Orders", "Please wait...", true);
 
-            databaseReference.child("Delivers").addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        databaseReference.child("Delivers").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                    String branchPin = null;
+                String branchPin = null;
 
-                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        HashMap<String, String> hashMap = (HashMap<String, String>) ds.getValue();
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    HashMap<String, String> hashMap = (HashMap<String, String>) ds.getValue();
 
-                        for (HashMap.Entry<String, String> entry : hashMap.entrySet()) {
-                            if (entry.getValue().equalsIgnoreCase(customerDatabaseHelper.getPincode())) {
-                                branchPin = entry.getKey();
-                                break;
-                            }
+                    for (HashMap.Entry<String, String> entry : hashMap.entrySet()) {
+                        if (entry.getValue().equalsIgnoreCase(address.getPincode())) {
+                            branchPin = entry.getKey();
+                            break;
                         }
                     }
+                }
 
-                    final String finalBranchPin = branchPin;
+                databaseReference.child("orders").child(branchPin).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                    databaseReference.child("orders").child(finalBranchPin).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                        Log.d("Cancell...","Yes1");
+                        for(DataSnapshot ds:dataSnapshot.getChildren())
+                        {
+                            HashMap<String,String> hashMap = (HashMap<String, String>) ds.child("customerDetails").getValue();
 
-                            int t = 0;
-                            everydayOrders = new ArrayList<>();
-
-                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                                Order order = ds.getValue(Order.class);
-                                if (order.getCustomerDetails().get("Name").equalsIgnoreCase(customerDatabaseHelper.getName()) &&
-                                        order.getCustomerDetails().get("Pincode").equalsIgnoreCase(customerDatabaseHelper.getPincode()) &&
-                                        order.getCustomerDetails().get("Phone Number").equalsIgnoreCase(customerDatabaseHelper.getPhoneNumber()) &&
-                                        order.getEveryday().equalsIgnoreCase("yes")) {
-                                    t = 1;
-                                    notAvailable.setVisibility(View.GONE);
-                                    cancelListView.setVisibility(View.VISIBLE);
-
-                                    everydayOrders.add(new EverydayOrder(order, finalBranchPin));
+                            Log.d("Cancell...","Yes2");
+                            Log.d("Cancell...",hashMap.get("Nickname"));
+                            Log.d("Cancell...",address.getNickname());
+                            if(hashMap.get("Name").equalsIgnoreCase(address.getName())&&
+                                hashMap.get("Area").toLowerCase().contains(address.getArea().toLowerCase())&&
+                                hashMap.get("Nickname").equalsIgnoreCase(address.getNickname())&&
+                                hashMap.get("Phone Number").equalsIgnoreCase(address.getPhoneNum().replace("Ph: ","").trim())&&
+                                hashMap.get("House Number").equalsIgnoreCase(address.getHouseNo())&&
+                                hashMap.get("Pincode").equalsIgnoreCase(address.getPincode()))
+                            {
+                                for(DataSnapshot dataSnapshot1:ds.child("itemsOrdered").getChildren())
+                                {
+                                    cancelItems.add(dataSnapshot1.getValue(ItemsOrdered.class));
                                 }
                             }
-
-                            cancelAdapter = new CancelAdapter(CancelEverydayOrder.this, everydayOrders);
-                            cancelListView.setAdapter(null);
-
-                            if (everydayOrders.size() != 0) {
-                                cancelListView.setAdapter(cancelAdapter);
-                            }
-
-                            if (t == 0) {
-                                notAvailable.setVisibility(View.VISIBLE);
-                                cancelListView.setVisibility(View.GONE);
-                                notAvailable.setText("The saved delivery address/phone number or name does not match.\nPlease set correct delivery address");
-                            }
-
-                            progressDialog.dismiss();
                         }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                        if(cancelItems.size()!=0)
+                        {
+                            cancelItemsAdapter = new CancelItemsAdapter(CancelEverydayOrder.this,cancelItems);
+                            cancelItemsListView.setVisibility(View.VISIBLE);
+                            cancelItemsListView.setAdapter(cancelItemsAdapter);
+                            Log.d("Cancell...","Yes4");
                         }
-                    });
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+                        dialog.dismiss();
+                    }
 
-                }
-            });
-        }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 }

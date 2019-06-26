@@ -22,6 +22,12 @@ public class Item implements Serializable {
         this.type = type;
     }
 
+    public Item(String name, HashMap<String, String> quant_price, String type) {
+        this.name = name;
+        this.quant_price = quant_price;
+        this.type = type;
+    }
+
     public String getType() {
         return type;
     }

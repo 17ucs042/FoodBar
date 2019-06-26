@@ -96,7 +96,7 @@ public class SelectDeliveryInterval extends AppCompatActivity {
 
                             for (int i=0;i<6;i++)
                             {
-                                if(arrayList.get(i+1).equalsIgnoreCase("0"))
+                                if(arrayList.get(i).equalsIgnoreCase("0"))
                                 {
                                     textViews[i].setVisibility(View.VISIBLE);
                                     radioButtons[i].setEnabled(Boolean.FALSE);

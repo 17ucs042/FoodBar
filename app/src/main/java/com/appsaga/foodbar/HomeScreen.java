@@ -268,7 +268,7 @@ public class HomeScreen extends AppCompatActivity implements GoogleApiClient.OnC
                         } else if (menuItem.getItemId() == R.id.homy_basket) {
                             viewPager.setCurrentItem(4);
                         } else if (menuItem.getItemId() == R.id.cancel_order) {
-                            startActivity(new Intent(HomeScreen.this, CancelEverydayOrder.class));
+                            startActivity(new Intent(HomeScreen.this, SelectCancelOrderAddress.class));
                         }
                         else if (menuItem.getItemId() == R.id.address) {
                             startActivity(new Intent(HomeScreen.this, MyDeliveryAddress.class));

@@ -1,7 +1,9 @@
 package com.appsaga.foodbar;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class EnterDetails extends AppCompatActivity {
@@ -22,7 +25,10 @@ public class EnterDetails extends AppCompatActivity {
     EditText landmark;
     EditText areaDetails;
     EditText pincode;
-    EditText nickname;
+    TextView workTag;
+    TextView homeTag;
+    TextView otherTag;
+    TextView tagAs;
     ImageButton next;
 
     String name;
@@ -33,7 +39,6 @@ public class EnterDetails extends AppCompatActivity {
     String nickname1;
 
     Button saveAddress;
-    Button copyAddress;
 
     CustomerDatabaseHelper customerDatabaseHelper;
     MyPincodeDatabaseHelper myPincodeDatabaseHelper;
@@ -56,19 +61,58 @@ public class EnterDetails extends AppCompatActivity {
         landmark = findViewById(R.id.landmark);
         areaDetails = findViewById(R.id.area_details);
         pincode = findViewById(R.id.pincode);
-        nickname = findViewById(R.id.nickname);
+        workTag = findViewById(R.id.work_tag);
+        homeTag = findViewById(R.id.home_tag);
+        otherTag = findViewById(R.id.other_tag);
+        tagAs=findViewById(R.id.tag);
 
         saveAddress = findViewById(R.id.save_address);
-        copyAddress = findViewById(R.id.copy_saved_address);
-
-        next = findViewById(R.id.next);
 
         if(myPincodeDatabaseHelper.getTotalItems()!=0)
         {
             pincode.setText(myPincodeDatabaseHelper.getPincode());
         }
 
-        next.setOnClickListener(new View.OnClickListener() {
+        workTag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                workTag.setTextColor(Color.parseColor("#FFC107"));
+                workTag.setSelected(true);
+                homeTag.setSelected(false);
+                homeTag.setTextColor(Color.parseColor("#000000"));
+                otherTag.setSelected(false);
+                otherTag.setTextColor(Color.parseColor("#000000"));
+            }
+        });
+
+        homeTag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                homeTag.setTextColor(Color.parseColor("#FFC107"));
+                homeTag.setSelected(true);
+                workTag.setSelected(false);
+                workTag.setTextColor(Color.parseColor("#000000"));
+                otherTag.setSelected(false);
+                otherTag.setTextColor(Color.parseColor("#000000"));
+            }
+        });
+
+        otherTag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                otherTag.setTextColor(Color.parseColor("#FFC107"));
+                otherTag.setSelected(true);
+                workTag.setSelected(false);
+                workTag.setTextColor(Color.parseColor("#000000"));
+                homeTag.setSelected(false);
+                homeTag.setTextColor(Color.parseColor("#000000"));
+            }
+        });
+
+        /*next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -97,10 +141,10 @@ public class EnterDetails extends AppCompatActivity {
                     pincode.setError("Incorrect pincode");
                     pincode.requestFocus();
                 }
-                else if(nickname.getText().toString().trim().length()==0)
+                else if(!(otherTag.isSelected()||homeTag.isSelected()||workTag.isSelected()))
                 {
-                    nickname.setError("Please enter nickname");
-                    nickname.requestFocus();
+                    tagAs.setError("Please select a tag");
+                    tagAs.requestFocus();
                 }
                 else if (myPincodeDatabaseHelper.getTotalItems() != 0) {
 
@@ -116,7 +160,7 @@ public class EnterDetails extends AppCompatActivity {
                                 streetDetails.getText().toString()+" "+landmark.getText().toString();
                         area = areaDetails.getText().toString();
                         pincode1 = pincode.getText().toString();
-                        nickname1 = nickname.getText().toString();
+                        //nickname1 = nickname.getText().toString();
 
                         Address address = new Address(name,phoneNumber,house,area,pincode1,nickname1);
 
@@ -135,7 +179,7 @@ public class EnterDetails extends AppCompatActivity {
                             streetDetails.getText().toString()+" "+landmark.getText().toString();
                     area = areaDetails.getText().toString();
                     pincode1 = pincode.getText().toString();
-                    nickname1 = nickname.getText().toString();
+                   // nickname1 = nickname.getText().toString();
 
                     Address address = new Address(name,phoneNumber,house,area,pincode1,nickname1);
 
@@ -146,7 +190,7 @@ public class EnterDetails extends AppCompatActivity {
                     finish();
                 }
             }
-        });
+        });*/
 
         saveAddress.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,10 +221,10 @@ public class EnterDetails extends AppCompatActivity {
                     pincode.setError("Incorrect pincode");
                     pincode.requestFocus();
                 }
-                else if(nickname.getText().toString().trim().length()==0)
+                else if(!(otherTag.isSelected()||homeTag.isSelected()||workTag.isSelected()))
                 {
-                    nickname.setError("Please enter nickname");
-                    nickname.requestFocus();
+                    tagAs.setError("Please select a tag");
+                    tagAs.requestFocus();
                 }
                 else if (myPincodeDatabaseHelper.getTotalItems() != 0) {
 
@@ -196,13 +240,28 @@ public class EnterDetails extends AppCompatActivity {
                                 streetDetails.getText().toString() + " " + landmark.getText().toString();
                         area = areaDetails.getText().toString();
                         pincode1 = pincode.getText().toString();
-                        nickname1 = nickname.getText().toString();
 
-                        customerDatabaseHelper.insertData(firstName.getText().toString(), lastName.getText().toString(),
+                        if(workTag.isSelected())
+                        {
+                            nickname1= workTag.getText().toString();
+                        }
+                        else if(homeTag.isSelected())
+                        {
+                            nickname1= homeTag.getText().toString();
+                        }
+                        else {
+                            nickname1= otherTag.getText().toString();
+                        }
+
+                        customerDatabaseHelper.insert(firstName.getText().toString(), lastName.getText().toString(),
                                 phoneNumber, houseNo.getText().toString(), apartmentName.getText().toString(), streetDetails.getText().toString(),
                                 landmark.getText().toString(), area, pincode1, nickname1);
 
                         Toast.makeText(EnterDetails.this, "Address saved", Toast.LENGTH_SHORT).show();
+
+                        Intent returnIntent = new Intent(EnterDetails.this,SavedAddresses.class);
+                        startActivity(returnIntent);
+                        finish();
                     }
                 }
                 else
@@ -213,18 +272,33 @@ public class EnterDetails extends AppCompatActivity {
                             streetDetails.getText().toString()+" "+landmark.getText().toString();
                     area = areaDetails.getText().toString();
                     pincode1 = pincode.getText().toString();
-                    nickname1 = nickname.getText().toString();
 
-                    customerDatabaseHelper.insertData(firstName.getText().toString(),lastName.getText().toString(),
+                    if(workTag.isSelected())
+                    {
+                        nickname1= workTag.getText().toString();
+                    }
+                    else if(homeTag.isSelected())
+                    {
+                        nickname1= homeTag.getText().toString();
+                    }
+                    else {
+                        nickname1= otherTag.getText().toString();
+                    }
+
+                    customerDatabaseHelper.insert(firstName.getText().toString(),lastName.getText().toString(),
                             phoneNumber,houseNo.getText().toString(),apartmentName.getText().toString(),streetDetails.getText().toString(),
                             landmark.getText().toString(),area,pincode1,nickname1);
 
                     Toast.makeText(EnterDetails.this,"Address saved",Toast.LENGTH_SHORT).show();
+
+                    Intent returnIntent = new Intent(EnterDetails.this,SavedAddresses.class);
+                    startActivity(returnIntent);
+                    finish();
                 }
             }
         });
 
-        copyAddress.setOnClickListener(new View.OnClickListener() {
+        /*copyAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -251,6 +325,12 @@ public class EnterDetails extends AppCompatActivity {
                     Toast.makeText(EnterDetails.this,"No address is saved",Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        });*/
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        finish();
     }
 }

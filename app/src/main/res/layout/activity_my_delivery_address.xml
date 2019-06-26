@@ -245,21 +245,35 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <Button
-                android:id="@+id/save_address"
-                android:layout_width="wrap_content"
-                android:layout_height="45dp"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/enter_nickname"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="15dp"
-                android:background="@drawable/ripple_effect2"
-                android:paddingStart="15dp"
-                android:paddingLeft="15dp"
-                android:paddingEnd="15dp"
-                android:paddingRight="15dp"
-                android:text="Save Address"
-                android:textColor="#FFFFFF"
-                android:layout_alignParentBottom="true"/>
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp">
+
+                <Button
+                    android:id="@+id/save_address"
+                    android:layout_width="0dp"
+                    android:layout_height="45dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/ripple_effect5"
+                    android:text="Add Address"
+                    android:textColor="#DC143C"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="10dp"/>
+
+                <Button
+                    android:id="@+id/view_saved_address"
+                    android:layout_width="0dp"
+                    android:layout_height="45dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/ripple_effect2"
+                    android:text="View Addresses"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="20dp"/>
+            </LinearLayout>
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>

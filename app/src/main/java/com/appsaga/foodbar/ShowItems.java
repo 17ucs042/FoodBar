@@ -184,7 +184,7 @@ public class ShowItems extends AppCompatActivity {
                                     });*/
 
                                         itemAdapter = new ItemAdapter(ShowItems.this, allItems);
-                                        // itemsList.setAdapter(null);
+                                        //itemsList.setAdapter(null);
                                         itemsList.setAdapter(itemAdapter);
 
                                         opened = Boolean.FALSE;

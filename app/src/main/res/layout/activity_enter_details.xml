@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EnterDetails">
+    tools:context=".EnterDetails"
+    android:background="#FFFFFF">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -34,7 +35,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar">
+        android:layout_below="@id/toolbar"
+        android:background="#FFFFFF"
+        android:layout_above="@id/save_address">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -110,7 +113,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/enter_phone_num"
                 android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
                 android:layout_marginTop="20dp"
                 android:text="Address Details"
                 android:textColor="#000000"
@@ -225,77 +227,82 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/enter_nickname"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/enter_pincode">
+           <RelativeLayout
+               android:id="@+id/tag_nickname"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_below="@id/enter_pincode"
+               android:layout_marginTop="10dp"
+               android:paddingBottom="3dp">
 
-                <EditText
-                    android:id="@+id/nickname"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginEnd="15dp"
-                    android:layout_marginRight="15dp"
-                    android:hint="* Nickname eg. Home, Office, etc." />
+               <TextView
+                   android:id="@+id/tag"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="Tag As"
+                   android:layout_marginStart="20dp"
+                   android:textStyle="bold"
+                   android:layout_marginBottom="10dp"/>
 
-            </android.support.design.widget.TextInputLayout>
+               <TextView
+                   android:id="@+id/home_tag"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="Home"
+                   android:textColor="#000000"
+                   android:drawableStart="@drawable/tag_home"
+                   android:layout_marginStart="20dp"
+                   android:textSize="17sp"
+                   android:drawablePadding="10dp"
+                   android:background="@drawable/tag_background"
+                   android:padding="10dp"
+                   android:layout_below="@id/tag"/>
 
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/enter_nickname"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true">
+               <TextView
+                   android:id="@+id/work_tag"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="Work"
+                   android:textColor="#000000"
+                   android:layout_toEndOf="@id/home_tag"
+                   android:textSize="17sp"
+                   android:drawableStart="@drawable/tag_work"
+                   android:drawablePadding="10dp"
+                   android:background="@drawable/tag_background"
+                   android:padding="10dp"
+                   android:layout_below="@id/tag"
+                   android:layout_marginStart="10dp"/>
 
-                <ImageButton
-                    android:id="@+id/next"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/circle"
-                    android:paddingStart="15dp"
-                    android:paddingLeft="15dp"
-                    android:paddingEnd="15dp"
-                    android:paddingRight="15dp"
-                    android:src="@drawable/details_go"
-                    android:textColor="#FFFFFF" />
+               <TextView
+                   android:id="@+id/other_tag"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="Other"
+                   android:textColor="#000000"
+                   android:layout_toEndOf="@id/work_tag"
+                   android:textSize="17sp"
+                   android:drawablePadding="10dp"
+                   android:layout_marginStart="10dp"
+                   android:drawableStart="@drawable/tag_other"
+                   android:background="@drawable/tag_background"
+                   android:padding="10dp"
+                   android:layout_below="@id/tag"/>
 
-                <Button
-                    android:id="@+id/save_address"
-                    android:layout_width="120dp"
-                    android:layout_height="45dp"
-                    android:layout_below="@id/next"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginStart="50dp"
-                    android:background="@drawable/ripple_effect2"
-                    android:paddingStart="15dp"
-                    android:paddingLeft="15dp"
-                    android:paddingEnd="15dp"
-                    android:paddingRight="15dp"
-                    android:text="Save Address"
-                    android:textColor="#FFFFFF" />
+           </RelativeLayout>
 
-                <Button
-                    android:id="@+id/copy_saved_address"
-                    android:layout_width="120dp"
-                    android:layout_height="45dp"
-                    android:layout_below="@id/next"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="50dp"
-                    android:background="@drawable/ripple_effect2"
-                    android:paddingStart="15dp"
-                    android:paddingLeft="15dp"
-                    android:paddingEnd="15dp"
-                    android:paddingRight="15dp"
-                    android:text="Copy Saved Address"
-                    android:textColor="#FFFFFF" />
-
-            </RelativeLayout>
         </RelativeLayout>
     </ScrollView>
+
+        <Button
+            android:id="@+id/save_address"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+           android:layout_alignParentBottom="true"
+            android:background="@drawable/ripple_effect2"
+            android:text="Add Address"
+            android:textColor="#FFFFFF"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"/>
+
+
 </RelativeLayout>

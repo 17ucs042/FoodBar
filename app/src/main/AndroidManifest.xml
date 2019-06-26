@@ -17,11 +17,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CancelEverydayOrder"
-            android:launchMode="singleTask">
-
-        </activity>
-        <activity android:name=".SelectDeliveryInterval" />
+        <activity android:name=".SelectCancelOrderAddress"></activity>
+        <activity android:name=".SavedAddresses" />
+        <activity
+            android:name=".CancelEverydayOrder"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".SelectDeliveryInterval"
+            android:launchMode="singleTask" />
         <activity android:name=".ScheduleEveryday" />
         <activity android:name=".AboutUs" />
         <activity android:name=".MyOrders" />
@@ -81,7 +84,9 @@
             android:name=".ShowItems"
             android:label="@string/title_activity_show_items"
             android:theme="@style/AppTheme" />
-        <activity android:name=".EnterDetails" />
+        <activity
+            android:name=".EnterDetails"
+            android:windowSoftInputMode="stateHidden|adjustResize|adjustPan" />
         <activity android:name=".SelectPaymentOptions" />
         <activity android:name=".ItemDescription" />
         <activity android:name=".MyDeliveryAddress" />
